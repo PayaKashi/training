@@ -68,6 +68,23 @@ h2.page{margin:0;font-size:1.625rem;font-weight:800}
 .big.owe{color:var(--fg)}
 .muted{color:var(--muted);margin:0}
 .paid-line{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent-strong);margin:0}
+.brandbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:8px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.0625rem;color:var(--accent-strong);letter-spacing:.01em}
+.brand-mark{width:34px;height:34px;border-radius:11px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:1.125rem}
+.cover-line{margin:0;font-weight:600;color:var(--fg)}
+.cover-line.warn{color:var(--warn-fg)}
+.btn-line{background:var(--surface);color:var(--accent-strong);border:1.5px solid var(--accent-soft)}
+.lift{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer}
+.lift:hover{border-color:var(--accent)}
+.lift-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lift-main strong{font-size:1.0625rem}
+.lift-main .best{font-size:1.25rem;font-weight:800;color:var(--accent)}
+.lift-main .s{color:var(--muted);font-size:.9375rem}
+.spark{flex:0 0 76px;height:32px;color:var(--accent)}
+.chart{width:100%;height:auto;display:block;color:var(--accent)}
+.chart text{fill:var(--muted);font-size:11px;font-family:var(--font)}
+.chart .grid{stroke:var(--line)}
+.pr{display:inline-block;font-size:.75rem;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);margin-left:6px;vertical-align:middle}
 .slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:4px}
 .slot{height:10px;border-radius:5px;background:var(--line)}
 .slot.ok{background:var(--accent)}
@@ -126,6 +143,7 @@ h2.page{margin:0;font-size:1.625rem;font-weight:800}
 
 nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom, 0px);padding-left:max(8px, env(safe-area-inset-left, 0px));padding-right:max(8px, env(safe-area-inset-right, 0px));z-index:5}
 nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding-top:6px;padding-bottom:10px}
+nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 .tab{background:none;border:0;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:.875rem;font-weight:600;cursor:pointer;border-radius:12px}
 .tab[aria-current="page"]{color:var(--accent);font-weight:800}
 .tab[aria-current="page"] svg{stroke-width:2.4}
@@ -149,14 +167,17 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
 <body>
 <div class="app">
   <span id="client" data-name="" hidden></span>
+  <div class="brandbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">P</span><span>Training with Paya</span></div>
+    <button class="size-btn" id="size-btn" type="button" aria-pressed="false" aria-label="Larger text">
+      <span aria-hidden="true">A<span style="font-size:1.25em">A</span></span><small id="size-word">Larger</small>
+    </button>
+  </div>
   <header class="top">
     <div>
       <p id="today-line"></p>
       <h1 id="greeting">Hi </h1>
     </div>
-    <button class="size-btn" id="size-btn" type="button" aria-pressed="false" aria-label="Larger text">
-      <span aria-hidden="true">A<span style="font-size:1.25em">A</span></span><small id="size-word">Larger</small>
-    </button>
   </header>
 
   <main id="view" class="view"><p class="empty-note">Loading your account…</p></main>
@@ -175,6 +196,10 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
     <button class="tab" type="button" data-tab="account">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
       My account
+    </button>
+    <button class="tab" type="button" data-tab="progress" id="tab-progress" hidden>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg>
+      Progress
     </button>
   </div>
 </nav>
@@ -217,6 +242,7 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
     two: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M15 14.6c3.2-.4 6 1.4 6 4.9"/></svg>',
     clock: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
     chevR: '<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
+    cal: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M12 13v5M9.5 15.5h5"/></svg>',
     chevD: '<svg class="chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'
   };
 
@@ -284,6 +310,10 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
       if (a.owingRows.length) groups.unshift({ kind: 'owing', d: a.owingRows[a.owingRows.length - 1].d, rows: a.owingRows, amt: a.owed });
     }
     a.groups = groups;
+    a.progress = data.progress && data.progress.lifts ? data.progress : null;
+    if (a.progress) a.progress.lifts.forEach(function(l){
+      l.best = l.sessions.reduce(function(b, s){ return !b || better(s, b) ? s : b; }, null);
+    });
     return a;
   }
 
@@ -360,10 +390,7 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
       var shown = a.upcoming.slice(0, 4);
       card = '<section class="card" aria-labelledby="h-money"><p class="label" id="h-money">Credit remaining</p>' +
         '<p class="big">' + money(a.credit) + '</p>' +
-        (shown.length ? (a.mixedRates ? '' : '<p class="muted">Enough for your next ' + plural(a.coveredCount, 'session') + '.</p>') +
-          '<div class="slots" role="img" aria-label="' + shown.filter(function(s){ return s.status === 'covered'; }).length + ' of your next ' + shown.length + ' sessions are covered">' +
-            shown.map(function(s){ return '<div class="slot ' + (s.status === 'covered' ? 'ok' : s.status === 'partial' ? 'part' : '') + '"></div>'; }).join('') + '</div>' +
-          '<div class="slot-key" aria-hidden="true">' + shown.map(function(s){ return '<span>' + md(s.d) + '</span>'; }).join('') + '</div>' : '') +
+        coverLine(a) +
         (a.owed > 0 ? '<button class="grp owing" type="button" data-group="0"><div class="dot warn">' + icons.clock + '</div><div class="tl-main"><div class="tl-top"><strong>Not paid yet</strong><span class="amt">' + money(a.owed) + '</span></div><span class="s">' + plural(a.owingRows.length, 'session') + '</span></div>' + icons.chevR + '</button>' : '') +
         '</section>';
     } else if (a.owed > 0) {
@@ -385,6 +412,14 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
       '<p class="footer-note">Need to change a session? Just text Paya.</p>';
   }
 
+  function coverLine(a){
+    if (!a.upcoming.length) return '';
+    var covered = a.upcoming.filter(function(s){ return s.status === 'covered'; });
+    if (covered.length === a.upcoming.length) return '<p class="cover-line">Covers all your booked sessions.</p>';
+    if (!covered.length) return '<p class="cover-line warn">Doesn\'t cover your next session yet.</p>';
+    return '<p class="cover-line">Covers your sessions until ' + short(covered[covered.length - 1].d) + '.</p>';
+  }
+
   function viewUpcoming(a){
     if (!a.upcoming.length) return '<h2 class="page">Upcoming sessions</h2><p class="empty-note">You have no sessions booked. Text Paya to set up your next one.</p>';
     var monday = new Date(TODAY); monday.setDate(TODAY.getDate() - ((TODAY.getDay() + 6) % 7));
@@ -397,6 +432,7 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
       g.items.push(sessButton(a, s, i));
     });
     return '<h2 class="page">Upcoming sessions</h2>' +
+      (CAN_ICS ? '<button class="btn btn-line" type="button" data-ics="all">' + icons.cal + 'Add all to my calendar</button>' : '') +
       '<p class="muted">' + (a.plan === 'prepaid' ? 'Tap a session to see what it costs and how much credit you\'ll have after.' : 'Tap a session to see the details.') + '</p>' +
       groups.map(function(g){ return '<p class="label group-label">' + g.name + '</p><div class="list">' + g.items.join('') + '</div>'; }).join('') +
       '<p class="footer-note">Need to change a session? Just text Paya.</p>';
@@ -442,7 +478,8 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
         '<div class="fact"><span>' + (covered ? 'Credit after' : 'Still to pay') + '</span><b>' + (covered ? money(s.after) : money(s.short)) + '</b></div>';
       extra = covered ? '<p class="muted">This session is paid for from your credit.</p>' : '<div class="notice"><p>Your credit won\'t fully cover this one yet.</p></div>';
     }
-    openSheet('<h3>' + full(s.d) + '</h3><div class="facts">' + facts + '</div>' + extra, 'Session on ' + full(s.d));
+    openSheet('<h3>' + full(s.d) + '</h3><div class="facts">' + facts + '</div>' + extra +
+      (CAN_ICS ? '<button class="btn btn-line" type="button" data-ics="' + i + '">' + icons.cal + 'Add to my calendar</button>' : ''), 'Session on ' + full(s.d));
   }
   function groupSheet(a, i){
     var g = a.groups[i];
@@ -456,16 +493,102 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
       (g.rows.length ? '<div class="timeline">' + list + (foot ? '<div class="total-row"><span>Total</span><span>' + foot + '</span></div>' : '') + '</div>' : ''), title);
   }
 
+  // ---- calendar file (website only: Claude previews block downloads) ----
+  function icsStamp(dateKey, hm){ return dateKey.replace(/-/g, '') + 'T' + hm.replace(':', '') + '00'; }
+  function icsText(list){
+    var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Training with Paya//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    list.forEach(function(s){
+      if (!s.start) return;
+      lines.push('BEGIN:VEVENT', 'UID:' + s.key + '-' + s.start.replace(':', '') + '@training-with-paya',
+        'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z',
+        'DTSTART:' + icsStamp(s.key, s.start), 'DTEND:' + icsStamp(s.key, s.end || s.start),
+        'SUMMARY:Training with Paya' + (s.partners.length ? ' (' + kindLabel(s).toLowerCase() + ')' : ''),
+        'DESCRIPTION:' + kindLabel(s) + (s.price ? ' · ' + money(s.price) : ''),
+        'BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', 'DESCRIPTION:Training with Paya', 'END:VALARM', 'END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    return lines.join('\r\n');
+  }
+  function addToCalendar(list){
+    var text = icsText(list);
+    var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (ios) { location.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(text); return; }
+    var url = URL.createObjectURL(new Blob([text], { type: 'text/calendar' }));
+    var link = document.createElement('a'); link.href = url; link.download = list.length === 1 ? 'training-' + list[0].key + '.ics' : 'training-sessions.ics';
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }
+
+  // ---- progress (Hevy) ----
+  function fmtW(w){ return (Math.round(w * 2) / 2).toString(); }
+  function setText(p, unit){ return p.weight ? fmtW(p.weight) + ' ' + unit + ' × ' + p.reps : p.reps + ' reps'; }
+  function liftVal(p){ return p.weight ? p.weight : p.reps; }
+  function better(x, y){ return x.weight !== y.weight ? x.weight > y.weight : x.reps > y.reps; }
+  function sparkline(lift){
+    var v = lift.sessions.map(liftVal); if (v.length < 2) return '';
+    var lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), span = hi - lo || 1;
+    var pts = v.map(function(x, i){ return (2 + i * 72 / (v.length - 1)).toFixed(1) + ',' + (28 - (x - lo) / span * 24).toFixed(1); }).join(' ');
+    return '<svg class="spark" viewBox="0 0 76 32" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  function liftSub(lift, unit){
+    var s = lift.sessions, first = s[0], best = lift.best;
+    if (s.length < 2) return 'First logged ' + md(parse(first.date));
+    if (first.weight && best.weight > first.weight) return 'Up ' + fmtW(best.weight - first.weight) + ' ' + unit + ' since ' + md(parse(first.date));
+    if (!first.weight && best.reps > first.reps) return 'Up ' + (best.reps - first.reps) + ' reps since ' + md(parse(first.date));
+    return plural(s.length, 'session') + ' since ' + md(parse(first.date));
+  }
+  function viewProgress(a){
+    var p = a.progress;
+    if (!p || !p.lifts.length) return '<h2 class="page">Your progress</h2><p class="empty-note">Your lifts will show here after your next workout with Paya.</p>';
+    return '<h2 class="page">Your progress</h2>' +
+      '<p class="muted">Your best set on each exercise. Tap one to see how it\'s changed over time.</p>' +
+      '<div class="list">' + p.lifts.map(function(l, i){
+        return '<button class="lift" type="button" data-lift="' + i + '"><div class="lift-main"><strong>' + esc(l.name) + '</strong>' +
+          '<span class="best">' + setText(l.best, p.unit) + '</span><span class="s">' + liftSub(l, p.unit) + '</span></div>' + sparkline(l) + icons.chevR + '</button>';
+      }).join('') + '</div>' +
+      (p.updated ? '<p class="footer-note">From your workouts logged by Paya, up to ' + md(parse(p.updated)) + '.</p>' : '');
+  }
+  function liftChart(lift, unit){
+    var s = lift.sessions; if (s.length < 2) return '';
+    var W = 320, H = 170, L = 40, R = 12, T = 14, B = 26;
+    var v = s.map(liftVal), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
+    var pad = (hi - lo) * 0.15 || Math.max(1, hi * 0.1); var step = hi > 20 ? 5 : 1; lo = Math.max(0, Math.floor((lo - pad) / step) * step); hi = Math.ceil((hi + pad) / step) * step;
+    var x = function(i){ return L + i * (W - L - R) / (s.length - 1); };
+    var y = function(val){ return T + (H - T - B) * (1 - (val - lo) / (hi - lo)); };
+    var ticks = [lo, (lo + hi) / 2, hi].map(function(t){ return Math.round(t); });
+    var best = null, out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(lift.name) + ' best set over time">';
+    ticks.forEach(function(t){ out += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '"/><text x="' + (L - 6) + '" y="' + (y(t) + 4) + '" text-anchor="end">' + t + '</text>'; });
+    out += '<polyline points="' + s.map(function(p, i){ return x(i).toFixed(1) + ',' + y(liftVal(p)).toFixed(1); }).join(' ') + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    s.forEach(function(p, i){
+      var isPr = !best || better(p, best); if (isPr) best = p;
+      out += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(liftVal(p)).toFixed(1) + '" r="' + (isPr ? 5 : 3.5) + '" fill="' + (isPr ? 'currentColor' : 'var(--surface)') + '" stroke="currentColor" stroke-width="2"/>';
+    });
+    out += '<text x="' + L + '" y="' + (H - 6) + '">' + md(parse(s[0].date)) + '</text><text x="' + (W - R) + '" y="' + (H - 6) + '" text-anchor="end">' + md(parse(s[s.length - 1].date)) + '</text></svg>';
+    return out;
+  }
+  function liftSheet(a, i){
+    var p = a.progress, l = p.lifts[i], best = null;
+    var rows = l.sessions.map(function(s){ var pr = !best || better(s, best); if (pr) best = s; return { s: s, pr: pr }; }).reverse();
+    openSheet('<h3>' + esc(l.name) + '</h3>' +
+      '<p class="muted">Best set: <b style="color:var(--fg)">' + setText(l.best, p.unit) + '</b> on ' + md(parse(l.best.date)) + '</p>' +
+      liftChart(l, p.unit) +
+      (l.sessions.length > 1 ? '<p class="muted" style="font-size:.875rem">' + (l.best.weight ? 'Weight' : 'Reps') + ' of your best set each session. Filled dots are new bests.</p>' : '') +
+      '<div class="timeline">' + rows.map(function(r){
+        return '<div class="tl-row"><div class="tl-main"><div class="tl-top"><strong>' + short(parse(r.s.date)) + '</strong><span class="amt">' + setText(r.s, p.unit) + (r.pr ? '<span class="pr">Best</span>' : '') + '</span></div></div></div>';
+      }).join('') + '</div>', l.name);
+  }
+
   // ---- state + routing ----
   var acct = null, recentOpen = false;
   document.addEventListener('toggle', function(e){ if (e.target.classList && e.target.classList.contains('fold')) recentOpen = e.target.open; }, true);
-  var views = { home: viewHome, upcoming: viewUpcoming, account: viewAccount };
+  var views = { home: viewHome, upcoming: viewUpcoming, account: viewAccount, progress: viewProgress };
   // Website mode: the link carries this client's private key after the #; tabs are kept in memory instead.
   var SLUG_KEY = 'client-key:' + location.pathname;
   var KEY = (location.hash || '').length > 30 ? location.hash.slice(1) : null;
   if (KEY) { try { localStorage.setItem(SLUG_KEY, KEY); } catch (e) {} }
   else if (!document.getElementById('client').getAttribute('data-name')) { try { KEY = localStorage.getItem(SLUG_KEY); } catch (e) {} }
   var curTab = 'home';
+  var CAN_ICS = !!KEY;
   function current(){ if (KEY) return curTab; var h = (location.hash || '').slice(1); return views[h] ? h : 'home'; }
   function render(){
     var name = current();
@@ -488,6 +611,8 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
     if (t.dataset.tab) { go(t.dataset.tab); return; }
     if (t.dataset.go) { go(t.dataset.go); return; }
     if (t.id === 'retry') { load(); return; }
+    if (acct && t.dataset.ics !== undefined) { addToCalendar(t.dataset.ics === 'all' ? acct.upcoming : [acct.upcoming[Number(t.dataset.ics)]]); return; }
+    if (acct && t.dataset.lift !== undefined) { liftSheet(acct, Number(t.dataset.lift)); return; }
     if (!acct) return;
     if (t.dataset.sess !== undefined) { sessionSheet(acct, Number(t.dataset.sess)); return; }
     if (t.dataset.group !== undefined) { groupSheet(acct, Number(t.dataset.group)); return; }
@@ -524,7 +649,13 @@ nav.tabs .inner{max-width:480px;margin:0 auto;display:grid;grid-template-columns
   function load(){
     document.getElementById('view').innerHTML = '<p class="empty-note">Loading your account…</p>';
     getData()
-      .then(function(d){ greet(d.name); acct = build(d); render(); })
+      .then(function(d){
+        greet(d.name); acct = build(d);
+        var hasP = !!acct.progress;
+        document.getElementById('tab-progress').hidden = !hasP;
+        document.querySelector('nav.tabs .inner').classList.toggle('four', hasP);
+        render();
+      })
       .catch(function(){
         document.getElementById('view').innerHTML = '<div class="empty-note"><p style="margin:0 0 12px">Your account didn\'t load. Check your connection and try again. If it keeps happening, ask Paya to resend your link.</p><button class="btn btn-quiet" type="button" id="retry">Try again</button></div>';
       });
