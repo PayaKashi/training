@@ -629,7 +629,7 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
   if (KEY) { try { localStorage.setItem(SLUG_KEY, KEY); } catch (e) {} }
   else if (!document.getElementById('client').getAttribute('data-name')) { try { KEY = localStorage.getItem(SLUG_KEY); } catch (e) {} }
   var curTab = 'home';
-  var CAN_ICS = !!KEY;
+  var CAN_ICS = false; // calendar buttons turned off: view-only app
   function current(){ if (KEY) return curTab; var h = (location.hash || '').slice(1); return views[h] ? h : 'home'; }
   function render(){
     var name = current();
