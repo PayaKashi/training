@@ -312,7 +312,9 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
     a.groups = groups;
     a.progress = data.progress && data.progress.lifts ? data.progress : null;
     if (a.progress) a.progress.lifts.forEach(function(l){
-      l.best = l.sessions.reduce(function(b, s){ return !b || better(s, b) ? s : b; }, null);
+      l.weighted = l.sessions.some(function(s){ return s.weight > 0; });
+      l.assisted = /assisted/i.test(l.name);
+      l.best = l.sessions.reduce(function(b, s){ return !b || better(s, b, l) ? s : b; }, null);
     });
     return a;
   }
@@ -521,11 +523,18 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 
   // ---- progress (Hevy) ----
   function fmtW(w){ return (Math.round(w * 2) / 2).toString(); }
-  function setText(p, unit){ return p.weight ? fmtW(p.weight) + ' ' + unit + ' × ' + p.reps : p.reps + ' reps'; }
-  function liftVal(p){ return p.weight ? p.weight : p.reps; }
-  function better(x, y){ return x.weight !== y.weight ? x.weight > y.weight : x.reps > y.reps; }
+  // A lift is "weighted" if any session used weight; assisted lifts count less assistance as progress.
+  function setText(p, unit, l){ return p.weight ? fmtW(p.weight) + ' ' + unit + (l && l.assisted ? ' assist' : '') + ' × ' + p.reps : (l && l.weighted ? 'Bodyweight × ' : '') + p.reps + (l && l.weighted ? '' : ' reps'); }
+  function liftVal(p, l){ return l && l.weighted ? (p.weight || 0) : p.reps; }
+  function better(x, y, l){
+    if (x.weight !== y.weight) {
+      if (l && l.assisted && x.weight && y.weight) return x.weight < y.weight;
+      return x.weight > y.weight;
+    }
+    return x.reps > y.reps;
+  }
   function sparkline(lift){
-    var v = lift.sessions.map(liftVal); if (v.length < 2) return '';
+    var v = lift.sessions.map(function(p){ return liftVal(p, lift) * (lift.assisted ? -1 : 1); }); if (v.length < 2) return '';
     var lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), span = hi - lo || 1;
     var pts = v.map(function(x, i){ return (2 + i * 72 / (v.length - 1)).toFixed(1) + ',' + (28 - (x - lo) / span * 24).toFixed(1); }).join(' ');
     return '<svg class="spark" viewBox="0 0 76 32" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -533,6 +542,8 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
   function liftSub(lift, unit){
     var s = lift.sessions, first = s[0], best = lift.best;
     if (s.length < 2) return 'First logged ' + md(parse(first.date));
+    if (lift.assisted && first.weight && best.weight < first.weight) return fmtW(first.weight - best.weight) + ' ' + unit + ' less help since ' + md(parse(first.date));
+    if (lift.weighted && !first.weight && best.weight) return 'Added weight since ' + md(parse(first.date));
     if (first.weight && best.weight > first.weight) return 'Up ' + fmtW(best.weight - first.weight) + ' ' + unit + ' since ' + md(parse(first.date));
     if (!first.weight && best.reps > first.reps) return 'Up ' + (best.reps - first.reps) + ' reps since ' + md(parse(first.date));
     return plural(s.length, 'session') + ' since ' + md(parse(first.date));
@@ -544,37 +555,37 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
       '<p class="muted">Your best set on each exercise. Tap one to see how it\'s changed over time.</p>' +
       '<div class="list">' + p.lifts.map(function(l, i){
         return '<button class="lift" type="button" data-lift="' + i + '"><div class="lift-main"><strong>' + esc(l.name) + '</strong>' +
-          '<span class="best">' + setText(l.best, p.unit) + '</span><span class="s">' + liftSub(l, p.unit) + '</span></div>' + sparkline(l) + icons.chevR + '</button>';
+          '<span class="best">' + setText(l.best, p.unit, l) + '</span><span class="s">' + liftSub(l, p.unit) + '</span></div>' + sparkline(l) + icons.chevR + '</button>';
       }).join('') + '</div>' +
       (p.updated ? '<p class="footer-note">From your workouts logged by Paya, up to ' + md(parse(p.updated)) + '.</p>' : '');
   }
   function liftChart(lift, unit){
     var s = lift.sessions; if (s.length < 2) return '';
     var W = 320, H = 170, L = 40, R = 12, T = 14, B = 26;
-    var v = s.map(liftVal), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
+    var v = s.map(function(p){ return liftVal(p, lift); }), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
     var pad = (hi - lo) * 0.15 || Math.max(1, hi * 0.1); var step = hi > 20 ? 5 : 1; lo = Math.max(0, Math.floor((lo - pad) / step) * step); hi = Math.ceil((hi + pad) / step) * step;
     var x = function(i){ return L + i * (W - L - R) / (s.length - 1); };
     var y = function(val){ return T + (H - T - B) * (1 - (val - lo) / (hi - lo)); };
     var ticks = [lo, (lo + hi) / 2, hi].map(function(t){ return Math.round(t); });
     var best = null, out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(lift.name) + ' best set over time">';
     ticks.forEach(function(t){ out += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '"/><text x="' + (L - 6) + '" y="' + (y(t) + 4) + '" text-anchor="end">' + t + '</text>'; });
-    out += '<polyline points="' + s.map(function(p, i){ return x(i).toFixed(1) + ',' + y(liftVal(p)).toFixed(1); }).join(' ') + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    out += '<polyline points="' + s.map(function(p, i){ return x(i).toFixed(1) + ',' + y(liftVal(p, lift)).toFixed(1); }).join(' ') + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
     s.forEach(function(p, i){
-      var isPr = !best || better(p, best); if (isPr) best = p;
-      out += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(liftVal(p)).toFixed(1) + '" r="' + (isPr ? 5 : 3.5) + '" fill="' + (isPr ? 'currentColor' : 'var(--surface)') + '" stroke="currentColor" stroke-width="2"/>';
+      var isPr = !best || better(p, best, lift); if (isPr) best = p;
+      out += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(liftVal(p, lift)).toFixed(1) + '" r="' + (isPr ? 5 : 3.5) + '" fill="' + (isPr ? 'currentColor' : 'var(--surface)') + '" stroke="currentColor" stroke-width="2"/>';
     });
     out += '<text x="' + L + '" y="' + (H - 6) + '">' + md(parse(s[0].date)) + '</text><text x="' + (W - R) + '" y="' + (H - 6) + '" text-anchor="end">' + md(parse(s[s.length - 1].date)) + '</text></svg>';
     return out;
   }
   function liftSheet(a, i){
     var p = a.progress, l = p.lifts[i], best = null;
-    var rows = l.sessions.map(function(s){ var pr = !best || better(s, best); if (pr) best = s; return { s: s, pr: pr }; }).reverse();
+    var rows = l.sessions.map(function(s){ var pr = !best || better(s, best, l); if (pr) best = s; return { s: s, pr: pr }; }).reverse();
     openSheet('<h3>' + esc(l.name) + '</h3>' +
-      '<p class="muted">Best set: <b style="color:var(--fg)">' + setText(l.best, p.unit) + '</b> on ' + md(parse(l.best.date)) + '</p>' +
+      '<p class="muted">Best set: <b style="color:var(--fg)">' + setText(l.best, p.unit, l) + '</b> on ' + md(parse(l.best.date)) + '</p>' +
       liftChart(l, p.unit) +
-      (l.sessions.length > 1 ? '<p class="muted" style="font-size:.875rem">' + (l.best.weight ? 'Weight' : 'Reps') + ' of your best set each session. Filled dots are new bests.</p>' : '') +
+      (l.sessions.length > 1 ? '<p class="muted" style="font-size:.875rem">' + (l.assisted ? 'Assistance on your best set each session (lower is stronger).' : (l.weighted ? 'Weight' : 'Reps') + ' of your best set each session.') + ' Filled dots are new bests.</p>' : '') +
       '<div class="timeline">' + rows.map(function(r){
-        return '<div class="tl-row"><div class="tl-main"><div class="tl-top"><strong>' + short(parse(r.s.date)) + '</strong><span class="amt">' + setText(r.s, p.unit) + (r.pr ? '<span class="pr">Best</span>' : '') + '</span></div></div></div>';
+        return '<div class="tl-row"><div class="tl-main"><div class="tl-top"><strong>' + short(parse(r.s.date)) + '</strong><span class="amt">' + setText(r.s, p.unit, l) + (r.pr ? '<span class="pr">Best</span>' : '') + '</span></div></div></div>';
       }).join('') + '</div>', l.name);
   }
 
