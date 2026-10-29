@@ -281,6 +281,14 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
         g.endBal = g.rows[g.rows.length - 1].bal;
       });
       groups.reverse();
+      // Last payment cycle: the latest top-up and every session paid from it (plus sessions it cleared that were owing just before)
+      var li = -1; a.rows.forEach(function(r, i){ if (r.type === 'topup') li = i; });
+      if (li >= 0) {
+        var before = [];
+        for (var j = li - 1; j >= 0 && a.rows[j].type === 'session' && a.rows[j].bal < 0; j--) before.unshift(a.rows[j]);
+        var cyc = before.concat(a.rows.slice(li + 1));
+        a.lastCycle = { row: a.rows[li], rows: cyc, used: cyc.reduce(function(x, r){ return x + r.amt; }, 0) };
+      }
       var owing = (data.unpaid || []).map(function(u){
         var m = /w\/\s*(.+)/.exec(u.what || '');
         return { d: parse(u.date), type: 'session', s: { d: parse(u.date), partners: m ? m[1].split(/\s*(?:,|&|and)\s*/) : [], price: u.amount }, unpaid: true };
@@ -408,6 +416,15 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
         '</section>';
     }
     var recent = a.groups.slice(0, 3);
+    if (a.plan === 'prepaid') {
+      var c = a.lastCycle;
+      return hero + card +
+        (c ? '<section class="list" aria-labelledby="h-last"><h2 class="section" id="h-last">Last payment</h2>' +
+          '<button class="grp" type="button" data-cycle="1"><div class="dot pay">' + icons.check + '</div><div class="tl-main">' +
+          '<div class="tl-top"><strong>' + esc(/package/i.test(c.row.note || '') ? 'Package bought' : 'Payment' + (c.row.method ? ' · ' + c.row.method : '')) + '</strong><span class="amt plus">+' + money(c.row.amt) + '</span></div>' +
+          '<span class="s">' + short(c.row.d) + ' · ' + (c.rows.length ? plural(c.rows.length, 'session') + ' used' : 'no sessions used yet') + '</span></div>' + icons.chevR + '</button></section>' : '') +
+        '<p class="footer-note">Need to change a session? Just text Paya.</p>';
+    }
     return hero + card +
       (recent.length ? '<details class="fold"' + (recentOpen ? ' open' : '') + '><summary><h2 class="section">Recent activity</h2>' + icons.chevD + '</summary>' +
         '<div class="fold-body">' + groupList(a, recent) + '<button class="link-btn" type="button" data-go="account">See full history</button></div></details>' : '') +
@@ -482,6 +499,19 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
     }
     openSheet('<h3>' + full(s.d) + '</h3><div class="facts">' + facts + '</div>' + extra +
       (CAN_ICS ? '<button class="btn btn-line" type="button" data-ics="' + i + '">' + icons.cal + 'Add to my calendar</button>' : ''), 'Session on ' + full(s.d));
+  }
+  function cycleSheet(a){
+    var c = a.lastCycle; if (!c) return;
+    var title = /package/i.test(c.row.note || '') ? 'Package of ' + money(c.row.amt) : 'Payment of ' + money(c.row.amt);
+    var note = short(c.row.d) + (c.row.method ? ' · ' + c.row.method : '') + (c.row.note ? ' · ' + c.row.note : '');
+    var run = c.row.amt;
+    var list = c.rows.map(function(r){ run -= r.amt; return { d: r.d, type: r.type, partners: r.partners, amt: r.amt, bal: run }; })
+      .reverse().map(function(r){ return tlRow(a, r); }).join('');
+    openSheet('<h3>' + esc(title) + '</h3><p class="muted">' + esc(note) + '</p>' +
+      (c.rows.length ? '<div class="timeline">' + list +
+        '<div class="total-row"><span>Used so far</span><span>−' + money(c.used) + '</span></div>' +
+        '<div class="total-row"><span>Credit left</span><span>' + money(a.credit) + '</span></div></div>'
+        : '<p class="empty-note">No sessions have come off this payment yet.</p>'), title);
   }
   function groupSheet(a, i){
     var g = a.groups[i];
@@ -624,6 +654,7 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
     if (t.id === 'retry') { load(); return; }
     if (acct && t.dataset.ics !== undefined) { addToCalendar(t.dataset.ics === 'all' ? acct.upcoming : [acct.upcoming[Number(t.dataset.ics)]]); return; }
     if (acct && t.dataset.lift !== undefined) { liftSheet(acct, Number(t.dataset.lift)); return; }
+    if (acct && t.dataset.cycle !== undefined) { cycleSheet(acct); return; }
     if (!acct) return;
     if (t.dataset.sess !== undefined) { sessionSheet(acct, Number(t.dataset.sess)); return; }
     if (t.dataset.group !== undefined) { groupSheet(acct, Number(t.dataset.group)); return; }
