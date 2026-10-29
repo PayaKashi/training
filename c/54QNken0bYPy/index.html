@@ -150,6 +150,9 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 
 .scrim{position:fixed;inset:0;background:var(--scrim);z-index:20;display:flex;align-items:flex-end;justify-content:center}
 .sheet{width:100%;max-width:480px;background:var(--surface);border-radius:24px 24px 0 0;padding:12px max(20px, env(safe-area-inset-left, 0px)) calc(24px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:16px;max-height:88vh;overflow-y:auto}
+.sheet{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;max-height:88dvh}
+.sheet > *{flex-shrink:0}
+html.sheet-open,html.sheet-open body{overflow:hidden}
 .grabber{width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto}
 .sheet h3{margin:0;font-size:1.5rem;font-weight:800;line-height:1.2}
 .facts{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px}
@@ -476,9 +479,10 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
     lastFocus = document.activeElement;
     sheetRoot.innerHTML = '<div class="scrim" data-close><div class="sheet" role="dialog" aria-modal="true" aria-label="' + esc(title) + '"><div class="grabber" aria-hidden="true"></div>' + html +
       '<button class="btn btn-quiet" type="button" data-close>Close</button></div></div>';
-    var b = sheetRoot.querySelector('.sheet button'); if (b) b.focus();
+    document.documentElement.classList.add('sheet-open');
+    var b = sheetRoot.querySelector('.sheet button'); if (b) b.focus({ preventScroll: true });
   }
-  function closeSheet(){ sheetRoot.innerHTML = ''; if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); }
+  function closeSheet(){ sheetRoot.innerHTML = ''; document.documentElement.classList.remove('sheet-open'); if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); }
   function sessionSheet(a, i){
     var s = a.upcoming[i];
     var facts = '<div class="fact"><span>Time</span><b>' + timeRange(s.start, s.end) + '</b></div>' +
