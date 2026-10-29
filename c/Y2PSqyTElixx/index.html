@@ -39,7 +39,7 @@ button,select{font:inherit;color:inherit}
 
 .app{max-width:480px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:12px calc(110px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:20px}
 
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-top:4px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-top:16px}
 .top p{margin:0;color:var(--muted);font-size:1rem}
 .top h1{margin:2px 0 0;font-size:1.875rem;font-weight:800;line-height:1.15;text-wrap:balance}
 .size-btn{flex:0 0 auto;min-height:44px;min-width:44px;padding:0 12px;border:1px solid var(--line);background:var(--surface);border-radius:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
@@ -167,12 +167,6 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
 <body>
 <div class="app">
   <span id="client" data-name="" hidden></span>
-  <div class="brandbar">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">P</span><span>Training with Paya</span></div>
-    <button class="size-btn" id="size-btn" type="button" aria-pressed="false" aria-label="Larger text">
-      <span aria-hidden="true">A<span style="font-size:1.25em">A</span></span><small id="size-word">Larger</small>
-    </button>
-  </div>
   <header class="top">
     <div>
       <p id="today-line"></p>
@@ -658,9 +652,7 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
     if (!acct) return;
     if (t.dataset.sess !== undefined) { sessionSheet(acct, Number(t.dataset.sess)); return; }
     if (t.dataset.group !== undefined) { groupSheet(acct, Number(t.dataset.group)); return; }
-    if (t.id === 'size-btn') setLarge(!document.documentElement.classList.contains('large'));
   });
-  document.getElementById('size-btn').addEventListener('click', function(){ if (!acct) setLarge(!document.documentElement.classList.contains('large')); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && sheetRoot.innerHTML) closeSheet(); });
 
   function setLarge(on){
@@ -669,7 +661,6 @@ nav.tabs .inner.four{grid-template-columns:repeat(4,minmax(0,1fr))}
     document.getElementById('size-word').textContent = on ? 'Normal' : 'Larger';
     try { localStorage.setItem('client-large-text', on ? '1' : '0'); } catch (e) {}
   }
-  try { if (localStorage.getItem('client-large-text') === '1') setLarge(true); } catch (e) {}
 
   function greet(name){
     document.getElementById('greeting').textContent = (NOW.hour < 12 ? 'Good morning' : NOW.hour < 18 ? 'Good afternoon' : 'Good evening') + (name ? ', ' + name : '');
