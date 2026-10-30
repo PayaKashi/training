@@ -12,23 +12,26 @@
 <title>My Training</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,800&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: one calm phone column, big type, three tabs pinned to the bottom. */
 :root{
-  --bg:#F2F5F3; --surface:#FFFFFF; --line:#DCE4E0; --fg:#16201D; --muted:#4F5D58;
-  --accent:#1E6B66; --accent-ink:#FFFFFF; --accent-soft:#E0EEEB; --accent-strong:#154F4B;
-  --warn-bg:#FBEFD9; --warn-fg:#77470A; --scrim:rgba(14,22,20,.45);
+  /* Plasma Magenta + Core Black. Light: magenta deepened for readable text; the next-session card stays Core Black in both themes. */
+  --bg:#F7F4F9; --surface:#FFFFFF; --line:#E6DFEA; --fg:#141418; --muted:#5F5866;
+  --accent:#A11BBF; --accent-ink:#FFFFFF; --accent-soft:#F6E3FB; --accent-strong:#7E1597;
+  --plasma:#E445FF; --core:#141418; --core-2:#1E1E24; --core-fg:#F2EEF5; --core-muted:#A8A3B0;
+  --warn-bg:#FBEFD9; --warn-fg:#77470A; --scrim:rgba(20,20,24,.5);
   --font:"Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display:"Archivo", "Figtree", ui-sans-serif, system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F1513; --surface:#18211E; --line:#2A3632; --fg:#E7EEEA; --muted:#A6B4AE;
-  --accent:#62B9AF; --accent-ink:#0A1D1A; --accent-soft:#1C3431; --accent-strong:#8ED3CA;
-  --warn-bg:#3A2B12; --warn-fg:#F3CA7E; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
+  --bg:#141418; --surface:#1E1E24; --line:#2E2D36; --fg:#F2EEF5; --muted:#A8A3B0;
+  --accent:#E445FF; --accent-ink:#141418; --accent-soft:#2F1D36; --accent-strong:#EE8BFF;
+  --core-2:#26252D; --warn-bg:#3A2B12; --warn-fg:#F3CA7E; --scrim:rgba(0,0,0,.65); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0F1513; --surface:#18211E; --line:#2A3632; --fg:#E7EEEA; --muted:#A6B4AE;
-  --accent:#62B9AF; --accent-ink:#0A1D1A; --accent-soft:#1C3431; --accent-strong:#8ED3CA;
-  --warn-bg:#3A2B12; --warn-fg:#F3CA7E; --scrim:rgba(0,0,0,.6); color-scheme:dark}
+  --bg:#141418; --surface:#1E1E24; --line:#2E2D36; --fg:#F2EEF5; --muted:#A8A3B0;
+  --accent:#E445FF; --accent-ink:#141418; --accent-soft:#2F1D36; --accent-strong:#EE8BFF;
+  --core-2:#26252D; --warn-bg:#3A2B12; --warn-fg:#F3CA7E; --scrim:rgba(0,0,0,.65); color-scheme:dark}
 
 html{font-size:16px}
 html.large{font-size:19px}
@@ -41,30 +44,32 @@ button,select{font:inherit;color:inherit}
 
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-top:16px}
 .top p{margin:0;color:var(--muted);font-size:1rem}
-.top h1{margin:2px 0 0;font-size:1.875rem;font-weight:800;line-height:1.15;text-wrap:balance}
+.top h1{margin:2px 0 0;font-family:var(--display);font-stretch:125%;font-size:1.75rem;font-weight:800;line-height:1.1;letter-spacing:-.01em;text-wrap:balance}
 .size-btn{flex:0 0 auto;min-height:44px;min-width:44px;padding:0 12px;border:1px solid var(--line);background:var(--surface);border-radius:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 .size-btn small{font-size:.75rem;font-weight:600;color:var(--muted)}
 
 .view{display:flex;flex-direction:column;gap:20px}
 .label{margin:0;font-size:.8125rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 h2.section{margin:0;font-size:1.25rem;font-weight:800}
-h2.page{margin:0;font-size:1.625rem;font-weight:800}
+h2.page{margin:0;font-family:var(--display);font-stretch:125%;font-size:1.5rem;font-weight:800;letter-spacing:-.01em}
 .row-head{display:flex;justify-content:space-between;align-items:center}
 .link-btn{background:none;border:0;padding:10px 0;min-height:44px;color:var(--accent);font-weight:700;cursor:pointer;font-size:1rem}
 
-.hero{background:var(--accent);color:var(--accent-ink);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px}
-.hero .label{color:inherit;opacity:.85}
-.hero .when{margin:0;font-size:2.25rem;font-weight:800;line-height:1.05}
+.hero{background:var(--core);color:var(--core-fg);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.hero .label{color:var(--plasma)}
+.hero .when{margin:0;font-family:var(--display);font-stretch:125%;font-size:1.875rem;font-weight:800;line-height:1.08;letter-spacing:-.01em}
 .hero .sub{margin:4px 0 0;font-size:1.25rem;font-weight:600}
 .hero .kind{display:inline-flex;align-items:center;gap:8px;font-size:1.0625rem}
 .hero.empty{background:var(--surface);color:var(--fg);border:1px solid var(--line)}
+.hero .kind{color:var(--core-muted)}
+.hero .btn-on-accent{background:var(--plasma);color:var(--core)}
 .hero.empty .when{font-size:1.5rem}
 .btn{min-height:52px;border-radius:14px;border:0;font-weight:700;font-size:1.0625rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 18px}
 .btn-on-accent{background:var(--accent-ink);color:var(--accent)}
 .btn-quiet{background:var(--accent-soft);color:var(--accent-strong)}
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:10px}
-.big{margin:0;font-size:3rem;font-weight:800;line-height:1;color:var(--accent)}
+.big{margin:0;font-family:var(--display);font-stretch:125%;font-size:2.75rem;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--accent)}
 .big.owe{color:var(--fg)}
 .muted{color:var(--muted);margin:0}
 .paid-line{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--accent-strong);margin:0}
@@ -81,7 +86,13 @@ h2.page{margin:0;font-size:1.625rem;font-weight:800}
 .lift-main .best{font-size:1.25rem;font-weight:800;color:var(--accent)}
 .lift-main .s{color:var(--muted);font-size:.9375rem}
 .spark{flex:0 0 76px;height:32px;color:var(--accent)}
-.chart{width:100%;height:auto;display:block;color:var(--accent)}
+.chart{width:100%;height:auto;display:block;color:var(--accent);overflow:visible}
+.chart .pt{cursor:pointer}
+.chart .best-tag{fill:var(--accent);font-weight:800;font-size:11.5px}
+.chart .sel{fill:var(--fg)}
+.readout{display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:var(--accent-soft);border-radius:14px;padding:10px 14px;margin:0}
+.readout b{font-family:var(--display);font-stretch:125%;font-size:1.125rem;color:var(--accent-strong)}
+.readout span{color:var(--muted);font-size:.9375rem}
 .chart text{fill:var(--muted);font-size:11px;font-family:var(--font)}
 .chart .grid{stroke:var(--line)}
 .pr{display:inline-block;font-size:.75rem;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);margin-left:6px;vertical-align:middle}
@@ -601,36 +612,50 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
   }
   function liftChart(lift, unit){
     var s = lift.sessions; if (s.length < 2) return '';
-    var W = 320, H = 170, L = 40, R = 12, T = 14, B = 26;
+    var W = 320, H = 190, L = 38, R = 14, T = 30, B = 26;
     var v = s.map(function(p){ return liftVal(p, lift); }), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v);
     var pad = (hi - lo) * 0.15 || Math.max(1, hi * 0.1); var step = hi > 20 ? 5 : 1; lo = Math.max(0, Math.floor((lo - pad) / step) * step); hi = Math.ceil((hi + pad) / step) * step;
     var x = function(i){ return L + i * (W - L - R) / (s.length - 1); };
     var y = function(val){ return T + (H - T - B) * (1 - (val - lo) / (hi - lo)); };
     var ticks = [lo, (lo + hi) / 2, hi].map(function(t){ return Math.round(t); });
-    var best = null, out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(lift.name) + ' best set over time">';
+    var pts = s.map(function(p, i){ return [x(i), y(liftVal(p, lift))]; });
+    var line = pts.map(function(q){ return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ');
+    var area = 'M' + pts[0][0].toFixed(1) + ',' + (H - B) + ' L' + line.replace(/ /g, ' L') + ' L' + pts[pts.length - 1][0].toFixed(1) + ',' + (H - B) + ' Z';
+    var gid = 'g' + Math.random().toString(36).slice(2, 8);
+    var out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(lift.name) + ' best set over time">' +
+      '<defs><linearGradient id="' + gid + 'f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".32"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient>' +
+      '<filter id="' + gid + 'g" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3.5"/></filter></defs>';
     ticks.forEach(function(t){ out += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '"/><text x="' + (L - 6) + '" y="' + (y(t) + 4) + '" text-anchor="end">' + t + '</text>'; });
-    out += '<polyline points="' + s.map(function(p, i){ return x(i).toFixed(1) + ',' + y(liftVal(p, lift)).toFixed(1); }).join(' ') + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    out += '<path d="' + area + '" fill="url(#' + gid + 'f)"/>' +
+      '<polyline points="' + line + '" fill="none" stroke="currentColor" stroke-width="5" stroke-opacity=".45" filter="url(#' + gid + 'g)"/>' +
+      '<polyline points="' + line + '" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linejoin="round" stroke-linecap="round"/>';
+    var best = null, bestI = 0;
     s.forEach(function(p, i){
-      var isPr = !best || better(p, best, lift); if (isPr) best = p;
-      out += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(liftVal(p, lift)).toFixed(1) + '" r="' + (isPr ? 5 : 3.5) + '" fill="' + (isPr ? 'currentColor' : 'var(--surface)') + '" stroke="currentColor" stroke-width="2"/>';
+      var isPr = !best || better(p, best, lift); if (isPr) { best = p; bestI = i; }
+      out += '<circle cx="' + pts[i][0].toFixed(1) + '" cy="' + pts[i][1].toFixed(1) + '" r="' + (isPr ? 5 : 3.5) + '" fill="' + (isPr ? 'currentColor' : 'var(--surface)') + '" stroke="currentColor" stroke-width="2"/>';
+    });
+    var bx = pts[bestI][0], anchor = bx > W - 70 ? 'end' : bx < L + 40 ? 'start' : 'middle';
+    out += '<text class="best-tag" x="' + bx.toFixed(1) + '" y="' + (pts[bestI][1] - 12).toFixed(1) + '" text-anchor="' + anchor + '">Best · ' + esc(setText(best, unit, lift)) + '</text>';
+    s.forEach(function(p, i){
+      out += '<circle class="pt" data-pt="' + i + '" cx="' + pts[i][0].toFixed(1) + '" cy="' + pts[i][1].toFixed(1) + '" r="16" fill="transparent"><title>' + md(parse(p.date)) + ': ' + esc(setText(p, unit, lift)) + '</title></circle>';
     });
     out += '<text x="' + L + '" y="' + (H - 6) + '">' + md(parse(s[0].date)) + '</text><text x="' + (W - R) + '" y="' + (H - 6) + '" text-anchor="end">' + md(parse(s[s.length - 1].date)) + '</text></svg>';
-    return out;
+    return '<p class="readout" id="readout"><b>' + esc(setText(s[s.length - 1], unit, lift)) + '</b><span>' + short(parse(s[s.length - 1].date)) + ' · tap a point</span></p>' + out;
   }
   function liftSheet(a, i){
-    var p = a.progress, l = p.lifts[i], best = null;
+    var p = a.progress, l = p.lifts[i], best = null; curLift = l;
     var rows = l.sessions.map(function(s){ var pr = !best || better(s, best, l); if (pr) best = s; return { s: s, pr: pr }; }).reverse();
     openSheet('<h3>' + esc(l.name) + '</h3>' +
       '<p class="muted">Best set: <b style="color:var(--fg)">' + setText(l.best, p.unit, l) + '</b> on ' + md(parse(l.best.date)) + '</p>' +
       liftChart(l, p.unit) +
-      (l.sessions.length > 1 ? '<p class="muted" style="font-size:.875rem">' + (l.assisted ? 'Assistance on your best set each session (lower is stronger).' : (l.weighted ? 'Weight' : 'Reps') + ' of your best set each session.') + ' Filled dots are new bests.</p>' : '') +
+      (l.sessions.length > 1 ? '<p class="muted" style="font-size:.875rem">' + (l.assisted ? 'Assistance on your best set each session (lower is stronger).' : (l.weighted ? 'Weight' : 'Reps') + ' of your best set each session.') + ' Filled dots are new bests. Tap a point to see that day.</p>' : '') +
       '<div class="timeline">' + rows.map(function(r){
         return '<div class="tl-row"><div class="tl-main"><div class="tl-top"><strong>' + short(parse(r.s.date)) + '</strong><span class="amt">' + setText(r.s, p.unit, l) + (r.pr ? '<span class="pr">Best</span>' : '') + '</span></div></div></div>';
       }).join('') + '</div>', l.name);
   }
 
   // ---- state + routing ----
-  var acct = null, recentOpen = false;
+  var acct = null, recentOpen = false, curLift = null;
   document.addEventListener('toggle', function(e){ if (e.target.classList && e.target.classList.contains('fold')) recentOpen = e.target.open; }, true);
   var views = { home: viewHome, upcoming: viewUpcoming, account: viewAccount, progress: viewProgress };
   // Website mode: the link carries this client's private key after the #; tabs are kept in memory instead.
@@ -655,6 +680,12 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
   window.addEventListener('hashchange', function(){ if (KEY) return; render(); window.scrollTo(0, 0); });
 
   document.addEventListener('click', function(e){
+    var pt = e.target.closest && e.target.closest('[data-pt]');
+    if (pt && curLift && acct) {
+      var sp = curLift.sessions[Number(pt.getAttribute('data-pt'))], ro = document.getElementById('readout');
+      if (ro && sp) ro.innerHTML = '<b>' + esc(setText(sp, acct.progress.unit, curLift)) + '</b><span>' + short(parse(sp.date)) + '</span>';
+      return;
+    }
     var t = e.target.closest('button, .scrim');
     if (!t) return;
     if (t.classList.contains('scrim') && e.target !== t) return;
