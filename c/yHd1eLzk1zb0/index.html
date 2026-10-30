@@ -409,6 +409,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     } else {
       card = '<section class="card" aria-labelledby="h-money"><p class="label" id="h-money">Your balance</p>' +
         '<p class="paid-line">' + icons.check + 'You\'re all paid up</p>' +
+        (a.credit > 0 ? '<p class="muted">You have <b style="color:var(--fg)">' + money(a.credit) + ' in credit</b> toward upcoming sessions.</p>' : '') +
         (a.lastPayment ? '<p class="muted">Last payment: ' + money(a.lastPayment.amt) + ' on ' + md(a.lastPayment.d) + '.</p>' : '') +
         '</section>';
     }
@@ -464,6 +465,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     } else {
       head = '<section class="card" aria-labelledby="h-acc"><p class="label" id="h-acc">' + (a.owed > 0 ? 'Amount owing' : 'Your balance') + '</p>' +
         (a.owed > 0 ? '<p class="big owe">' + money(a.owed) + '</p>' : '<p class="paid-line">' + icons.check + 'You\'re all paid up</p>') +
+        (a.owed <= 0 && a.credit > 0 ? '<p class="muted">You have <b style="color:var(--fg)">' + money(a.credit) + ' in credit</b> toward upcoming sessions.</p>' : '') +
         '<p class="muted">Up to date as of ' + a.asOf + '.</p></section>';
     }
     return '<h2 class="page">My account</h2>' + head +
