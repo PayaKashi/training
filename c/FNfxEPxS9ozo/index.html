@@ -701,7 +701,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     document.getElementById('view').innerHTML = '<p class="empty-note">Loading your account…</p>';
     getData()
       .then(function(d){
-        greet(d.name); acct = build(d);
+        greet(d.greeting || d.name); acct = build(d);
         var hasP = !!acct.progress;
         document.getElementById('tab-progress').hidden = !hasP;
         document.querySelector('nav.tabs .inner').classList.toggle('four', hasP);
