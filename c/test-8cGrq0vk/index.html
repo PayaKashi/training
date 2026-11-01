@@ -446,7 +446,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
   }
 
   function viewUpcoming(a){
-    if (!a.upcoming.length) return '<h2 class="page">Upcoming sessions</h2><p class="empty-note">You have no sessions booked. Text Paya to set up your next one.</p>';
+    if (!a.upcoming.length) return '<h2 class="page">Upcoming sessions</h2><p class="empty-note">You have no sessions booked.</p>';
     var monday = new Date(TODAY); monday.setDate(TODAY.getDate() - ((TODAY.getDay() + 6) % 7));
     var groups = [];
     a.upcoming.forEach(function(s, i){
@@ -535,7 +535,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
       return;
     }
     var title, foot = '', note = '';
-    if (g.kind === 'owing') { title = 'Not paid yet'; foot = money(g.amt); note = 'Pay whenever suits you.'; }
+    if (g.kind === 'owing') { title = 'Not paid yet'; foot = money(g.amt); }
     else if (g.kind === 'payment') { title = 'Payment of ' + money(g.amt); note = short(g.d) + ' · ' + g.method + (g.note ? '. ' + g.note : ''); }
     else if (g.kind === 'paid') { title = 'Earlier paid sessions'; }
     else { title = 'Sessions in ' + g.month; foot = '−' + money(g.total); note = 'Credit left after these: ' + (g.endBal < 0 ? 'owing ' + money(g.endBal) : money(g.endBal)) + '.'; }
