@@ -197,13 +197,13 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
       Home
     </button>
-    <button class="tab" type="button" data-tab="upcoming">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
-      Upcoming
-    </button>
     <button class="tab" type="button" data-tab="progress" id="tab-progress" hidden>
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg>
       Progress
+    </button>
+    <button class="tab" type="button" data-tab="upcoming">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+      Upcoming
     </button>
     <button class="tab" type="button" data-tab="account">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
@@ -277,16 +277,15 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
       });
       a.coveredCount = a.upcoming.filter(function(s){ return s.status === 'covered'; }).length;
       a.mixedRates = a.upcoming.some(function(s){ return s.partners.length; }) && a.upcoming.some(function(s){ return !s.partners.length; });
+      // History by payment: each package/payment with the sessions it paid for
+      var cur = null, pending = [];
       a.rows.forEach(function(r){
-        if (r.type === 'topup') { groups.push({ kind: 'topup', d: r.d, row: r }); return; }
-        var m = monthOf(r.d), g = groups[groups.length - 1];
-        if (!g || g.kind !== 'month' || g.month !== m) { g = { kind: 'month', month: m, rows: [] }; groups.push(g); }
-        g.rows.push(r); g.d = r.d;
+        if (r.type === 'topup') { cur = { kind: 'pkg', d: r.d, row: r, rows: pending }; pending = []; groups.push(cur); return; }
+        if (cur && r.bal + r.amt > 0) cur.rows.push(r); else pending.push(r);
       });
       groups.forEach(function(g){
-        if (g.kind !== 'month') return;
-        g.total = g.rows.reduce(function(x, r){ return x + r.amt; }, 0);
-        g.endBal = g.rows[g.rows.length - 1].bal;
+        g.used = g.rows.reduce(function(x, r){ return x + r.amt; }, 0);
+        g.left = g.rows.length ? g.rows[g.rows.length - 1].bal : g.row.bal;
       });
       groups.reverse();
       // Last payment cycle: the latest top-up and every session paid from it (plus sessions it cleared that were owing just before)
@@ -315,12 +314,8 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
         groups.push({ kind: 'payment', d: parse(p.date), amt: p.amount, method: p.method, note: p.note, rows: rows });
       });
       a.lastPayment = groups.length ? groups[groups.length - 1] : null;
-      sessions.filter(function(r){ return !r.unpaid && !used[r.s.key + r.s.start]; }).forEach(function(r){
-        var m = monthOf(r.d) + ' ' + r.d.getFullYear();
-        var g = groups.find(function(x){ return x.kind === 'paid' && x.mkey === m; });
-        if (!g) { g = { kind: 'paid', mkey: m, month: monthOf(r.d), rows: [] }; groups.push(g); }
-        g.rows.push(r); g.d = r.d;
-      });
+      var earlier = sessions.filter(function(r){ return !r.unpaid && !used[r.s.key + r.s.start]; });
+      if (earlier.length) groups.push({ kind: 'paid', d: earlier[earlier.length - 1].d, rows: earlier });
       groups.sort(function(x, y){ return y.d - x.d; });
       a.owingRows = sessions.filter(function(r){ return r.unpaid; });
       if (a.owingRows.length) groups.unshift({ kind: 'owing', d: a.owingRows[a.owingRows.length - 1].d, rows: a.owingRows, amt: a.owed });
@@ -368,6 +363,12 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
   }
   function groupRow(a, g, i){
     if (g.kind === 'topup') return '<div class="timeline">' + tlRow(a, g.row) + '</div>';
+    if (g.kind === 'pkg') {
+      var pt = /package/i.test(g.row.note || '') ? 'Package bought' : 'Payment' + (g.row.method ? ' · ' + g.row.method : '');
+      return '<button class="grp" type="button" data-group="' + i + '"><div class="dot pay">' + icons.check + '</div><div class="tl-main">' +
+        '<div class="tl-top"><strong>' + esc(pt) + '</strong><span class="amt plus">+' + money(g.row.amt) + '</span></div>' +
+        '<span class="s">' + short(g.d) + ' · ' + (g.rows.length ? plural(g.rows.length, 'session') + ' used' : 'no sessions used yet') + '</span></div>' + icons.chevR + '</button>';
+    }
     var n = g.rows.length, title, amount, sub, dotCls = '', icon = icons.one, extraCls = '';
     if (g.kind === 'owing') {
       title = 'Not paid yet'; amount = money(g.amt); dotCls = ' warn'; extraCls = ' owing'; icon = icons.clock;
@@ -377,8 +378,8 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
       sub = short(g.d) + (n ? ' · ' + plural(n, 'session') : '');
     } else if (g.kind === 'paid') {
       var sum = g.rows.every(function(r){ return r.s.price; }) ? g.rows.reduce(function(x, r){ return x + r.s.price; }, 0) : 0;
-      title = 'Paid sessions'; amount = sum ? money(sum) : ''; icon = icons.check;
-      sub = g.month + ' · ' + plural(n, 'session');
+      title = 'Earlier paid sessions'; amount = sum ? money(sum) : ''; icon = icons.check;
+      sub = plural(n, 'session') + ' · ' + (n === 1 ? md(g.rows[0].d) : md(g.rows[0].d) + ' to ' + md(g.rows[n-1].d));
     } else {
       title = 'Sessions in ' + g.month; amount = '−' + money(g.total);
       sub = plural(n, 'session') + ' · ' + (g.endBal < 0 ? 'owing ' + money(g.endBal) : 'credit left ' + money(g.endBal));
@@ -398,8 +399,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     var hero = next ?
       '<section class="hero" aria-labelledby="h-next"><p class="label" id="h-next">Your next session</p>' +
         '<div><p class="when">' + rel(next.d) + ', ' + md(next.d) + '</p><p class="sub">' + timeRange(next.start, next.end) + '</p></div>' +
-        '<span class="kind">' + (next.partners.length ? icons.two : icons.one) + esc(kindLabel(next)) + (next.price ? ' · ' + money(next.price) : '') + '</span>' +
-        '<button class="btn btn-on-accent" type="button" data-sess="0">Session details</button></section>'
+                '<button class="btn btn-on-accent" type="button" data-sess="0">Session details</button></section>'
       : '<section class="hero empty" aria-labelledby="h-next"><p class="label" id="h-next">Your next session</p>' +
         '<p class="when">Nothing booked right now</p><p class="muted">Text Paya whenever you\'d like to book your next session.</p></section>';
 
@@ -408,7 +408,6 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
       var shown = a.upcoming.slice(0, 4);
       card = '<section class="card" aria-labelledby="h-money"><p class="label" id="h-money">Credit remaining</p>' +
         '<p class="big">' + money(a.credit) + '</p>' +
-        coverLine(a) +
         (a.owed > 0 ? '<button class="grp owing" type="button" data-group="0"><div class="dot warn">' + icons.clock + '</div><div class="tl-main"><div class="tl-top"><strong>Not paid yet</strong><span class="amt">' + money(a.owed) + '</span></div><span class="s">' + plural(a.owingRows.length, 'session') + '</span></div>' + icons.chevR + '</button>' : '') +
         '</section>';
     } else if (a.owed > 0) {
@@ -432,12 +431,11 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
           '<button class="grp" type="button" data-cycle="1"><div class="dot pay">' + icons.check + '</div><div class="tl-main">' +
           '<div class="tl-top"><strong>' + esc(/package/i.test(c.row.note || '') ? 'Package bought' : 'Payment' + (c.row.method ? ' · ' + c.row.method : '')) + '</strong><span class="amt plus">+' + money(c.row.amt) + '</span></div>' +
           '<span class="s">' + short(c.row.d) + ' · ' + (c.rows.length ? plural(c.rows.length, 'session') + ' used' : 'no sessions used yet') + '</span></div>' + icons.chevR + '</button></section>' : '') +
-        '<p class="footer-note">Need to change a session? Just text Paya.</p>';
+        '';
     }
     return hero + card +
       (recent.length ? '<details class="fold"' + (recentOpen ? ' open' : '') + '><summary><h2 class="section">Recent activity</h2>' + icons.chevD + '</summary>' +
-        '<div class="fold-body">' + groupList(a, recent) + '<button class="link-btn" type="button" data-go="account">See full history</button></div></details>' : '') +
-      '<p class="footer-note">Need to change a session? Just text Paya.</p>';
+        '<div class="fold-body">' + groupList(a, recent) + '<button class="link-btn" type="button" data-go="account">See full history</button></div></details>' : '');
   }
 
   function coverLine(a){
@@ -461,9 +459,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     });
     return '<h2 class="page">Upcoming sessions</h2>' +
       (CAN_ICS ? '<button class="btn btn-line" type="button" data-ics="all">' + icons.cal + 'Add all to my calendar</button>' : '') +
-      '<p class="muted">' + (a.plan === 'prepaid' ? 'Tap a session to see what it costs and how much credit you\'ll have after.' : 'Tap a session to see the details.') + '</p>' +
-      groups.map(function(g){ return '<p class="label group-label">' + g.name + '</p><div class="list">' + g.items.join('') + '</div>'; }).join('') +
-      '<p class="footer-note">Need to change a session? Just text Paya.</p>';
+      groups.map(function(g){ return '<p class="label group-label">' + g.name + '</p><div class="list">' + g.items.join('') + '</div>'; }).join('');
   }
 
   function viewAccount(a){
@@ -481,8 +477,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     }
     return '<h2 class="page">My account</h2>' + head +
       '<h2 class="section" style="margin-top:8px">History</h2>' +
-      (a.groups.length ? '<p class="muted">Tap any row to see the sessions in it.</p>' + groupList(a, a.groups) : '<p class="empty-note">Your sessions and payments will show here.</p>') +
-      '<p class="footer-note">Something look off? Just text Paya.</p>';
+      (a.groups.length ? groupList(a, a.groups) : '<p class="empty-note">Your sessions and payments will show here.</p>');
   }
 
   // ---- sheets ----
@@ -526,10 +521,24 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
   }
   function groupSheet(a, i){
     var g = a.groups[i];
+    if (g.kind === 'pkg') {
+      var pt = /package/i.test(g.row.note || '') ? 'Package of ' + money(g.row.amt) : 'Payment of ' + money(g.row.amt);
+      var pn = short(g.row.d) + (g.row.method ? ' · ' + g.row.method : '') + (g.row.note ? ' · ' + g.row.note : '');
+      var run = g.row.amt, isLast = a.groups.filter(function(x){ return x.kind === 'pkg'; })[0] === g;
+      var pl = g.rows.map(function(r){ run -= r.amt; return { d: r.d, type: r.type, partners: r.partners, amt: r.amt, bal: run }; })
+        .reverse().map(function(r){ return tlRow(a, r); }).join('');
+      var left = isLast ? a.credit : Math.max(0, g.left);
+      openSheet('<h3>' + esc(pt) + '</h3><p class="muted">' + esc(pn) + '</p>' +
+        (g.rows.length ? '<div class="timeline">' + pl +
+          '<div class="total-row"><span>Used' + (isLast ? ' so far' : '') + '</span><span>−' + money(g.used) + '</span></div>' +
+          '<div class="total-row"><span>Credit left</span><span>' + money(left) + '</span></div></div>'
+          : '<p class="empty-note">No sessions have come off this payment yet.</p>'), pt);
+      return;
+    }
     var title, foot = '', note = '';
     if (g.kind === 'owing') { title = 'Not paid yet'; foot = money(g.amt); note = 'Pay whenever suits you.'; }
     else if (g.kind === 'payment') { title = 'Payment of ' + money(g.amt); note = short(g.d) + ' · ' + g.method + (g.note ? '. ' + g.note : ''); }
-    else if (g.kind === 'paid') { title = 'Paid sessions · ' + g.month; }
+    else if (g.kind === 'paid') { title = 'Earlier paid sessions'; }
     else { title = 'Sessions in ' + g.month; foot = '−' + money(g.total); note = 'Credit left after these: ' + (g.endBal < 0 ? 'owing ' + money(g.endBal) : money(g.endBal)) + '.'; }
     var list = g.rows.slice().reverse().map(function(r){ return tlRow(a, r); }).join('');
     openSheet('<h3>' + esc(title) + '</h3>' + (note ? '<p class="muted">' + esc(note) + '</p>' : '') +
@@ -600,7 +609,6 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     var p = a.progress;
     if (!p || !p.lifts.length) return '<h2 class="page">Your progress</h2><p class="empty-note">Your lifts will show here after your next workout with Paya.</p>';
     return '<h2 class="page">Your progress</h2>' +
-      '<p class="muted">Your best set on each exercise. Tap one to see how it\'s changed over time.</p>' +
       ['Lower body', 'Upper body', 'Other'].map(function(g){
         var items = p.lifts.map(function(l, i){ return { l: l, i: i }; }).filter(function(x){ return liftGroup(x.l) === g; });
         if (!items.length) return '';
@@ -609,8 +617,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
           return '<button class="lift" type="button" data-lift="' + x.i + '"><div class="lift-main"><strong>' + esc(l.name) + '</strong>' +
             '<span class="best">' + setText(l.best, p.unit, l) + '</span><span class="s">' + liftSub(l, p.unit) + '</span></div>' + sparkline(l) + icons.chevR + '</button>';
         }).join('') + '</div>';
-      }).join('') +
-      (p.updated ? '<p class="footer-note">From your workouts with Paya, up to ' + md(parse(p.updated)) + '.</p>' : '');
+      }).join('');
   }
   function liftChart(lift, unit){
     var s = lift.sessions; if (s.length < 2) return '';
@@ -650,7 +657,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
     openSheet('<h3>' + esc(l.name) + '</h3>' +
       '<p class="muted">Best set: <b style="color:var(--fg)">' + setText(l.best, p.unit, l) + '</b> on ' + md(parse(l.best.date)) + '</p>' +
       liftChart(l, p.unit) +
-      (l.sessions.length > 1 ? '<p class="muted" style="font-size:.875rem">' + (l.assisted ? 'Assistance on your best set each session (lower is stronger).' : (l.weighted ? 'Weight' : 'Reps') + ' of your best set each session.') + ' Filled dots are new bests. Tap a point to see that day.</p>' : '') +
+      
       '<div class="timeline">' + rows.map(function(r){
         return '<div class="tl-row"><div class="tl-main"><div class="tl-top"><strong>' + short(parse(r.s.date)) + '</strong><span class="amt">' + setText(r.s, p.unit, l) + (r.pr ? '<span class="pr">Best</span>' : '') + '</span></div></div></div>';
       }).join('') + '</div>', l.name);
