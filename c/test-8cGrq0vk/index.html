@@ -178,6 +178,11 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
   @keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
 }
 /* ===== Aura Blend design ===== */
+[hidden]{display:none!important}
+.card.member .paid-line{color:#fff;font-size:1.35rem;position:relative;z-index:1}
+.card.member b{color:#fff!important}
+.card.member .muted{position:relative;z-index:1}
+
 .note{background:rgba(255,255,255,.72);border:1px solid #fff;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 10px 26px -18px rgba(120,40,140,.45);margin-top:-6px;backdrop-filter:blur(14px)}
 .note small{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .note p{margin:0;font-family:var(--display);font-size:1.12rem;line-height:1.4;color:var(--fg)}
@@ -923,7 +928,7 @@ div.list > :first-child{border-top:0}
 <script>
 function enhance0(d){
   var h=document.getElementById('greeting');
-  if (h && !h.querySelector('span.nm') && h.textContent.indexOf(',')>0){ var p=h.textContent.split(', '); h.innerHTML=p[0]+', <span class="nm">'+p.slice(1).join(', ')+'</span>'; }
+  if (h && !h.querySelector('span.nm') && h.textContent.indexOf(',')>0){ var p=h.textContent.split(', '); var nmT=p.slice(1).join(', '), mm=/^(.*?[\p{L}\p{M}.'\-]+)(.*)$/u.exec(nmT)||[0,nmT,'']; var e2=function(x){return x.replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}; h.innerHTML=e2(p[0])+', <span class="nm">'+e2(mm[1])+'</span>'+e2(mm[2]); }
   var hero=document.querySelector('.hero:not(.empty)');
   if (hero && !hero.dataset.done){
     var w=hero.querySelector('.when'), s=hero.querySelector('.sub'); if(!w) return;
@@ -935,7 +940,7 @@ function enhance0(d){
 }
 function enhance1(d){
   document.querySelectorAll('section.card').forEach(function(c){
-    if (c.classList.contains('member') || !c.querySelector('.big')) return;
+    if (c.classList.contains('member') || !(c.querySelector('.big') || c.querySelector('.paid-line'))) return;
     c.classList.add('member');
     var f=document.createElement('div'); f.className='mfoot'; f.innerHTML='<b>'+d.name+'</b><span>'+(d.plan==='prepaid'?'Prepaid':'')+'</span>'; c.appendChild(f);
   });
