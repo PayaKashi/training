@@ -929,7 +929,7 @@ function enhance0(d){
     var w=hero.querySelector('.when'), s=hero.querySelector('.sub'); if(!w) return;
     var m=/(\d+)\s*$/.exec(w.textContent); if(!m) return;
     var wrap=w.parentNode, row=document.createElement('div'); row.className='row';
-    row.innerHTML='<div class="num">'+m[1]+'</div><div><p class="when">'+w.textContent.replace(/\s*\d+\s*$/,'').replace(/,\s*$/,'')+'</p><p class="sub">'+s.textContent+'</p></div>';
+    row.innerHTML='<div class="num">'+m[1]+'</div><div><p class="when">'+w.textContent.replace(/\s*\d+\s*$/,'').replace(/,\s*$/,'').replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/,function(m){return {Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'}[m];})+'</p><p class="sub">'+s.textContent+'</p></div>';
     wrap.replaceWith(row); hero.dataset.done=1;
   }
 }
