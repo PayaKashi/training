@@ -401,7 +401,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
         '<div><p class="when">' + rel(next.d) + ', ' + md(next.d) + '</p><p class="sub">' + timeRange(next.start, next.end) + '</p></div>' +
                 '<button class="btn btn-on-accent" type="button" data-sess="0">Session details</button></section>'
       : '<section class="hero empty" aria-labelledby="h-next"><p class="label" id="h-next">Your next session</p>' +
-        '<p class="when">Nothing booked right now</p><p class="muted">Text Paya whenever you\'d like to book your next session.</p></section>';
+        '<p class="when">Nothing booked right now</p></section>';
 
     var card;
     if (a.plan === 'prepaid') {
@@ -414,7 +414,6 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
       var u = a.owingRows;
       card = '<section class="card" aria-labelledby="h-money"><p class="label" id="h-money">Amount owing</p>' +
         '<p class="big owe">' + money(a.owed) + '</p>' +
-        '<p class="muted">For ' + u.length + (u.length === 1 ? ' session on ' + md(u[0].d) : ' sessions, ' + md(u[0].d) + ' to ' + md(u[u.length-1].d)) + '. Pay whenever suits you.</p>' +
         '<button class="btn btn-quiet" type="button" data-group="0">See the sessions</button></section>';
     } else {
       card = '<section class="card" aria-labelledby="h-money"><p class="label" id="h-money">Your balance</p>' +
