@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="My Training">
-<meta name="theme-color" content="#F2F5F3">
+<meta name="theme-color" content="#09318D">
 <style>:root{padding-top:env(safe-area-inset-top,0px)}body{margin:0;-webkit-text-size-adjust:100%}[hidden]{display:none!important}</style>
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
@@ -191,6 +191,7 @@ html.sheet-open,html.sheet-open body{overflow:hidden}
 .recap h3{margin:0;font-family:var(--display);font-weight:500;font-size:1.6rem}
 .recap .st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .recap .st.two{grid-template-columns:repeat(2,1fr)}
+.recap .st.one{grid-template-columns:1fr}
 .recap .st div{background:rgba(214,70,180,.07);border-radius:14px;padding:10px 6px;text-align:center}
 .recap .st b{display:block;font-family:var(--display);font-size:1.6rem;font-weight:500;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .recap .st span{font-size:.75rem;color:var(--muted)}
@@ -724,24 +725,26 @@ div.list > :first-child{border-top:0}
     var sess = (a.sessionDates || []).filter(inM).length;
     var bests = 0, gain = null;
     p.lifts.forEach(function(l){
-      var before = null, monthBest = null;
+      var before = null, monthBest = null, firstIn = null;
       l.sessions.forEach(function(s){
         var x = parse(s.date);
         if (x < m0) { if (!before || better(s, before, l)) before = s; return; }
         if (x >= m1) return;
+        if (!firstIn) firstIn = s;
         if (!monthBest || better(s, monthBest, l)) monthBest = s;
       });
-      if (before && monthBest && better(monthBest, before, l)) bests++;
-      if (before && monthBest && l.weighted && !l.assisted && monthBest.weight > before.weight) {
-        var g = monthBest.weight - before.weight;
+      var base = before || (monthBest !== firstIn ? firstIn : null);
+      if (base && monthBest && better(monthBest, base, l)) bests++;
+      if (base && monthBest && l.weighted && !l.assisted && monthBest.weight > base.weight) {
+        var g = monthBest.weight - base.weight;
         if (!gain || g > gain.g) gain = { g: g, name: l.name.replace(/\s*\(.*\)$/, '') };
       }
     });
     if (!sess && !bests) return '';
     var cells = '<div><b>' + sess + '</b><span>' + (sess === 1 ? 'session' : 'sessions') + '</span></div>' +
-      '<div><b>' + bests + '</b><span>' + (bests === 1 ? 'new best' : 'new bests') + '</span></div>' +
+      (bests ? '<div><b>' + bests + '</b><span>' + (bests === 1 ? 'new best' : 'new bests') + '</span></div>' : '') +
       (gain ? '<div><b>+' + fmtW(gain.g) + '</b><span>' + (p.unit || 'lb') + ' ' + esc(gain.name.toLowerCase()) + '</span></div>' : '');
-    return '<section class="recap" aria-label="' + monthOf(m0) + ' recap"><h3>' + monthOf(m0) + ' Recap</h3><div class="st' + (gain ? '' : ' two') + '">' + cells + '</div></section>';
+    return '<section class="recap" aria-label="' + monthOf(m0) + ' recap"><h3>' + monthOf(m0) + ' Recap</h3><div class="st' + (bests && gain ? '' : (bests || gain ? ' two' : ' one')) + '">' + cells + '</div></section>';
   }
   // ---- progress (Hevy) ----
   function fmtW(w){ return (Math.round(w * 2) / 2).toString(); }
@@ -948,6 +951,29 @@ function enhance1(d){
 function enhance(d){enhance0(d);enhance1(d);}
 (function(){var run=function(){if(window.__D){try{enhance(window.__D)}catch(e){}}};new MutationObserver(run).observe(document.body,{childList:true,subtree:true});})();
 </script>
+<style>
+/* 4 Deep Blue / Pure White / Bubblegum Pink */
+:root:not(#_){--bg:#FFFFFF;--surface:#FFFFFF;--line:rgba(9,49,141,.10);--fg:#0A1E4D;--muted:#5A6B8F;
+ --accent:#E2479E;--accent-strong:#C2307F;--accent-soft:rgba(253,145,204,.15);--grad:linear-gradient(135deg,#FD91CC 0%,#E2479E 100%)}
+body{background:linear-gradient(180deg,#09318D 0px,#1E54D6 260px,#FFFFFF 520px)!important}
+.top p{color:rgba(255,255,255,.75)!important}.top h1{color:#fff!important}
+.top h1 .nm{background:none!important;-webkit-text-fill-color:#FD91CC!important}
+.hero{background:#fff!important;border:0!important;box-shadow:0 24px 50px -24px rgba(9,49,141,.6)!important}
+.hero .num{background:linear-gradient(135deg,#FD91CC,#09318D)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.hero .btn-on-accent,.btn-on-accent{background:#FD91CC!important;color:#0A1E4D!important;box-shadow:none!important}
+.card.member{background:radial-gradient(60% 70% at 90% 10%,rgba(253,145,204,.6),transparent 60%),linear-gradient(140deg,#09318D 0%,#1E54D6 100%)!important}
+.big{background:none!important;-webkit-text-fill-color:#09318D!important}.card.member .big{-webkit-text-fill-color:#fff!important}
+.card,.grp,.sess,.lift,.timeline,.fold,.facts,.win,.note{border:1px solid rgba(9,49,141,.08)!important;box-shadow:0 10px 26px -18px rgba(9,49,141,.35)!important;background:#fff!important}
+.dot.pay,.pr,.chip.ok{background:#09318D!important;color:#fff!important}
+.tab[aria-current="page"]{color:#09318D!important;background:rgba(9,49,141,.07)!important}
+.chart{color:#E2479E}
+h2.page{color:#fff!important}
+
+.label.group-label{display:inline-block;align-self:flex-start;background:rgba(255,255,255,.92);color:#09318D!important;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px -10px rgba(9,49,141,.5)}
+
+.view > h2.section{display:inline-flex;align-self:flex-start;background:rgba(255,255,255,.92);color:#09318D!important;padding:5px 12px;border-radius:999px;box-shadow:0 6px 16px -10px rgba(9,49,141,.5)}
+.view > h2.section::after{display:none}
+</style>
 
 </body>
 </html>
