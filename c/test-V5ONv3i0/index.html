@@ -602,7 +602,8 @@ div.list > :first-child{border-top:0}
     }
     return '<h2 class="page">My account</h2>' + head +
       '<h2 class="section" style="margin-top:8px">History</h2>' +
-      (a.groups.length ? groupList(a, a.groups) : '<p class="empty-note">Your sessions and payments will show here.</p>');
+      (a.groups.length ? groupList(a, a.groups) : '<p class="empty-note">Your sessions and payments will show here.</p>') +
+      (PINMODE ? '<div class="forget"><button class="btn btn-line" type="button" id="forget">' + 'Forget this phone</button><p class="muted small">Locks this page again. You\u2019ll need your PIN to reopen it.</p></div>' : '');
   }
 
   // ---- sheets ----
@@ -877,6 +878,7 @@ div.list > :first-child{border-top:0}
     if (t.dataset.tab) { go(t.dataset.tab); return; }
     if (t.dataset.go) { go(t.dataset.go); return; }
     if (t.id === 'retry') { load(); return; }
+    if (t.id === 'forget') { try { localStorage.removeItem(DKEY); } catch (e) {} acct = null; window.__D = null; curTab = 'home'; load(); return; }
     if (acct && t.dataset.ics !== undefined) { addToCalendar(t.dataset.ics === 'all' ? acct.upcoming : [acct.upcoming[Number(t.dataset.ics)]]); return; }
     if (acct && t.dataset.lift !== undefined) { liftSheet(acct, Number(t.dataset.lift)); return; }
     if (acct && t.dataset.cycle !== undefined) { cycleSheet(acct); return; }
@@ -900,14 +902,65 @@ div.list > :first-child{border-top:0}
   greet(document.getElementById('client').getAttribute('data-name'));
 
   function b64u(s){ s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return Uint8Array.from(atob(s), function(c){ return c.charCodeAt(0); }); }
+  // PIN lock: when data.enc is marked pin, the page key is derived from the link + the client's 6-digit PIN.
+  var DKEY = 'client-dk:' + location.pathname, PINMODE = false;
+  function aesOpen(k, x){
+    return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64u(x.iv) }, k, b64u(x.ct)).then(function(buf){ return JSON.parse(new TextDecoder().decode(buf)); });
+  }
+  function rawAes(bytes){ return crypto.subtle.importKey('raw', bytes, 'AES-GCM', false, ['decrypt']); }
+  function fromPin(pin, x){
+    return crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits'])
+      .then(function(base){ return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: b64u(KEY), iterations: x.it }, base, 256); });
+  }
+  function toB64u(buf){ var s = ''; new Uint8Array(buf).forEach(function(b){ s += String.fromCharCode(b); }); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function askPin(x){
+    return new Promise(function(resolve){
+      var nav = document.querySelector('nav.tabs'); if (nav) nav.hidden = true;
+      document.getElementById('view').innerHTML =
+        '<section class="card lock" aria-labelledby="h-lock">' +
+        '<div class="lock-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></div>' +
+        '<h2 id="h-lock">Enter your PIN</h2>' +
+        '<p class="muted">Paya texted you a 6-digit PIN. You only need it once on this phone.</p>' +
+        '<form id="pin-form" novalidate><input id="pin-in" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" aria-label="6-digit PIN" aria-describedby="pin-err">' +
+        '<p id="pin-err" class="pin-err" role="alert"></p>' +
+        '<button class="btn btn-on-accent" type="submit" id="pin-go">Unlock</button></form>' +
+        '<p class="muted small">Forgot it? Just text Paya.</p></section>';
+      var form = document.getElementById('pin-form'), inp = document.getElementById('pin-in'), err = document.getElementById('pin-err'), go = document.getElementById('pin-go'), busy = false;
+      setTimeout(function(){ try { inp.focus(); } catch (e) {} }, 50);
+      inp.addEventListener('input', function(){ inp.value = inp.value.replace(/\D/g, '').slice(0, 6); err.textContent = ''; inp.classList.remove('bad'); });
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (busy) return;
+        var pin = inp.value;
+        if (pin.length !== 6) { err.textContent = 'Your PIN is 6 numbers.'; inp.classList.add('bad'); return; }
+        busy = true; go.textContent = 'Unlocking…'; go.disabled = true;
+        var bits;
+        fromPin(pin, x).then(function(b){ bits = b; return rawAes(b); }).then(function(k){ return aesOpen(k, x); })
+          .then(function(d){
+            try { localStorage.setItem(DKEY, toB64u(bits)); } catch (e) {}
+            if (nav) nav.hidden = false;
+            resolve(d);
+          })
+          .catch(function(){
+            busy = false; go.textContent = 'Unlock'; go.disabled = false;
+            err.textContent = 'That PIN didn’t match. Check the text from Paya and try again.';
+            inp.classList.add('bad'); inp.value = ''; inp.focus();
+          });
+      });
+    });
+  }
   function getData(){
     if (!KEY) return fetch('data.json', { cache: 'no-store' }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); });
-    return Promise.all([
-      fetch('data.enc', { cache: 'no-store' }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }),
-      crypto.subtle.importKey('raw', b64u(KEY), 'AES-GCM', false, ['decrypt'])
-    ]).then(function(x){
-      return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64u(x[0].iv) }, x[1], b64u(x[0].ct));
-    }).then(function(buf){ return JSON.parse(new TextDecoder().decode(buf)); });
+    return fetch('data.enc', { cache: 'no-store' }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(x){
+      if (!x.pin) return rawAes(b64u(KEY)).then(function(k){ return aesOpen(k, x); });
+      PINMODE = true;
+      var saved = null; try { saved = localStorage.getItem(DKEY); } catch (e) {}
+      if (!saved) return askPin(x);
+      return rawAes(b64u(saved)).then(function(k){ return aesOpen(k, x); }).catch(function(){
+        try { localStorage.removeItem(DKEY); } catch (e) {}
+        return askPin(x);
+      });
+    });
   }
 
   function load(){
@@ -951,6 +1004,21 @@ function enhance1(d){
 function enhance(d){enhance0(d);enhance1(d);}
 (function(){var run=function(){if(window.__D){try{enhance(window.__D)}catch(e){}}};new MutationObserver(run).observe(document.body,{childList:true,subtree:true});})();
 </script>
+<style>
+.lock{text-align:center;padding:28px 22px!important;margin-top:8px}
+.lock h2{font-size:1.5rem;margin:8px 0 6px}
+.lock .lock-ico{width:56px;height:56px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(224,90,156,.12);color:#B23A77}
+.lock #pin-in{display:block;width:100%;box-sizing:border-box;margin:18px 0 6px;padding:14px 10px;font-size:2rem;letter-spacing:.6em;text-indent:.6em;text-align:center;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);font-family:inherit}
+.lock #pin-in:focus{outline:none;border-color:#E05A9C;box-shadow:0 0 0 3px rgba(224,90,156,.2)}
+.lock #pin-in.bad{border-color:#C0392B}
+.lock .pin-err{min-height:1.4em;margin:0 0 10px;color:#B03A2E;font-weight:600;font-size:.95rem}
+.lock .btn{width:100%}
+.lock .small,.forget .small{font-size:.9rem;margin-top:14px}
+.forget{margin-top:22px;text-align:center}
+.forget .small{color:rgba(255,255,255,.72)!important}
+.forget .btn{width:100%}
+</style>
+
 <style>
 /* C Night to Cream: charcoal speckle header fading into cream, pink */
 :root:not(#_){--bg:#F3EEE6;--surface:#FBF8F3;--line:rgba(30,27,25,.10);--fg:#1E1B19;--muted:#6E665D;--accent:#D04A8E;--accent-strong:#B23A77;--accent-soft:rgba(224,90,156,.12);--grad:linear-gradient(135deg,#E05A9C,#B23A77)}
