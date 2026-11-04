@@ -719,13 +719,12 @@ div.list > :first-child{border-top:0}
     if (nd && dayDiff(nd) < -7) return '';
     return '<section class="note" aria-label="A note from Paya"><small>A note from Paya</small><p>' + esc(n.text) + '</p>' + (nd ? '<span>' + md(nd) + '</span>' : '') + '</section>';
   }
-  function recap(a){
-    var p = a.progress; if (!p) return '';
-    var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth() - 1, 1), m1 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+  function monthStats(a, m0, m1){
+    var p = a.progress;
     var inM = function(ds){ var x = parse(ds); return x >= m0 && x < m1; };
     var sess = (a.sessionDates || []).filter(inM).length;
     var bests = 0, gain = null;
-    p.lifts.forEach(function(l){
+    if (p) p.lifts.forEach(function(l){
       var before = null, monthBest = null, firstIn = null;
       l.sessions.forEach(function(s){
         var x = parse(s.date);
@@ -741,11 +740,78 @@ div.list > :first-child{border-top:0}
         if (!gain || g > gain.g) gain = { g: g, name: l.name.replace(/\s*\(.*\)$/, '') };
       }
     });
+    return { sess: sess, bests: bests, gain: gain };
+  }
+  function recap(a){
+    var p = a.progress; if (!p) return '';
+    var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth() - 1, 1), m1 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+    var st = monthStats(a, m0, m1), sess = st.sess, bests = st.bests, gain = st.gain;
     if (!sess && !bests) return '';
     var cells = '<div><b>' + sess + '</b><span>' + (sess === 1 ? 'session' : 'sessions') + '</span></div>' +
       (bests ? '<div><b>' + bests + '</b><span>' + (bests === 1 ? 'new best' : 'new bests') + '</span></div>' : '') +
       (gain ? '<div><b>+' + fmtW(gain.g) + '</b><span>' + (p.unit || 'lb') + ' ' + esc(gain.name.toLowerCase()) + '</span></div>' : '');
-    return '<section class="recap" aria-label="' + monthOf(m0) + ' recap"><h3>' + monthOf(m0) + ' Recap</h3><div class="st' + (bests && gain ? '' : (bests || gain ? ' two' : ' one')) + '">' + cells + '</div></section>';
+    var more = workoutsOf(a).length ? '<button class="recap-more" type="button" data-hist>See all months' + icons.chevR + '</button>' : '';
+    return '<section class="recap" aria-label="' + monthOf(m0) + ' recap"><h3>' + monthOf(m0) + ' Recap</h3><div class="st' + (bests && gain ? '' : (bests || gain ? ' two' : ' one')) + '">' + cells + '</div>' + more + '</section>';
+  }
+  // Every workout = one date in Hevy, with each lift's top set that day (and how it compared with last time)
+  function workoutsOf(a){
+    var p = a.progress; if (!p) return [];
+    if (a._wk) return a._wk;
+    var by = {};
+    p.lifts.forEach(function(l){
+      var best = null, prev = null;
+      l.sessions.forEach(function(s){
+        (by[s.date] = by[s.date] || []).push({ l: l, s: s, prev: prev, pr: !!(best && better(s, best, l)) });
+        if (!best || better(s, best, l)) best = s;
+        prev = s;
+      });
+    });
+    a._wk = Object.keys(by).sort().reverse().map(function(k){
+      var items = by[k].sort(function(x, y){ return (y.pr - x.pr) || liftGroup(x.l).localeCompare(liftGroup(y.l)); });
+      return { date: k, d: parse(k), items: items, prs: items.filter(function(i){ return i.pr; }).length };
+    });
+    return a._wk;
+  }
+  function wkTag(it, unit){
+    var l = it.l, s = it.s, p = it.prev;
+    if (it.pr) return '<span class="wk-tag pr">New best</span>';
+    if (!p) return '<span class="wk-tag">First time</span>';
+    if (!l.assisted && s.weight > p.weight) return '<span class="wk-tag up">+' + fmtW(s.weight - p.weight) + ' ' + unit + '</span>';
+    if (l.assisted && s.weight < p.weight) return '<span class="wk-tag up">' + fmtW(p.weight - s.weight) + ' ' + unit + ' less help</span>';
+    if (s.weight === p.weight && s.reps > p.reps) return '<span class="wk-tag up">+' + plural(s.reps - p.reps, 'rep') + '</span>';
+    if (s.weight === p.weight && s.reps === p.reps) return '<span class="wk-tag">Same as last time</span>';
+    return '';
+  }
+  function wkRows(w, unit){
+    return '<div class="wk-list">' + w.items.map(function(it){
+      return '<div class="wk-row"><div class="wk-main"><strong>' + esc(it.l.name.replace(/\s*\(.*\)$/, '')) + '</strong><span>' + setText(it.s, unit, it.l) + '</span></div>' + wkTag(it, unit) + '</div>';
+    }).join('') + '</div>';
+  }
+  function lastWorkout(a){
+    var w = workoutsOf(a)[0]; if (!w) return '';
+    var unit = a.progress.unit || 'lb';
+    return '<details class="lastwk"><summary><span class="lw-head"><span class="label">Your last workout</span>' +
+      '<b class="lw-date">' + full(w.d) + '</b><span class="muted">' + plural(w.items.length, 'exercise') + (w.prs ? ' · <b class="wk-prs">' + plural(w.prs, 'new best') + '</b>' : '') + '</span></span>' +
+      '<span class="lw-more"><span class="lw-show">See exercises</span><span class="lw-hide">Hide</span>' + icons.chevR + '</span></summary>' +
+      wkRows(w, unit) + '</details>';
+  }
+  function histSheet(a){
+    var ws = workoutsOf(a), unit = a.progress.unit || 'lb', months = [];
+    ws.forEach(function(w){
+      var k = w.d.getFullYear() * 12 + w.d.getMonth(), m = months[months.length - 1];
+      if (!m || m.k !== k) months.push(m = { k: k, d: new Date(w.d.getFullYear(), w.d.getMonth(), 1), ws: [] });
+      m.ws.push(w);
+    });
+    var html = '<h3>Your training history</h3><p class="muted">Every workout logged with Paya. Tap a month to see its workouts, then a day to see your sets.</p><div class="mos">' +
+      months.map(function(m){
+        var m1 = new Date(m.d.getFullYear(), m.d.getMonth() + 1, 1), st = monthStats(a, m.d, m1), cur = m1 > TODAY;
+        var line = [plural(st.sess || m.ws.length, 'session')].concat(st.bests ? [plural(st.bests, 'new best')] : []).concat(st.gain ? ['+' + fmtW(st.gain.g) + ' ' + unit + ' ' + esc(st.gain.name.toLowerCase())] : []).join(' · ');
+        return '<details class="mo"><summary><span class="mo-head"><h4>' + monthOf(m.d) + (cur ? ' <small>so far</small>' : '') + '</h4><span>' + line + '</span></span>' + icons.chevR + '</summary><div class="mo-days">' +
+          m.ws.map(function(w){
+            return '<details class="wk"><summary><span class="wk-d"><b>' + short(w.d) + '</b><span>' + plural(w.items.length, 'exercise') + (w.prs ? ' · <i>' + plural(w.prs, 'new best') + '</i>' : '') + '</span></span>' + icons.chevR + '</summary>' + wkRows(w, unit) + '</details>';
+          }).join('') + '</div></details>';
+      }).join('') + '</div>';
+    openSheet(html, 'Your training history');
   }
   // ---- progress (Hevy) ----
   function fmtW(w){ return (Math.round(w * 2) / 2).toString(); }
@@ -784,7 +850,7 @@ div.list > :first-child{border-top:0}
   function viewProgress(a){
     var p = a.progress;
     if (!p || !p.lifts.length) return '<h2 class="page">Your progress</h2><p class="empty-note">Your lifts will show here after your next workout with Paya.</p>';
-    return '<h2 class="page">Your progress</h2>' + recap(a) +
+    return '<h2 class="page">Your progress</h2>' + lastWorkout(a) + recap(a) +
       ['Lower body', 'Upper body', 'Other'].map(function(g){
         var items = p.lifts.map(function(l, i){ return { l: l, i: i }; }).filter(function(x){ return liftGroup(x.l) === g; });
         if (!items.length) return '';
@@ -880,6 +946,7 @@ div.list > :first-child{border-top:0}
     if (t.id === 'retry') { load(); return; }
     if (t.id === 'forget') { try { localStorage.removeItem(DKEY); } catch (e) {} acct = null; window.__D = null; curTab = 'home'; load(); return; }
     if (acct && t.dataset.ics !== undefined) { addToCalendar(t.dataset.ics === 'all' ? acct.upcoming : [acct.upcoming[Number(t.dataset.ics)]]); return; }
+    if (acct && t.hasAttribute('data-hist')) { histSheet(acct); return; }
     if (acct && t.dataset.lift !== undefined) { liftSheet(acct, Number(t.dataset.lift)); return; }
     if (acct && t.dataset.cycle !== undefined) { cycleSheet(acct); return; }
     if (!acct) return;
@@ -1072,6 +1139,96 @@ new MutationObserver(function(){
   if(window.__D&&v&&!v.querySelector('.signoff')&&!v.querySelector('.lock')){var d=document.createElement('div');d.className='signoff';d.setAttribute('role','img');d.setAttribute('aria-label','P² Collective');v.appendChild(d);}
 }).observe(document.body,{childList:true,subtree:true});
 })();</script>
+<style id="noir">
+/* NOIR LITE: same design, darker. Only colours change: fonts, shapes, pills, layout untouched. */
+:root:not(#_):not(#__){--bg:#121014;--surface:#1D1A20;--line:rgba(255,255,255,.09);--fg:#F1ECEF;--muted:#A39BA6;--accent-soft:rgba(224,90,156,.16)}
+html body{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%23ffffff' fill-opacity='.10'%3E%3Ccircle cx='12' cy='30' r='1.2'/%3E%3Ccircle cx='60' cy='12' r='.8'/%3E%3Ccircle cx='110' cy='70' r='1.4'/%3E%3Ccircle cx='170' cy='24' r='.9'/%3E%3Ccircle cx='200' cy='120' r='1.1'/%3E%3Ccircle cx='40' cy='150' r='.9'/%3E%3Ccircle cx='140' cy='180' r='1.3'/%3E%3Ccircle cx='90' cy='200' r='.7'/%3E%3C/g%3E%3C/svg%3E"),radial-gradient(70% 40% at 0% 0%,rgba(120,40,80,.18),transparent 70%),radial-gradient(60% 40% at 100% 85%,rgba(110,60,200,.10),transparent 70%),#121014!important;background-attachment:fixed!important;color:var(--fg)!important}
+
+/* cream boxes -> dark boxes (same shape, radius, spacing) */
+html body .hero,html body .card:not(.member),html body .grp,html body .sess,html body .lift,html body .timeline,html body .fold,html body .facts,html body .win,html body .note,html body div.list,html body .recap,html body .lock{
+  background:#1D1A20!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:0 14px 30px -20px rgba(0,0,0,.8)!important}
+html body div.list>.grp,html body div.list>.sess,html body div.list>.lift{background:transparent!important;border:0!important;border-top:1px solid rgba(255,255,255,.08)!important;box-shadow:none!important}
+html body div.list>*:first-child{border-top:0!important}
+
+/* text that was dark-on-cream -> light-on-dark */
+html body .hero .when,html body .hero .row,html body .big,html body h2.page,html body .tl-top strong,html body .win-t,html body .note p,html body .recap b,html body .paid-line,html body .lock h2,html body .sheet h3{color:var(--fg)!important;-webkit-text-fill-color:var(--fg)!important}
+html body .hero .sub,html body .muted,html body .s,html body small,html body .recap span,html body .fold summary,html body .label{color:var(--muted)}
+html body .win-t small,html body .note small,html body .note>p:first-child{-webkit-text-fill-color:#EE6FB0!important;color:#EE6FB0!important}
+html body .tile{background:rgba(224,90,156,.16)!important;color:#F08CC2!important}
+html body .chip.warn{background:rgba(255,255,255,.08)!important;color:#EDE3EA!important}
+html body svg.chev{color:var(--muted)!important}
+
+/* tab bar + sheets + PIN field */
+html body nav.tabs{background:rgba(22,20,25,.92)!important;border-top:1px solid rgba(255,255,255,.08)!important}
+html body .tab{color:var(--muted)!important}
+html body .tab[aria-current="page"]{color:var(--fg)!important;background:rgba(224,90,156,.18)!important}
+html body .sheet{background:#1D1A20!important;color:var(--fg)!important}
+html body .lock #pin-in{background:#141216!important;color:var(--fg)!important;border-color:rgba(255,255,255,.12)!important}
+html body .btn-line{background:transparent!important;color:var(--fg)!important;border-color:rgba(255,255,255,.14)!important}
+html body .btn-quiet{background:rgba(255,255,255,.08)!important;color:var(--fg)!important}
+
+/* keep accents from the current design */
+html body .lift-main,html body .sess-main{color:var(--fg)}
+html body .recap{background:linear-gradient(160deg,rgba(224,90,156,.16),rgba(224,90,156,.06))!important;border:1px solid rgba(224,90,156,.35)!important}
+html body .recap .st>div{background:rgba(255,255,255,.05)!important}
+html body .recap .st b{color:#F08CC2!important;-webkit-text-fill-color:#F08CC2!important}
+html body .grp.owing,html body .grp.owing *{color:#F0B86E!important}
+html body .grp.owing{background:rgba(240,184,110,.08)!important}
+</style>
+
+<style id="hist">
+.recap-more{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;min-height:44px;margin-top:2px;border:0;border-radius:14px;background:rgba(224,90,156,.14);color:#F08CC2;font:inherit;font-weight:700;font-size:.95rem;cursor:pointer}
+.recap-more .chev{width:18px;height:18px}
+.lastwk{background:#1D1A20;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:18px 18px 8px;box-shadow:0 14px 30px -20px rgba(0,0,0,.8)}
+.lastwk h3{margin:6px 0 2px;font-size:1.3rem;font-weight:700;color:var(--fg)}
+.lastwk>.muted{margin:0 0 10px;font-size:.95rem}
+.wk-prs{color:#F08CC2;font-weight:700}
+.wk-list{display:flex;flex-direction:column}
+.wk-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}
+.wk-main{display:flex;flex-direction:column;min-width:0}
+.wk-main strong{font-weight:600;color:var(--fg)}
+.wk-main span{color:var(--muted);font-size:.95rem}
+.wk-tag{flex:0 0 auto;font-size:.8rem;font-weight:700;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--muted);white-space:nowrap}
+.wk-tag.up{background:rgba(224,90,156,.14);color:#F08CC2}
+.wk-tag.pr{background:#E05A9C;color:#fff}
+.sheet .mo{margin:18px 0 6px}
+.sheet .mo-head{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
+.sheet .mo-head h4{margin:0;font-family:var(--display);font-weight:500;font-size:1.45rem;color:var(--fg)}
+.sheet .mo-head h4 small{font-family:var(--font);font-size:.8rem;color:var(--muted);font-weight:600}
+.sheet .mo-head span{color:var(--muted);font-size:.9rem}
+.sheet details.wk{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;margin:8px 0;padding:0 14px}
+.sheet details.wk summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:56px;cursor:pointer}
+.sheet details.wk summary::-webkit-details-marker{display:none}
+.sheet details.wk summary .chev{transition:transform .2s;color:var(--muted)}
+.sheet details.wk[open] summary .chev{transform:rotate(90deg)}
+.sheet .wk-d{display:flex;flex-direction:column}
+.sheet .wk-d b{color:var(--fg)}
+.sheet .wk-d span{color:var(--muted);font-size:.9rem}
+.sheet .wk-d i{font-style:normal;color:#F08CC2;font-weight:600}
+.sheet details.wk .wk-list{padding-bottom:6px}
+</style>
+
+<style id="hist2">
+details.lastwk{padding:0 18px!important}
+details.lastwk>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 0;cursor:pointer}
+details.lastwk>summary::-webkit-details-marker{display:none}
+.lw-head{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lw-date{font-size:1.25rem;font-weight:700;color:var(--fg)}
+.lw-head .muted{font-size:.95rem}
+.lw-more{display:flex;align-items:center;gap:2px;flex:0 0 auto;color:#F08CC2;font-weight:700;font-size:.9rem}
+.lw-more .chev{transition:transform .2s;color:#F08CC2}
+details.lastwk[open] .lw-more .chev{transform:rotate(90deg)}
+.lw-show,.lw-hide{display:none}
+details.lastwk .wk-list{padding-bottom:8px}
+.sheet details.mo{margin:10px 0!important;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.03);padding:0 14px}
+.sheet details.mo>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0;cursor:pointer}
+.sheet details.mo>summary::-webkit-details-marker{display:none}
+.sheet details.mo>summary .chev{transition:transform .2s;color:var(--muted);flex:0 0 auto}
+.sheet details.mo[open]>summary .chev{transform:rotate(90deg)}
+.sheet .mo-days{padding-bottom:8px}
+.sheet details.mo .mo-head{margin-bottom:0}
+.sheet .mo-days details.wk{background:rgba(255,255,255,.04)}
+</style>
 
 </body>
 </html>
