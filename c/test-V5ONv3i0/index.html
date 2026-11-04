@@ -790,9 +790,10 @@ div.list > :first-child{border-top:0}
   function lastWorkout(a){
     var w = workoutsOf(a)[0]; if (!w) return '';
     var unit = a.progress.unit || 'lb';
-    return '<section class="lastwk" aria-labelledby="h-lastwk"><p class="label" id="h-lastwk">Your last workout</p>' +
-      '<h3>' + full(w.d) + '</h3><p class="muted">' + plural(w.items.length, 'exercise') + (w.prs ? ' · <b class="wk-prs">' + plural(w.prs, 'new best') + '</b>' : '') + '</p>' +
-      wkRows(w, unit) + '</section>';
+    return '<details class="lastwk"><summary><span class="lw-head"><span class="label">Your last workout</span>' +
+      '<b class="lw-date">' + full(w.d) + '</b><span class="muted">' + plural(w.items.length, 'exercise') + (w.prs ? ' · <b class="wk-prs">' + plural(w.prs, 'new best') + '</b>' : '') + '</span></span>' +
+      '<span class="lw-more"><span class="lw-show">See exercises</span><span class="lw-hide">Hide</span>' + icons.chevR + '</span></summary>' +
+      wkRows(w, unit) + '</details>';
   }
   function histSheet(a){
     var ws = workoutsOf(a), unit = a.progress.unit || 'lb', months = [];
@@ -801,15 +802,15 @@ div.list > :first-child{border-top:0}
       if (!m || m.k !== k) months.push(m = { k: k, d: new Date(w.d.getFullYear(), w.d.getMonth(), 1), ws: [] });
       m.ws.push(w);
     });
-    var html = '<h3>Your training history</h3><p class="muted">Every workout logged with Paya, newest first. Tap a day to see your sets.</p>' +
+    var html = '<h3>Your training history</h3><p class="muted">Every workout logged with Paya. Tap a month to see its workouts, then a day to see your sets.</p><div class="mos">' +
       months.map(function(m){
         var m1 = new Date(m.d.getFullYear(), m.d.getMonth() + 1, 1), st = monthStats(a, m.d, m1), cur = m1 > TODAY;
         var line = [plural(st.sess || m.ws.length, 'session')].concat(st.bests ? [plural(st.bests, 'new best')] : []).concat(st.gain ? ['+' + fmtW(st.gain.g) + ' ' + unit + ' ' + esc(st.gain.name.toLowerCase())] : []).join(' · ');
-        return '<section class="mo"><div class="mo-head"><h4>' + monthOf(m.d) + (cur ? ' <small>so far</small>' : '') + '</h4><span>' + line + '</span></div>' +
+        return '<details class="mo"><summary><span class="mo-head"><h4>' + monthOf(m.d) + (cur ? ' <small>so far</small>' : '') + '</h4><span>' + line + '</span></span>' + icons.chevR + '</summary><div class="mo-days">' +
           m.ws.map(function(w){
             return '<details class="wk"><summary><span class="wk-d"><b>' + short(w.d) + '</b><span>' + plural(w.items.length, 'exercise') + (w.prs ? ' · <i>' + plural(w.prs, 'new best') + '</i>' : '') + '</span></span>' + icons.chevR + '</summary>' + wkRows(w, unit) + '</details>';
-          }).join('') + '</section>';
-      }).join('');
+          }).join('') + '</div></details>';
+      }).join('') + '</div>';
     openSheet(html, 'Your training history');
   }
   // ---- progress (Hevy) ----
@@ -1205,6 +1206,28 @@ html body .grp.owing{background:rgba(240,184,110,.08)!important}
 .sheet .wk-d span{color:var(--muted);font-size:.9rem}
 .sheet .wk-d i{font-style:normal;color:#F08CC2;font-weight:600}
 .sheet details.wk .wk-list{padding-bottom:6px}
+</style>
+
+<style id="hist2">
+details.lastwk{padding:0 18px!important}
+details.lastwk>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 0;cursor:pointer}
+details.lastwk>summary::-webkit-details-marker{display:none}
+.lw-head{display:flex;flex-direction:column;gap:4px;min-width:0}
+.lw-date{font-size:1.25rem;font-weight:700;color:var(--fg)}
+.lw-head .muted{font-size:.95rem}
+.lw-more{display:flex;align-items:center;gap:2px;flex:0 0 auto;color:#F08CC2;font-weight:700;font-size:.9rem}
+.lw-more .chev{transition:transform .2s;color:#F08CC2}
+details.lastwk[open] .lw-more .chev{transform:rotate(90deg)}
+.lw-show,.lw-hide{display:none}
+details.lastwk .wk-list{padding-bottom:8px}
+.sheet details.mo{margin:10px 0!important;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.03);padding:0 14px}
+.sheet details.mo>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0;cursor:pointer}
+.sheet details.mo>summary::-webkit-details-marker{display:none}
+.sheet details.mo>summary .chev{transition:transform .2s;color:var(--muted);flex:0 0 auto}
+.sheet details.mo[open]>summary .chev{transform:rotate(90deg)}
+.sheet .mo-days{padding-bottom:8px}
+.sheet details.mo .mo-head{margin-bottom:0}
+.sheet .mo-days details.wk{background:rgba(255,255,255,.04)}
 </style>
 
 </body>
