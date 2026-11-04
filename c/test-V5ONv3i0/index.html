@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="/training/app-icon.png">
 <link rel="icon" href="/training/app-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Figtree:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: one calm phone column, big type, three tabs pinned to the bottom. */
 :root{
@@ -1072,6 +1072,112 @@ new MutationObserver(function(){
   if(window.__D&&v&&!v.querySelector('.signoff')&&!v.querySelector('.lock')){var d=document.createElement('div');d.className='signoff';d.setAttribute('role','img');d.setAttribute('aria-label','P² Collective');v.appendChild(d);}
 }).observe(document.body,{childList:true,subtree:true});
 })();</script>
+<style id="noir">
+/* NOIR — dark editorial theme (preview) */
+:root:not(#_):not(#__){
+  --bg:#0E0D11;--surface:rgba(255,255,255,.035);--surface2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);--fg:#F3EFF2;--muted:#968F9C;
+  --accent:#E25AA6;--accent-strong:#EE7BBE;--accent-soft:rgba(226,90,166,.14);
+  --grad:linear-gradient(100deg,#E0479E 0%,#B048D8 55%,#8B45F0 100%);
+  --serif:"Fraunces",Georgia,serif;
+}
+html body{background:#0E0D11!important;color:var(--fg)!important}
+html body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(70% 40% at 0% 0%,rgba(120,40,80,.22),transparent 70%),
+             radial-gradient(60% 40% at 100% 85%,rgba(110,60,200,.14),transparent 70%)}
+html body .app{position:relative;z-index:1;background:transparent!important}
+html body .app *{border-color:var(--line)}
+
+/* header: tracked date, light serif greeting, gradient name */
+html body .top p,#today-line{color:var(--muted)!important;letter-spacing:.22em!important;font-size:.72rem!important;font-weight:600!important;text-transform:uppercase}
+html body .top h1{font-family:var(--serif)!important;font-weight:300!important;color:var(--fg)!important;-webkit-text-fill-color:var(--fg)!important;font-size:clamp(1.9rem,8.4vw,2.4rem)!important;letter-spacing:-.02em!important}
+html body .top h1 .nm{background:var(--grad)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important}
+html body .top .brand{box-shadow:0 0 0 1px rgba(255,255,255,.08),0 6px 20px rgba(224,71,158,.18)!important}
+
+/* labels & section titles: tracked small caps, no pills */
+html body .label,html body .hero .label,html body p.label.group-label,html body .view>h2.section,html body .recap h3,html body .fold summary{
+  background:none!important;box-shadow:none!important;border:0!important;padding:0!important;border-radius:0!important;
+  color:var(--muted)!important;-webkit-text-fill-color:var(--muted)!important;font-family:"Figtree",sans-serif!important;
+  font-size:.72rem!important;font-weight:600!important;letter-spacing:.24em!important;text-transform:uppercase}
+html body .view>h2.section,html body p.label.group-label{margin:28px 0 12px!important;display:block!important}
+html body h2.page{font-family:var(--serif)!important;font-weight:300!important;color:var(--fg)!important;font-size:2.2rem!important;letter-spacing:-.02em}
+
+/* surfaces: dark glass with hairline */
+html body .hero,html body section.card,html body .note,html body .win,html body .recap,html body details.fold,
+html body button.grp,html body button.lift,html body button.sess,html body .list>*{
+  background:var(--surface)!important;color:var(--fg)!important;border:1px solid var(--line)!important;
+  box-shadow:none!important;border-radius:20px!important;backdrop-filter:none!important}
+html body .list{gap:10px}
+
+/* hero: editorial date */
+html body .hero{padding:24px 22px!important;background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.02))!important}
+html body .hero .when{font-family:var(--serif)!important;font-weight:400!important;font-size:2rem!important;line-height:1.1!important;color:var(--fg)!important;-webkit-text-fill-color:var(--fg)!important;letter-spacing:-.02em}
+html body .hero .sub{color:var(--muted)!important;font-size:1.05rem!important}
+html body .btn-on-accent,html body .hero .btn-on-accent{background:var(--grad)!important;color:#fff!important;border-radius:999px!important;box-shadow:0 8px 24px rgba(176,72,216,.28)!important}
+html body .btn-line{background:transparent!important;color:var(--fg)!important;border:1px solid var(--line)!important;border-radius:999px!important}
+html body .btn-quiet{background:rgba(255,255,255,.07)!important;color:var(--fg)!important;border-radius:999px!important}
+
+/* balance card: big gradient serif number like the run card */
+html body section.card.member{background:linear-gradient(150deg,#1B1720 0%,#141218 60%,#191325 100%)!important;padding:24px 22px!important}
+html body section.card.member:before,html body section.card.member:after{opacity:.35}
+html body .big,html body .hero .num{font-family:var(--serif)!important;font-weight:300!important;font-size:4.2rem!important;line-height:1!important;letter-spacing:-.04em!important;
+  background:var(--grad)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important}
+html body .mfoot b{color:var(--fg)!important;letter-spacing:.3em!important}
+html body .mfoot span{color:var(--muted)!important;letter-spacing:.24em!important}
+html body .muted,html body p.muted{color:var(--muted)!important}
+html body .paid-line{color:var(--fg)!important}
+
+/* rows */
+html body .tl-top strong,html body .lift-main,html body .sess-main{color:var(--fg)!important}
+html body .s,html body small{color:var(--muted)!important}
+html body .amt.plus{color:#F07FC0!important}
+html body .dot.pay{background:var(--grad)!important;color:#fff!important}
+html body .chip.ok{background:rgba(226,90,166,.16)!important;color:#F59BCF!important}
+html body .chip.warn{background:rgba(255,255,255,.08)!important;color:#E7DCE5!important}
+html body .win .win-t,html body .win b{color:var(--fg)!important}
+html body .win small,html body .note>p:first-child{color:#EE7BBE!important;-webkit-text-fill-color:#EE7BBE!important;letter-spacing:.22em!important}
+html body .note p{color:var(--fg)!important}
+html body .note p:not(:first-child){font-family:var(--serif)!important;font-weight:300}
+html body svg.chev{color:var(--muted)!important}
+html body .best{color:#F59BCF!important}
+html body svg.spark polyline{stroke:url(#noirg)!important;stroke-width:2.2!important}
+html body .tile{background:rgba(255,255,255,.06)!important;color:var(--fg)!important}
+
+/* recap: stat grid with hairline dividers, like TIME / PACE / HR */
+html body .recap{padding:20px 0 0!important;overflow:hidden}
+html body .recap h3{padding:0 20px!important;margin:0 0 14px!important}
+html body .recap .st{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;border-top:1px solid var(--line);gap:0!important;background:none!important}
+html body .recap .st>div{background:none!important;border:0!important;border-right:1px solid var(--line)!important;border-radius:0!important;padding:16px 18px 18px!important;text-align:left!important}
+html body .recap .st>div:last-child{border-right:0!important}
+html body .recap .st b{font-family:var(--serif)!important;font-weight:400!important;font-size:2.1rem!important;color:var(--fg)!important;-webkit-text-fill-color:var(--fg)!important;display:block;line-height:1.05}
+html body .recap .st span{color:var(--muted)!important;font-size:.82rem!important}
+
+/* tab bar: dark glass */
+html body .tabs{background:rgba(16,15,20,.82)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;border-top:1px solid var(--line)!important}
+html body .tabs .inner{background:none!important;box-shadow:none!important;border:0!important}
+html body .tab{color:var(--muted)!important;background:none!important}
+html body .tab[aria-current=page]{color:var(--fg)!important;background:rgba(255,255,255,.07)!important;border-radius:16px}
+html body .tab[aria-current=page] svg{color:#EE7BBE!important}
+
+/* sheets */
+html body .sheet{background:#17151B!important;color:var(--fg)!important;border:1px solid var(--line)}
+html body .sheet h3{font-family:var(--serif)!important;font-weight:400!important;color:var(--fg)!important}
+
+/* lock screen */
+html body .lock{background:var(--surface)!important;border:1px solid var(--line)!important}
+html body .lock h2{font-family:var(--serif)!important;font-weight:300!important;font-size:1.9rem!important;color:var(--fg)!important}
+html body .lock #pin-in{background:rgba(255,255,255,.04)!important;color:var(--fg)!important;border-color:var(--line)!important}
+/* v2 fixes */
+html body div.list,html body .timeline,html body .facts,html body .empty-note{background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:none!important;color:var(--fg)!important}
+html body div.list>.grp,html body div.list>.sess,html body div.list>.lift{background:transparent!important;border:0!important;border-top:1px solid var(--line)!important;border-radius:0!important}
+html body div.list>*:first-child{border-top:0!important}
+html body .lift-main b,html body .lift-main strong,html body .lift-main span:first-child,html body .tl-top,html body .sess-main b{color:var(--fg)!important}
+html body section.card.member p.big{background:var(--grad)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important;font-size:4.2rem!important;display:inline-block}
+html body details.fold summary{padding:18px 20px!important}
+html body .tabs,html body nav.tabs{border:1px solid var(--line)!important;box-shadow:0 10px 30px rgba(0,0,0,.5)!important}
+html body .forget .small{color:var(--muted)!important}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="noirg" x1="0" x2="1"><stop offset="0" stop-color="#E0479E"/><stop offset="1" stop-color="#8B45F0"/></linearGradient></defs></svg>
 
 </body>
 </html>
