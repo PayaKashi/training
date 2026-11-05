@@ -909,7 +909,13 @@ div.list > :first-child{border-top:0}
   // ---- online coaching ----
   var WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   function coachOf(a){ return a.coach; }
+  function curTiming(c){ return c.timing ? c.timing[Math.min(c.week, c.timing.length) - 1] : null; }
+  function timedMins(c, day){ var t = curTiming(c); if (!t) return day.mins; return Math.round((t.rounds * day.exercises.length * (t.on + t.off) + (t.rounds - 1) * (t.restRound || 60)) / 60); }
   function nextWorkout(c){
+    if (c.days.every(function(x){ return x.weekday == null; })) {
+      var n = (c.done || []).length, day = c.days[n % c.days.length];
+      return { d: TODAY, day: day, i: c.doneSet[TODAY_KEY] ? 1 : 0, rot: true };
+    }
     // today's workout if today is a program day and not done yet, else the next program day
     for (var i = 0; i < 8; i++) {
       var d = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() + i);
@@ -918,12 +924,16 @@ div.list > :first-child{border-top:0}
     }
     return null;
   }
-  function exList(day){
-    return '<div class="wk-list">' + day.exercises.map(function(e){
-      return '<div class="wk-row ex"><div class="wk-main"><strong>' + esc(e.name) + '</strong><span>' + e.sets + ' × ' + esc(String(e.reps)) + (e.target ? ' · ' + esc(e.target) : '') + '</span>' +
+  function cueFor(c, e){ if (!e.cues) return ''; var w = c.week; var hit = e.cues.filter(function(q){ return w >= q.from && w <= q.to; })[0]; return hit ? hit.text : ''; }
+  function exList(day, c, all){
+    return '<div class="wk-list">' + day.exercises.map(function(e, i){
+      var sub = e.sets ? e.sets + ' × ' + esc(String(e.reps)) + (e.target ? ' · ' + esc(e.target) : '') : esc(cueFor(c, e));
+      var weeks = all && e.cues ? '<span class="cues">' + e.cues.map(function(q){ return '<span' + (c.week >= q.from && c.week <= q.to ? ' class="now"' : '') + '><b>Weeks ' + q.from + '–' + q.to + '</b> ' + esc(q.text) + '</span>'; }).join('') + '</span>' : '';
+      return '<div class="wk-row ex">' + (c && c.timing ? '<span class="exn">' + (i + 1) + '</span>' : '') + '<div class="wk-main"><strong>' + esc(e.name) + '</strong>' + (all && e.cues ? weeks : '<span>' + sub + '</span>') +
         (e.note ? '<em>' + esc(e.note) + '</em>' : '') + '</div></div>';
     }).join('') + '</div>';
   }
+  function timingLine(c){ var t = curTiming(c); return t ? t.on + 's on / ' + t.off + 's off · ' + plural(t.rounds, 'round') : ''; }
   function weekStrip(c){
     var mon = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() - ((TODAY.getDay() + 6) % 7));
     var cells = '', planned = 0, done = 0;
@@ -934,6 +944,7 @@ div.list > :first-child{border-top:0}
       var cls = isDone ? 'done' : day ? (k < TODAY_KEY ? 'open past' : 'open') : 'rest';
       cells += '<div class="wd ' + cls + (k === TODAY_KEY ? ' today' : '') + '"><span>' + WD[d.getDay()].charAt(0) + '</span><i>' + (isDone ? icons.check : day ? day.key : '') + '</i></div>';
     }
+    if (!planned) planned = c.perWeek || 3;
     return '<section class="weekcard"><div class="wc-top"><p class="label">This week</p><span class="wc-n"><b>' + done + '</b> of ' + planned + ' workouts</span></div><div class="weekstrip">' + cells + '</div></section>';
   }
   function checkinCard(c){
@@ -943,9 +954,9 @@ div.list > :first-child{border-top:0}
   }
   function viewHomeOnline(a){
     var c = coachOf(a), nx = nextWorkout(c);
-    var hero = nx ? '<section class="hero" aria-labelledby="h-next"><p class="label" id="h-next">' + (nx.i === 0 ? 'Today\'s workout' : 'Your next workout') + '</p>' +
-        '<div><p class="when">' + esc(nx.day.name) + '</p><p class="sub">' + (nx.i === 0 ? 'Today' : rel(nx.d) + ', ' + md(nx.d)) + ' · ' + plural(nx.day.exercises.length, 'exercise') + ' · about ' + nx.day.mins + ' min</p></div>' +
-        '<button class="btn btn-on-accent" type="button" data-wkday="' + nx.day.key + '">See the workout</button></section>'
+    var hero = nx ? '<section class="hero" aria-labelledby="h-next"><p class="label" id="h-next">' + (nx.rot ? 'Your next workout' : nx.i === 0 ? 'Today\'s workout' : 'Your next workout') + '</p>' +
+        '<div><p class="when">' + esc(nx.day.name) + '</p><p class="sub">' + (nx.rot ? '' : (nx.i === 0 ? 'Today' : rel(nx.d) + ', ' + md(nx.d)) + ' · ') + (c.timing ? timingLine(c) + ' · about ' + timedMins(c, nx.day) + ' min' : plural(nx.day.exercises.length, 'exercise') + ' · about ' + nx.day.mins + ' min') + '</p></div>' +
+        (c.timing ? '<button class="btn btn-on-accent" type="button" data-timer="' + nx.day.key + '">Start the timer</button><button class="btn btn-quiet" type="button" data-wkday="' + nx.day.key + '">See the exercises</button>' : '<button class="btn btn-on-accent" type="button" data-wkday="' + nx.day.key + '">See the workout</button>') + '</section>'
       : '';
     var plan = '<section class="card" aria-labelledby="h-plan"><p class="label" id="h-plan">Your program</p><p class="big">Month ' + c.month + '</p>' +
       '<p class="muted">' + esc(c.phase) + ' · Week ' + c.week + ' of ' + c.weeks + '</p>' +
@@ -957,16 +968,17 @@ div.list > :first-child{border-top:0}
     return '<h2 class="page">Your program</h2>' +
       '<section class="progmonth"><p class="label">Month ' + c.month + ' · Week ' + c.week + ' of ' + c.weeks + '</p><h3>' + esc(c.phase) + '</h3><p class="muted">' + esc(c.focus) + '</p>' +
       '<div class="pbar" aria-hidden="true">' + Array.apply(null, Array(c.weeks)).map(function(_, i){ return '<i class="' + (i < c.week ? 'on' : '') + '"></i>'; }).join('') + '</div></section>' +
+      (c.timing ? '<section class="timing"><p class="label">How it works</p><p class="muted">' + esc(c.how || '') + '</p><div class="tladder">' + c.timing.map(function(t, i){ return '<div class="' + (i + 1 === c.week ? 'now' : '') + '"><b>Week ' + (i + 1) + '</b><span>' + t.on + 's / ' + t.off + 's</span><span>' + plural(t.rounds, 'round') + '</span></div>'; }).join('') + '</div></section>' : '') +
       '<h2 class="section">Your workouts</h2>' +
       c.days.map(function(day){
-        return '<details class="pday"><summary><span class="pd-key">' + day.key + '</span><span class="pd-t"><b>' + esc(day.name) + '</b><span>' + WD[day.weekday] + ' · ' + plural(day.exercises.length, 'exercise') + ' · ~' + day.mins + ' min</span></span>' + icons.chevR + '</summary>' + exList(day) + '</details>';
+        return '<details class="pday"><summary><span class="pd-key">' + day.key + '</span><span class="pd-t"><b>' + esc(day.name) + '</b><span>' + (day.weekday != null ? WD[day.weekday] + ' · ' : '') + plural(day.exercises.length, 'exercise') + ' · ~' + (c.timing ? timedMins(c, day) : day.mins) + ' min</span></span>' + icons.chevR + '</summary>' + exList(day, c, true) + (c.timing ? '<button class="btn btn-on-accent pd-go" type="button" data-timer="' + day.key + '">Start the timer</button>' : '') + '</details>';
       }).join('') +
       (c.next ? '<section class="note nextmonth"><small>Coming next month</small><p>' + esc(c.next) + '</p></section>' : '');
   }
   function viewAccountOnline(a){
     var c = coachOf(a);
-    var head = '<section class="card" aria-labelledby="h-acc"><p class="label" id="h-acc">Online coaching</p><p class="big">' + money(c.price) + '<small class="per">/month</small></p>' +
-      '<p class="muted">Renews ' + full(parse(c.renews)) + '. Includes your monthly program, check-ins and messaging with Paya.</p></section>';
+    var head = '<section class="card" aria-labelledby="h-acc"><p class="label" id="h-acc">Online coaching</p>' + (c.price ? '<p class="big">' + money(c.price) + '<small class="per">/month</small></p>' : '<p class="big">Month ' + c.month + '</p>') +
+      '<p class="muted">' + (c.renews ? 'Renews ' + full(parse(c.renews)) + '. ' : (c.started ? 'Started ' + full(parse(c.started)) + '. ' : '')) + 'Includes your program, check-ins and messaging with Paya.</p></section>';
     var pays = (c.payments || []).slice().reverse();
     return '<h2 class="page">My account</h2>' + head + '<h2 class="section" style="margin-top:8px">Payments</h2>' +
       (pays.length ? '<div class="list">' + pays.map(function(p){
@@ -975,7 +987,7 @@ div.list > :first-child{border-top:0}
   }
   function daySheet(a, key){
     var c = coachOf(a), day = c.days.filter(function(x){ return x.key === key; })[0]; if (!day) return;
-    openSheet('<h3>' + esc(day.name) + '</h3><p class="muted">' + WD[day.weekday] + ' · ' + plural(day.exercises.length, 'exercise') + ' · about ' + day.mins + ' min. Log it in Hevy as you go and share it with Paya when you\'re done.</p>' + exList(day), day.name);
+    openSheet('<h3>' + esc(day.name) + '</h3><p class="muted">' + (c.timing ? 'Week ' + c.week + ': ' + timingLine(c) + ', 1 min rest between rounds. ' : (day.weekday != null ? WD[day.weekday] + ' · ' : '') + plural(day.exercises.length, 'exercise') + ' · about ' + day.mins + ' min. ') + 'Log it in Hevy and share it with Paya when you\'re done.</p>' + exList(day, c) + (c.timing ? '<button class="btn btn-on-accent" type="button" data-timer="' + day.key + '">Start the timer</button>' : ''), day.name);
   }
   var CK = {};
   function checkinSheet(a){
@@ -992,6 +1004,50 @@ div.list > :first-child{border-top:0}
     var w = (document.getElementById('ck-w') || {}).value || '', n = (document.getElementById('ck-n') || {}).value || '';
     var body = 'Check-in from ' + a.name + ' (Month ' + a.coach.month + ')\n' + (w ? 'Bodyweight: ' + w + '\n' : '') + (CK.energy ? 'Energy: ' + CK.energy + '\n' : '') + (CK.feel ? 'Program felt: ' + CK.feel + '\n' : '') + (n ? 'Notes: ' + n : '');
     location.href = 'sms:' + (a.coach.phone || '') + '&body=' + encodeURIComponent(body);
+  }
+
+  // ---- interval timer (timed programs) ----
+  var TM = null;
+  function beep(f, ms){ try { var A = window.__ac || (window.__ac = new (window.AudioContext || window.webkitAudioContext)()); var o = A.createOscillator(), g = A.createGain(); o.frequency.value = f; g.gain.value = .15; o.connect(g); g.connect(A.destination); o.start(); o.stop(A.currentTime + ms / 1000); } catch (e) {} try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} }
+  function timerSheet(a, key){
+    var c = a.coach, day = c.days.filter(function(x){ return x.key === key; })[0], t = curTiming(c); if (!day || !t) return;
+    if (TM && TM.h) clearInterval(TM.h);
+    var steps = [];
+    for (var r = 1; r <= t.rounds; r++) {
+      day.exercises.forEach(function(e, i){
+        steps.push({ kind: 'work', secs: t.on, name: e.name, cue: cueFor(c, e), r: r });
+        var last = i === day.exercises.length - 1;
+        if (!last) steps.push({ kind: 'rest', secs: t.off, name: 'Rest', next: day.exercises[i + 1].name, r: r });
+        else if (r < t.rounds) steps.push({ kind: 'rest', secs: t.restRound || 60, name: 'Rest before round ' + (r + 1), next: day.exercises[0].name, r: r });
+      });
+    }
+    TM = { steps: steps, i: 0, left: steps[0].secs, run: false, h: null, total: t.rounds, day: day };
+    openSheet('<div class="tmr" id="tmr"></div>', day.name + ' timer');
+    paintTimer();
+  }
+  function paintTimer(){
+    var el = document.getElementById('tmr'); if (!el || !TM) return;
+    if (TM.i >= TM.steps.length) { el.innerHTML = '<div class="tm-done"><div class="tm-big">Done</div><p>Nice work. Log it in Hevy and share it with Paya.</p></div>'; return; }
+    var s = TM.steps[TM.i], mm = Math.floor(TM.left / 60), ss = TM.left % 60, pct = 1 - TM.left / s.secs;
+    el.innerHTML = '<p class="label">' + esc(TM.day.name) + ' · Round ' + s.r + ' of ' + TM.total + '</p>' +
+      '<div class="tm-ring ' + s.kind + '" style="--p:' + pct.toFixed(3) + '"><div><span class="tm-k">' + (s.kind === 'work' ? 'Go' : 'Rest') + '</span><span class="tm-big">' + (mm ? mm + ':' + String(ss).padStart(2, '0') : ss) + '</span></div></div>' +
+      '<h3 class="tm-name">' + esc(s.name) + '</h3>' + (s.cue ? '<p class="muted tm-cue">' + esc(s.cue) + '</p>' : '') + (s.next ? '<p class="muted tm-cue">Next: <b>' + esc(s.next) + '</b></p>' : '') +
+      '<div class="tm-btns"><button class="btn btn-quiet" type="button" data-tmback>Back</button><button class="btn btn-on-accent" type="button" data-tmgo>' + (TM.run ? 'Pause' : (TM.i || TM.left < s.secs ? 'Resume' : 'Start')) + '</button><button class="btn btn-quiet" type="button" data-tmskip>Skip</button></div>';
+  }
+  function tick(){
+    if (!TM || !TM.run) return;
+    if (!document.getElementById('tmr')) { clearInterval(TM.h); TM = null; return; }
+    TM.left--;
+    if (TM.left <= 3 && TM.left > 0) beep(660, 90);
+    if (TM.left <= 0) { TM.i++; beep(TM.i < TM.steps.length && TM.steps[TM.i].kind === 'work' ? 1040 : 520, 350); if (TM.i >= TM.steps.length) { TM.run = false; clearInterval(TM.h); } else TM.left = TM.steps[TM.i].secs; }
+    paintTimer();
+  }
+  function timerCmd(cmd){
+    if (!TM || TM.i >= TM.steps.length) return;
+    if (cmd === 'go') { TM.run = !TM.run; clearInterval(TM.h); if (TM.run) { beep(880, 120); TM.h = setInterval(tick, 1000); try { navigator.wakeLock && navigator.wakeLock.request('screen').then(function(l){ TM.wl = l; }).catch(function(){}); } catch (e) {} } else if (TM.wl) { try { TM.wl.release(); } catch (e) {} } }
+    if (cmd === 'skip') { TM.i++; if (TM.i < TM.steps.length) TM.left = TM.steps[TM.i].secs; else { TM.run = false; clearInterval(TM.h); } }
+    if (cmd === 'back') { if (TM.left === TM.steps[TM.i].secs && TM.i > 0) TM.i--; TM.left = TM.steps[TM.i].secs; }
+    paintTimer();
   }
 
   // ---- state + routing ----
@@ -1036,6 +1092,10 @@ div.list > :first-child{border-top:0}
     if (t.id === 'forget') { try { localStorage.removeItem(DKEY); } catch (e) {} acct = null; window.__D = null; curTab = 'home'; load(); return; }
     if (acct && t.dataset.ics !== undefined) { addToCalendar(t.dataset.ics === 'all' ? acct.upcoming : [acct.upcoming[Number(t.dataset.ics)]]); return; }
     if (acct && t.hasAttribute('data-hist')) { histSheet(acct); return; }
+    if (acct && t.dataset.timer) { timerSheet(acct, t.dataset.timer); return; }
+    if (t.hasAttribute('data-tmgo')) { timerCmd('go'); return; }
+    if (t.hasAttribute('data-tmskip')) { timerCmd('skip'); return; }
+    if (t.hasAttribute('data-tmback')) { timerCmd('back'); return; }
     if (acct && t.dataset.wkday) { daySheet(acct, t.dataset.wkday); return; }
     if (acct && t.hasAttribute('data-checkin')) { checkinSheet(acct); return; }
     if (acct && t.hasAttribute('data-cksend')) { sendCheckin(acct); return; }
@@ -1364,6 +1424,34 @@ details.pday .wk-list{padding-bottom:10px}
 .sheet .ck-o{font:inherit;font-weight:600;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:transparent;color:var(--fg);cursor:pointer}
 .sheet .ck-o.on{background:#E05A9C;border-color:#E05A9C;color:#fff}
 .sheet [data-cksend]{width:100%;margin-top:16px}
+</style>
+
+<style id="timed">
+.hero .btn-quiet{margin-top:8px}
+.wk-row.ex{justify-content:flex-start;align-items:flex-start;gap:12px}
+.exn{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:rgba(224,90,156,.16);color:#F08CC2;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.cues{display:flex;flex-direction:column;gap:2px;margin-top:2px}
+.cues>span{color:var(--muted);font-size:.92rem}.cues b{font-weight:600;color:var(--muted);margin-right:4px}
+.cues>span.now{color:var(--fg)}.cues>span.now b{color:#F08CC2}
+.pd-go{width:100%;margin:4px 0 14px}
+.timing{background:#1D1A20;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:16px 18px 18px}
+.timing .label{margin:0 0 6px}.timing .muted{margin:0 0 12px;font-size:.95rem}
+.tladder{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tladder>div{border-radius:14px;background:rgba(255,255,255,.04);padding:10px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.tladder b{font-size:.8rem;color:var(--muted)}.tladder span{font-size:.85rem;color:var(--fg)}
+.tladder .now{background:rgba(224,90,156,.16);outline:1.5px solid rgba(224,90,156,.55)}.tladder .now b{color:#F08CC2}
+.sheet .btn[data-timer]{width:100%;margin-top:14px}
+.tmr{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 6px}
+.tmr .label{margin:0 0 14px}
+.tm-ring{--p:0;width:220px;height:220px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(#E05A9C calc(var(--p)*360deg),rgba(255,255,255,.07) 0)}
+.tm-ring.rest{background:conic-gradient(#8B7BA8 calc(var(--p)*360deg),rgba(255,255,255,.07) 0)}
+.tm-ring>div{width:188px;height:188px;border-radius:50%;background:#1D1A20;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tm-k{font-size:.8rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#F08CC2}.tm-ring.rest .tm-k{color:var(--muted)}
+.tm-big{font-family:var(--display);font-size:4rem;line-height:1;color:var(--fg)}
+.tm-name{margin:16px 0 4px;font-size:1.4rem;color:var(--fg)}
+.tm-cue{margin:2px 0}
+.tm-btns{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px;width:100%;margin-top:18px}
+.tm-done{padding:30px 0}.tm-done p{color:var(--muted)}
 </style>
 
 </body>
