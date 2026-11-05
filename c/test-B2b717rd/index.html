@@ -874,7 +874,7 @@ div.list > :first-child{border-top:0}
     var line = pts.map(function(q){ return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ');
     var area = 'M' + pts[0][0].toFixed(1) + ',' + (H - B) + ' L' + line.replace(/ /g, ' L') + ' L' + pts[pts.length - 1][0].toFixed(1) + ',' + (H - B) + ' Z';
     var gid = 'g' + Math.random().toString(36).slice(2, 8);
-    var out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(lift.name) + ' best set over time">' +
+    var out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(lift.name) + ' best set over time. Drag across the chart to see each session." data-xs="' + pts.map(function(q){ return q[0].toFixed(1); }).join(',') + '" data-ys="' + pts.map(function(q){ return q[1].toFixed(1); }).join(',') + '" data-top="' + T + '" data-bot="' + (H - B) + '">' +
       '<defs><linearGradient id="' + gid + 'f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".32"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient>' +
       '<filter id="' + gid + 'g" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="3.5"/></filter></defs>';
     ticks.forEach(function(t){ out += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(t) + '" y2="' + y(t) + '"/><text x="' + (L - 6) + '" y="' + (y(t) + 4) + '" text-anchor="end">' + t + '</text>'; });
@@ -891,8 +891,9 @@ div.list > :first-child{border-top:0}
     s.forEach(function(p, i){
       out += '<circle class="pt" data-pt="' + i + '" cx="' + pts[i][0].toFixed(1) + '" cy="' + pts[i][1].toFixed(1) + '" r="16" fill="transparent"><title>' + md(parse(p.date)) + ': ' + esc(setText(p, unit, lift)) + '</title></circle>';
     });
+    out += '<line class="scrub-line" x1="0" x2="0" y1="' + T + '" y2="' + (H - B) + '"/><circle class="scrub-dot" cx="0" cy="0" r="7"/>';
     out += '<text x="' + L + '" y="' + (H - 6) + '">' + md(parse(s[0].date)) + '</text><text x="' + (W - R) + '" y="' + (H - 6) + '" text-anchor="end">' + md(parse(s[s.length - 1].date)) + '</text></svg>';
-    return '<p class="readout" id="readout"><b>' + esc(setText(s[s.length - 1], unit, lift)) + '</b><span>' + short(parse(s[s.length - 1].date)) + ' · tap a point</span></p>' + out;
+    return '<p class="readout" id="readout"><b>' + esc(setText(s[s.length - 1], unit, lift)) + '</b><span>' + short(parse(s[s.length - 1].date)) + ' · slide your finger across</span></p>' + out;
   }
   function liftSheet(a, i){
     var p = a.progress, l = p.lifts[i], best = null; curLift = l;
@@ -1497,6 +1498,33 @@ details.pday .wk-list{padding-bottom:10px}
   }
   new MutationObserver(function(){ stagger(); countUp(); }).observe(document.getElementById('view'), { childList: true });
 })();</script>
+<script>(function(){
+  // Drag (or hover) across a lift chart to read every session
+  var active = null, lastI = -1;
+  function pick(svg, clientX){
+    var xs = (svg.getAttribute('data-xs') || '').split(',').map(Number), ys = (svg.getAttribute('data-ys') || '').split(',').map(Number);
+    if (!xs.length) return;
+    var r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, x = (clientX - r.left) / r.width * vb.width;
+    var i = 0; for (var k = 1; k < xs.length; k++) if (Math.abs(xs[k] - x) < Math.abs(xs[i] - x)) i = k;
+    var line = svg.querySelector('.scrub-line'), dot = svg.querySelector('.scrub-dot');
+    line.setAttribute('x1', xs[i]); line.setAttribute('x2', xs[i]); dot.setAttribute('cx', xs[i]); dot.setAttribute('cy', ys[i]);
+    svg.classList.add('scrubbing');
+    if (i !== lastI) { lastI = i; var pt = svg.querySelector('[data-pt="' + i + '"]'); if (pt) pt.dispatchEvent(new MouseEvent('click', { bubbles: true })); try { navigator.vibrate && navigator.vibrate(4); } catch (e) {} }
+  }
+  document.addEventListener('pointerdown', function(e){ var svg = e.target.closest && e.target.closest('svg.chart'); if (!svg) return; active = svg; lastI = -1; pick(svg, e.clientX); });
+  document.addEventListener('pointermove', function(e){
+    if (active) { pick(active, e.clientX); return; }
+    if (e.pointerType === 'mouse') { var svg = e.target.closest && e.target.closest('svg.chart'); if (svg) pick(svg, e.clientX); }
+  });
+  ['pointerup', 'pointercancel'].forEach(function(t){ document.addEventListener(t, function(){ active = null; }); });
+})();</script>
+<style id="scrub">
+svg.chart{touch-action:pan-y;cursor:crosshair;-webkit-user-select:none;user-select:none}
+svg.chart .scrub-line{stroke:rgba(255,255,255,.35);stroke-width:1.5;stroke-dasharray:3 4;opacity:0;transition:opacity .2s}
+svg.chart .scrub-dot{fill:#E05A9C;stroke:#fff;stroke-width:2.5;opacity:0;transition:opacity .2s;filter:drop-shadow(0 0 6px rgba(224,90,156,.8))}
+svg.chart.scrubbing .scrub-line,svg.chart.scrubbing .scrub-dot{opacity:1}
+#readout b{transition:color .15s}
+</style>
 
 </body>
 </html>
