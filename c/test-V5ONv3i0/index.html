@@ -444,6 +444,7 @@ div.list > :first-child{border-top:0}
     }
     a.groups = groups;
     a.note = data.note || null;
+    if (data.coach) { a.coach = data.coach; a.coach.doneSet = {}; (a.coach.done || []).forEach(function(k){ a.coach.doneSet[k] = 1; }); }
     a.sessionDates = a.plan === 'prepaid'
       ? (data.ledger || []).filter(function(r){ return r.type === 'session'; }).map(function(r){ return r.date; })
       : (data.sessions || []).map(function(s){ return s.date; });
@@ -905,6 +906,94 @@ div.list > :first-child{border-top:0}
       }).join('') + '</div>', l.name);
   }
 
+  // ---- online coaching ----
+  var WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function coachOf(a){ return a.coach; }
+  function nextWorkout(c){
+    // today's workout if today is a program day and not done yet, else the next program day
+    for (var i = 0; i < 8; i++) {
+      var d = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() + i);
+      var day = c.days.filter(function(x){ return x.weekday === d.getDay(); })[0];
+      if (day && !(i === 0 && c.doneSet[TODAY_KEY])) return { d: d, day: day, i: i };
+    }
+    return null;
+  }
+  function exList(day){
+    return '<div class="wk-list">' + day.exercises.map(function(e){
+      return '<div class="wk-row ex"><div class="wk-main"><strong>' + esc(e.name) + '</strong><span>' + e.sets + ' × ' + esc(String(e.reps)) + (e.target ? ' · ' + esc(e.target) : '') + '</span>' +
+        (e.note ? '<em>' + esc(e.note) + '</em>' : '') + '</div></div>';
+    }).join('') + '</div>';
+  }
+  function weekStrip(c){
+    var mon = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() - ((TODAY.getDay() + 6) % 7));
+    var cells = '', planned = 0, done = 0;
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i), k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      var day = c.days.filter(function(x){ return x.weekday === d.getDay(); })[0], isDone = !!c.doneSet[k];
+      if (day) planned++; if (isDone) done++;
+      var cls = isDone ? 'done' : day ? (k < TODAY_KEY ? 'open past' : 'open') : 'rest';
+      cells += '<div class="wd ' + cls + (k === TODAY_KEY ? ' today' : '') + '"><span>' + WD[d.getDay()].charAt(0) + '</span><i>' + (isDone ? icons.check : day ? day.key : '') + '</i></div>';
+    }
+    return '<section class="weekcard"><div class="wc-top"><p class="label">This week</p><span class="wc-n"><b>' + done + '</b> of ' + planned + ' workouts</span></div><div class="weekstrip">' + cells + '</div></section>';
+  }
+  function checkinCard(c){
+    var due = parse(c.checkinDue), n = dayDiff(due);
+    if (n > 7) return '';
+    return '<button class="win checkin" type="button" data-checkin><span class="win-ic" aria-hidden="true">📝</span><span class="win-t"><small>Monthly check-in · ' + (n <= 0 ? 'due today' : 'due ' + short(due)) + '</small><b>Tell Paya how this month went</b></span>' + icons.chevR + '</button>';
+  }
+  function viewHomeOnline(a){
+    var c = coachOf(a), nx = nextWorkout(c);
+    var hero = nx ? '<section class="hero" aria-labelledby="h-next"><p class="label" id="h-next">' + (nx.i === 0 ? 'Today\'s workout' : 'Your next workout') + '</p>' +
+        '<div><p class="when">' + esc(nx.day.name) + '</p><p class="sub">' + (nx.i === 0 ? 'Today' : rel(nx.d) + ', ' + md(nx.d)) + ' · ' + plural(nx.day.exercises.length, 'exercise') + ' · about ' + nx.day.mins + ' min</p></div>' +
+        '<button class="btn btn-on-accent" type="button" data-wkday="' + nx.day.key + '">See the workout</button></section>'
+      : '';
+    var plan = '<section class="card" aria-labelledby="h-plan"><p class="label" id="h-plan">Your program</p><p class="big">Month ' + c.month + '</p>' +
+      '<p class="muted">' + esc(c.phase) + ' · Week ' + c.week + ' of ' + c.weeks + '</p>' +
+      '<button class="btn btn-quiet" type="button" data-go="upcoming">See this month\'s plan</button></section>';
+    return hero + weekStrip(c) + checkinCard(c) + winLine(a) + noteCard(a) + plan;
+  }
+  function viewProgram(a){
+    var c = coachOf(a);
+    return '<h2 class="page">Your program</h2>' +
+      '<section class="progmonth"><p class="label">Month ' + c.month + ' · Week ' + c.week + ' of ' + c.weeks + '</p><h3>' + esc(c.phase) + '</h3><p class="muted">' + esc(c.focus) + '</p>' +
+      '<div class="pbar" aria-hidden="true">' + Array.apply(null, Array(c.weeks)).map(function(_, i){ return '<i class="' + (i < c.week ? 'on' : '') + '"></i>'; }).join('') + '</div></section>' +
+      '<h2 class="section">Your workouts</h2>' +
+      c.days.map(function(day){
+        return '<details class="pday"><summary><span class="pd-key">' + day.key + '</span><span class="pd-t"><b>' + esc(day.name) + '</b><span>' + WD[day.weekday] + ' · ' + plural(day.exercises.length, 'exercise') + ' · ~' + day.mins + ' min</span></span>' + icons.chevR + '</summary>' + exList(day) + '</details>';
+      }).join('') +
+      (c.next ? '<section class="note nextmonth"><small>Coming next month</small><p>' + esc(c.next) + '</p></section>' : '');
+  }
+  function viewAccountOnline(a){
+    var c = coachOf(a);
+    var head = '<section class="card" aria-labelledby="h-acc"><p class="label" id="h-acc">Online coaching</p><p class="big">' + money(c.price) + '<small class="per">/month</small></p>' +
+      '<p class="muted">Renews ' + full(parse(c.renews)) + '. Includes your monthly program, check-ins and messaging with Paya.</p></section>';
+    var pays = (c.payments || []).slice().reverse();
+    return '<h2 class="page">My account</h2>' + head + '<h2 class="section" style="margin-top:8px">Payments</h2>' +
+      (pays.length ? '<div class="list">' + pays.map(function(p){
+        return '<div class="grp"><div class="dot pay">' + icons.check + '</div><div class="tl-main"><div class="tl-top"><strong>' + esc(p.what) + '</strong><span class="amt plus">' + money(p.amount) + '</span></div><span class="s">' + short(parse(p.date)) + ' · ' + esc(p.method) + '</span></div></div>';
+      }).join('') + '</div>' : '<p class="empty-note">Your payments will show here.</p>');
+  }
+  function daySheet(a, key){
+    var c = coachOf(a), day = c.days.filter(function(x){ return x.key === key; })[0]; if (!day) return;
+    openSheet('<h3>' + esc(day.name) + '</h3><p class="muted">' + WD[day.weekday] + ' · ' + plural(day.exercises.length, 'exercise') + ' · about ' + day.mins + ' min. Log it in Hevy as you go and share it with Paya when you\'re done.</p>' + exList(day), day.name);
+  }
+  var CK = {};
+  function checkinSheet(a){
+    CK = { energy: '', feel: '' };
+    var pick = function(name, opts){ return '<div class="ck-opts" data-ck="' + name + '">' + opts.map(function(o){ return '<button type="button" class="ck-o" data-ckv="' + esc(o) + '">' + esc(o) + '</button>'; }).join('') + '</div>'; };
+    openSheet('<h3>Monthly check-in</h3><p class="muted">Takes a minute. When you tap send, it opens a text to Paya with your answers.</p>' +
+      '<label class="ck-l">Bodyweight <span>(optional)</span><input id="ck-w" inputmode="decimal" placeholder="e.g. 168 lb"></label>' +
+      '<p class="ck-l">Energy this month</p>' + pick('energy', ['Low', 'Okay', 'Good', 'Great']) +
+      '<p class="ck-l">The program felt</p>' + pick('feel', ['Too easy', 'Just right', 'Too hard']) +
+      '<label class="ck-l">Wins, aches, or anything to change<textarea id="ck-n" rows="3" placeholder="e.g. knee felt better, want more upper body"></textarea></label>' +
+      '<button class="btn btn-on-accent" type="button" data-cksend>Send to Paya</button>', 'Monthly check-in');
+  }
+  function sendCheckin(a){
+    var w = (document.getElementById('ck-w') || {}).value || '', n = (document.getElementById('ck-n') || {}).value || '';
+    var body = 'Check-in from ' + a.name + ' (Month ' + a.coach.month + ')\n' + (w ? 'Bodyweight: ' + w + '\n' : '') + (CK.energy ? 'Energy: ' + CK.energy + '\n' : '') + (CK.feel ? 'Program felt: ' + CK.feel + '\n' : '') + (n ? 'Notes: ' + n : '');
+    location.href = 'sms:' + (a.coach.phone || '') + '&body=' + encodeURIComponent(body);
+  }
+
   // ---- state + routing ----
   var acct = null, recentOpen = false, curLift = null;
   document.addEventListener('toggle', function(e){ if (e.target.classList && e.target.classList.contains('fold')) recentOpen = e.target.open; }, true);
@@ -947,6 +1036,10 @@ div.list > :first-child{border-top:0}
     if (t.id === 'forget') { try { localStorage.removeItem(DKEY); } catch (e) {} acct = null; window.__D = null; curTab = 'home'; load(); return; }
     if (acct && t.dataset.ics !== undefined) { addToCalendar(t.dataset.ics === 'all' ? acct.upcoming : [acct.upcoming[Number(t.dataset.ics)]]); return; }
     if (acct && t.hasAttribute('data-hist')) { histSheet(acct); return; }
+    if (acct && t.dataset.wkday) { daySheet(acct, t.dataset.wkday); return; }
+    if (acct && t.hasAttribute('data-checkin')) { checkinSheet(acct); return; }
+    if (acct && t.hasAttribute('data-cksend')) { sendCheckin(acct); return; }
+    if (t.dataset.ckv !== undefined) { var g = t.parentNode; g.querySelectorAll('.ck-o').forEach(function(b){ b.classList.toggle('on', b === t); }); CK[g.dataset.ck] = t.dataset.ckv; return; }
     if (acct && t.dataset.lift !== undefined) { liftSheet(acct, Number(t.dataset.lift)); return; }
     if (acct && t.dataset.cycle !== undefined) { cycleSheet(acct); return; }
     if (!acct) return;
@@ -1035,6 +1128,11 @@ div.list > :first-child{border-top:0}
     getData()
       .then(function(d){
         window.__D = d; greet(d.greeting || d.name); acct = build(d);
+        if (acct.coach) {
+          views.home = viewHomeOnline; views.upcoming = viewProgram; views.account = viewAccountOnline;
+          var ub = document.querySelector('.tab[data-tab="upcoming"]');
+          if (ub) ub.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>Program';
+        }
         var hasP = !!acct.progress;
         document.getElementById('tab-progress').hidden = !hasP;
         document.querySelector('nav.tabs .inner').classList.toggle('four', hasP);
@@ -1228,6 +1326,44 @@ details.lastwk .wk-list{padding-bottom:8px}
 .sheet .mo-days{padding-bottom:8px}
 .sheet details.mo .mo-head{margin-bottom:0}
 .sheet .mo-days details.wk{background:rgba(255,255,255,.04)}
+</style>
+
+<style id="online">
+.weekcard{background:#1D1A20;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:16px 18px 18px;box-shadow:0 14px 30px -20px rgba(0,0,0,.8)}
+.wc-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.wc-top .label{margin:0}
+.wc-n{color:var(--muted);font-size:.95rem}.wc-n b{color:#F08CC2;font-size:1.1rem}
+.weekstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:6px}
+.wd span{font-size:.75rem;color:var(--muted);font-weight:600}
+.wd i{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:700;font-size:.9rem;background:rgba(255,255,255,.04);color:transparent}
+.wd.open i{border:1.5px solid rgba(224,90,156,.6);color:#F08CC2;background:transparent}
+.wd.open.past i{border-color:rgba(255,255,255,.18);color:var(--muted)}
+.wd.done i{background:#E05A9C;color:#fff}
+.wd.done i svg{width:18px;height:18px}
+.wd.today span{color:#F08CC2}
+.wk-row.ex .wk-main em{font-style:normal;font-size:.88rem;color:#F08CC2;margin-top:2px}
+.progmonth{background:linear-gradient(160deg,rgba(224,90,156,.16),rgba(224,90,156,.06));border:1px solid rgba(224,90,156,.35);border-radius:24px;padding:18px}
+.progmonth .label{margin:0 0 6px}
+.progmonth h3{margin:0 0 4px;font-family:var(--display);font-weight:500;font-size:1.6rem;color:var(--fg)}
+.progmonth .muted{margin:0 0 14px}
+.pbar{display:grid;grid-auto-flow:column;gap:6px}.pbar i{height:6px;border-radius:99px;background:rgba(255,255,255,.1)}.pbar i.on{background:#E05A9C}
+details.pday{background:#1D1A20;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:0 16px;margin-bottom:10px}
+details.pday>summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:68px;cursor:pointer}
+details.pday>summary::-webkit-details-marker{display:none}
+details.pday>summary .chev{margin-left:auto;transition:transform .2s;color:var(--muted)}
+details.pday[open]>summary .chev{transform:rotate(90deg)}
+.pd-key{width:38px;height:38px;border-radius:12px;background:rgba(224,90,156,.16);color:#F08CC2;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.pd-t{display:flex;flex-direction:column}.pd-t b{color:var(--fg)}.pd-t span{color:var(--muted);font-size:.9rem}
+details.pday .wk-list{padding-bottom:10px}
+.per{font-size:1.1rem;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-left:4px;letter-spacing:0}
+.sheet .ck-l{display:flex;flex-direction:column;gap:8px;margin:14px 0 6px;font-weight:600;color:var(--fg)}
+.sheet .ck-l span{color:var(--muted);font-weight:500}
+.sheet .ck-l input,.sheet .ck-l textarea{font:inherit;font-weight:500;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:#141216;color:var(--fg)}
+.sheet .ck-opts{display:flex;flex-wrap:wrap;gap:8px}
+.sheet .ck-o{font:inherit;font-weight:600;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:transparent;color:var(--fg);cursor:pointer}
+.sheet .ck-o.on{background:#E05A9C;border-color:#E05A9C;color:#fff}
+.sheet [data-cksend]{width:100%;margin-top:16px}
 </style>
 
 </body>
