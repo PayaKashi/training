@@ -1453,6 +1453,50 @@ details.pday .wk-list{padding-bottom:10px}
 .tm-btns{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px;width:100%;margin-top:18px}
 .tm-done{padding:30px 0}.tm-done p{color:var(--muted)}
 </style>
+<style id="motion">
+/* Premium polish: soft gradients + subtle motion (switched off for people who turn on Reduce Motion) */
+.btn-on-accent,.hero .btn-on-accent{background:linear-gradient(135deg,#EC74B0 0%,#E05A9C 45%,#C4418A 100%)!important;box-shadow:0 10px 24px -12px rgba(224,90,156,.75),inset 0 1px 0 rgba(255,255,255,.22)!important}
+.hero,details.lastwk,.weekcard,.timing,details.pday{background:linear-gradient(180deg,#221E25 0%,#1C191F 100%)!important}
+.recap,.progmonth{box-shadow:0 18px 40px -26px rgba(224,90,156,.55)!important}
+.wk-tag.pr{background:linear-gradient(110deg,#E05A9C 0%,#E05A9C 40%,#F7A6CF 50%,#E05A9C 60%,#E05A9C 100%)!important;background-size:250% 100%!important}
+@media (prefers-reduced-motion: no-preference){
+  #view>*{animation:p2rise .55s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(var(--i,0) * 70ms)}
+  @keyframes p2rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .top{animation:p2fade .6s ease both}
+  @keyframes p2fade{from{opacity:0}to{opacity:1}}
+  button,.lift,.grp,details>summary{transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .16s}
+  button:active,.lift:active,.grp:active,details>summary:active{transform:scale(.975);filter:brightness(1.08)}
+  .scrim{animation:p2fade .25s ease both}
+  .sheet{animation:p2sheet .42s cubic-bezier(.16,1,.3,1) both!important}
+  @keyframes p2sheet{from{transform:translateY(60%);opacity:.4}to{transform:none;opacity:1}}
+  details[open]>:not(summary){animation:p2rise .35s cubic-bezier(.2,.75,.2,1) both}
+  svg.spark polyline{stroke-dasharray:240;stroke-dashoffset:240;animation:p2draw 1.1s .35s cubic-bezier(.3,.7,.2,1) forwards}
+  @keyframes p2draw{to{stroke-dashoffset:0}}
+  .tab[aria-current="page"] svg{animation:p2pop .35s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes p2pop{0%{transform:scale(.8)}100%{transform:scale(1)}}
+  .wk-tag.pr{animation:p2shine 2.4s 1s ease-in-out 2}
+  @keyframes p2shine{from{background-position:100% 0}to{background-position:-50% 0}}
+  .wd.done i{animation:p2pop .4s cubic-bezier(.3,1.6,.5,1) both}
+  .tm-ring{transition:background .9s linear}
+}
+</style>
+<script>(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var counted = {};
+  function stagger(){ var v = document.getElementById('view'); if (!v) return; Array.prototype.forEach.call(v.children, function(el, i){ if (!el.style.getPropertyValue('--i')) el.style.setProperty('--i', Math.min(i, 8)); }); }
+  function countUp(){
+    if (reduce) return;
+    document.querySelectorAll('#view .big').forEach(function(el){
+      var t = el.firstChild; if (!t || t.nodeType !== 3) return;
+      var m = /^\$([\d,]+(?:\.\d+)?)$/.exec(t.nodeValue.trim()); if (!m) return;
+      var key = location.pathname + '|' + t.nodeValue; if (counted[key]) return; counted[key] = 1;
+      var end = parseFloat(m[1].replace(/,/g, '')), t0 = performance.now(), dur = 900;
+      (function step(now){ var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        t.nodeValue = '$' + Math.round(end * e).toLocaleString('en-US'); if (p < 1) requestAnimationFrame(step); else t.nodeValue = '$' + m[1]; })(t0);
+    });
+  }
+  new MutationObserver(function(){ stagger(); countUp(); }).observe(document.getElementById('view'), { childList: true });
+})();</script>
 
 </body>
 </html>
