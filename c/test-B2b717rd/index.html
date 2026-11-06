@@ -572,6 +572,13 @@ div.list > :first-child{border-top:0}
     return '<p class="cover-line">Covers your sessions until ' + short(covered[covered.length - 1].d) + '.</p>';
   }
 
+  var FOLD = {};
+  function foldGroup(id, title, count, inner, open){
+    var o = FOLD[id] === undefined ? open : FOLD[id];
+    return '<details class="gfold" data-fold="' + esc(id) + '"' + (o ? ' open' : '') + '><summary><span class="label group-label">' + esc(title) + '</span>' +
+      '<span class="gf-r"><span class="gf-n">' + count + '</span>' + icons.chevR + '</span></summary><div class="list">' + inner + '</div></details>';
+  }
+  document.addEventListener('toggle', function(e){ var d = e.target; if (d.dataset && d.dataset.fold) FOLD[d.dataset.fold] = d.open; }, true);
   function viewUpcoming(a){
     if (!a.upcoming.length) return '<h2 class="page">Upcoming sessions</h2><p class="empty-note">You have no sessions booked.</p>';
     var monday = new Date(TODAY); monday.setDate(TODAY.getDate() - ((TODAY.getDay() + 6) % 7));
@@ -585,7 +592,7 @@ div.list > :first-child{border-top:0}
     });
     return '<h2 class="page">Upcoming sessions</h2>' +
       (CAN_ICS ? '<button class="btn btn-line" type="button" data-ics="all">' + icons.cal + 'Add all to my calendar</button>' : '') +
-      groups.map(function(g){ return '<p class="label group-label">' + g.name + '</p><div class="list">' + g.items.join('') + '</div>'; }).join('');
+      groups.map(function(g){ return foldGroup('up:' + g.name, g.name, plural(g.items.length, 'session'), g.items.join(''), /^Later/.test(g.name) ? false : true); }).join('');
   }
 
   function viewAccount(a){
@@ -860,11 +867,11 @@ div.list > :first-child{border-top:0}
       ['Lower body', 'Upper body', 'Other'].map(function(g){
         var items = p.lifts.map(function(l, i){ return { l: l, i: i }; }).filter(function(x){ return liftGroup(x.l) === g; });
         if (!items.length) return '';
-        return '<p class="label group-label">' + g + '</p><div class="list">' + items.map(function(x){
+        return foldGroup('lift:' + g, g, plural(items.length, 'lift'), items.map(function(x){
           var l = x.l;
           return '<button class="lift" type="button" data-lift="' + x.i + '"><div class="lift-main"><strong>' + esc(l.name) + '</strong>' +
             '<span class="best">' + setText(l.best, p.unit, l) + '</span><span class="s">' + liftSub(l, p.unit) + '</span></div>' + sparkline(l) + icons.chevR + '</button>';
-        }).join('') + '</div>';
+        }).join(''), false);
       }).join('');
   }
   function liftChart(lift, unit){
@@ -1524,6 +1531,16 @@ details.pday .wk-list{padding-bottom:10px}
   ['pointerup', 'pointercancel'].forEach(function(t){ document.addEventListener(t, function(){ active = null; }); });
 })();</script>
 <style id="compact">
+html,body{overflow-x:hidden}
+.app{overflow-x:clip}
+details.gfold{display:flex;flex-direction:column}
+details.gfold>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:2px 2px 0;-webkit-tap-highlight-color:transparent}
+details.gfold>summary::-webkit-details-marker{display:none}
+details.gfold>summary .group-label{margin:0!important}
+details.gfold .gf-r{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.9rem}
+details.gfold .gf-r svg{width:18px;height:18px;transition:transform .35s cubic-bezier(.32,.72,0,1)}
+details.gfold[open] .gf-r svg{transform:rotate(90deg)}
+details.gfold>.list{margin-top:10px}
 html{font-size:14.5px}
 html.large{font-size:17.5px}
 .view{gap:16px}
