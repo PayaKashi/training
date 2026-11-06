@@ -630,6 +630,11 @@ div.list > :first-child{border-top:0}
         '<div class="fact"><span>' + (covered ? 'Credit after' : 'Still to pay') + '</span><b>' + (covered ? money(s.after) : money(s.short)) + '</b></div>';
       extra = covered ? '<p class="muted">This session is paid for from your credit.</p>' : '<div class="notice"><p>Your credit won\'t fully cover this one yet.</p></div>';
     }
+    else if (s.price) {
+      var run = (a.owed || 0) - (a.credit || 0);
+      for (var q = 0; q <= i; q++) run += a.upcoming[q].price || 0;
+      facts += '<div class="fact"><span>Owing after this session</span><b>' + money(Math.max(0, run)) + '</b></div>';
+    }
     openSheet('<h3>' + full(s.d) + '</h3><div class="facts">' + facts + '</div>' + extra +
       (CAN_ICS ? '<button class="btn btn-line" type="button" data-ics="' + i + '">' + icons.cal + 'Add to my calendar</button>' : ''), 'Session on ' + full(s.d));
   }
@@ -1518,6 +1523,67 @@ details.pday .wk-list{padding-bottom:10px}
   });
   ['pointerup', 'pointercancel'].forEach(function(t){ document.addEventListener(t, function(){ active = null; }); });
 })();</script>
+<style id="compact">
+html{font-size:14.5px}
+html.large{font-size:17.5px}
+.view{gap:16px}
+.hero{padding:18px!important;gap:11px}
+.card{padding:16px;gap:8px}
+.btn{min-height:46px}
+.sheet{gap:13px}
+.fact{padding:11px 14px}
+html body .grp,html body .sess,html body .lift{padding-top:12px!important;padding-bottom:12px!important}
+#view.sw-l{animation:swl .26s cubic-bezier(.2,.8,.2,1)}
+#view.sw-r{animation:swr .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes swl{from{transform:translateX(42px);opacity:.25}to{transform:none;opacity:1}}
+@keyframes swr{from{transform:translateX(-42px);opacity:.25}to{transform:none;opacity:1}}
+.sheet.drag{transition:none!important;animation:none!important}
+.sheet.snap{transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+</style>
+<script>(function(){
+  // Swipe left/right anywhere on the page to move between tabs
+  var sx=0, sy=0, st=0, ok=false;
+  document.addEventListener('touchstart', function(e){
+    var t=e.target;
+    ok = e.touches.length===1 && !document.documentElement.classList.contains('sheet-open') &&
+      !(t.closest && t.closest('svg[data-xs], .lock, input, .tabs'));
+    if(!ok) return; sx=e.touches[0].clientX; sy=e.touches[0].clientY; st=Date.now();
+  }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if(!ok) return; ok=false;
+    var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.6 || Date.now()-st>700) return;
+    var tabs=[].slice.call(document.querySelectorAll('.tabs .tab')).filter(function(b){return !b.hidden;});
+    var i=tabs.findIndex(function(b){return b.getAttribute('aria-current')==='page';});
+    var j=i+(dx<0?1:-1); if(i<0||j<0||j>=tabs.length) return;
+    tabs[j].click();
+    var v=document.getElementById('view'); v.classList.remove('sw-l','sw-r'); void v.offsetWidth; v.classList.add(dx<0?'sw-l':'sw-r');
+  }, {passive:true});
+  // Pull a sheet down to close it
+  var sh=null, y0=0, dy=0, t0=0, drag=false;
+  document.addEventListener('touchstart', function(e){
+    var s=e.target.closest && e.target.closest('.sheet'); if(!s||e.touches.length!==1) return;
+    if(s.scrollTop>0 && !e.target.closest('.grabber')) return;
+    sh=s; y0=e.touches[0].clientY; dy=0; t0=Date.now(); drag=false;
+  }, {passive:true});
+  document.addEventListener('touchmove', function(e){
+    if(!sh) return; dy=e.touches[0].clientY-y0;
+    if(!drag){ if(dy>8 && sh.scrollTop<=0){drag=true; sh.classList.remove('snap'); sh.classList.add('drag');} else if(dy<0){sh=null; return;} else return; }
+    if(e.cancelable) e.preventDefault();
+    var d=Math.max(0,dy); sh.style.transform='translateY('+d+'px)';
+    var sc=sh.parentNode; if(sc) sc.style.opacity=String(Math.max(.35,1-d/600));
+  }, {passive:false});
+  document.addEventListener('touchend', function(){
+    if(!sh) return; var s=sh; sh=null; if(!drag) return;
+    s.classList.remove('drag'); s.classList.add('snap');
+    var fast = dy/(Date.now()-t0) > .5;
+    if(dy>110 || (fast && dy>40)){
+      s.style.transform='translateY(105%)';
+      setTimeout(function(){ var c=s.querySelector('[data-close]'); if(c) c.click(); }, 200);
+    } else { s.style.transform=''; if(s.parentNode) s.parentNode.style.opacity=''; }
+  }, {passive:true});
+})();</script>
+
 <style id="scrub">
 svg.chart{touch-action:pan-y;cursor:crosshair;-webkit-user-select:none;user-select:none}
 svg.chart .scrub-line{stroke:rgba(255,255,255,.35);stroke-width:1.5;stroke-dasharray:3 4;opacity:0;transition:opacity .2s}
