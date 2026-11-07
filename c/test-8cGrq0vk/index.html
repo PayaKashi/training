@@ -864,16 +864,37 @@ div.list > :first-child{border-top:0}
     var p = a.progress;
     if (!p || !p.lifts.length) return '<h2 class="page">Your progress</h2><p class="empty-note">Your lifts will show here after your next workout with Paya.</p>';
     return '<h2 class="page">Your progress</h2>' + lastWorkout(a) + recap(a) +
-      ['Lower body', 'Upper body', 'Other'].map(function(g){
-        var items = p.lifts.map(function(l, i){ return { l: l, i: i }; }).filter(function(x){ return liftGroup(x.l) === g; });
-        if (!items.length) return '';
-        return foldGroup('lift:' + g, g, plural(items.length, 'lift'), items.map(function(x){
-          var l = x.l;
-          return '<button class="lift" type="button" data-lift="' + x.i + '"><div class="lift-main"><strong>' + esc(l.name) + '</strong>' +
-            '<span class="best">' + setText(l.best, p.unit, l) + '</span><span class="s">' + liftSub(l, p.unit) + '</span></div>' + sparkline(l) + icons.chevR + '</button>';
-        }).join(''), false);
-      }).join('');
+      (function(){
+        var gs = ['Lower body', 'Upper body', 'Other'].map(function(g){
+          var items = p.lifts.map(function(l, i){ return { l: l, i: i }; }).filter(function(x){ return liftGroup(x.l) === g; });
+          return { g: g, items: items };
+        }).filter(function(x){ return x.items.length; });
+        if (!gs.length) return '';
+        var sel = gs.some(function(x){ return x.g === LIFTSEL; }) ? LIFTSEL : null;
+        return '<div class="lgsw' + (sel ? ' has-sel' : '') + '">' + gs.map(function(x){
+            return '<button type="button" class="lgbtn' + (x.g === sel ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span class="label group-label">' + esc(x.g) + '</span><span class="lg-n">' + plural(x.items.length, 'lift') + '</span></button>';
+          }).join('') + '</div>' +
+          gs.map(function(x){
+            return '<div class="list lgpanel" data-lgp="' + esc(x.g) + '"' + (x.g === sel ? '' : ' hidden') + '>' + x.items.map(function(y){
+              var l = y.l;
+              return '<button class="lift" type="button" data-lift="' + y.i + '"><div class="lift-main"><strong>' + esc(l.name) + '</strong>' +
+                '<span class="best">' + setText(l.best, p.unit, l) + '</span><span class="s">' + liftSub(l, p.unit) + '</span></div>' + sparkline(l) + icons.chevR + '</button>';
+            }).join('') + '</div>';
+          }).join('');
+      })();
   }
+  var LIFTSEL = null;
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('[data-lg]'); if (!b) return;
+    var g = b.getAttribute('data-lg'); LIFTSEL = LIFTSEL === g ? null : g;
+    var sw = b.parentNode; sw.classList.toggle('has-sel', !!LIFTSEL);
+    [].forEach.call(sw.querySelectorAll('[data-lg]'), function(x){ x.classList.toggle('on', x.getAttribute('data-lg') === LIFTSEL); });
+    [].forEach.call(document.querySelectorAll('[data-lgp]'), function(pn){
+      var show = pn.getAttribute('data-lgp') === LIFTSEL;
+      if (show && pn.hidden) { pn.hidden = false; if (pn.animate) pn.animate([{opacity:0, transform:'translateY(10px)'},{opacity:1, transform:'none'}], {duration:380, easing:'cubic-bezier(.32,.72,0,1)'}); }
+      else if (!show) pn.hidden = true;
+    });
+  });
   function liftChart(lift, unit){
     var s = lift.sessions; if (s.length < 2) return '';
     var W = 320, H = 190, L = 38, R = 14, T = 30, B = 26;
@@ -1531,6 +1552,15 @@ details.pday .wk-list{padding-bottom:10px}
   ['pointerup', 'pointercancel'].forEach(function(t){ document.addEventListener(t, function(){ active = null; }); });
 })();</script>
 <style id="compact">
+/* lift group switcher */
+.lgsw{display:flex;gap:10px;flex-wrap:wrap}
+.lgbtn{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:opacity .3s,transform .2s}
+.lgbtn:active{transform:scale(.96)}
+.lgbtn .group-label{margin:0!important}
+.lgbtn .lg-n{display:none}
+.lgsw.has-sel .lgbtn:not(.on){opacity:.45}
+.lgbtn.on .group-label{box-shadow:0 0 0 2px rgba(238,111,176,.75),0 6px 18px -6px rgba(224,90,156,.6)!important}
+.lgpanel{margin-top:2px}
 html,body{overflow-x:hidden}
 .app{overflow-x:clip}
 details.gfold{display:flex;flex-direction:column}
