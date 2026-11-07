@@ -576,7 +576,7 @@ div.list > :first-child{border-top:0}
   function foldGroup(id, title, count, inner, open){
     var o = FOLD[id] === undefined ? open : FOLD[id];
     return '<details class="gfold' + (String(title).length > 12 ? ' gf-long' : '') + '" data-fold="' + esc(id) + '"' + (o ? ' open' : '') + '><summary><span class="label group-label">' + esc(title) + '</span>' +
-      '<span class="gf-r"><span class="gf-n">' + String(count).replace(/^(\d+) (.*)$/, '$1<span class="gf-w"> $2</span>') + '</span>' + icons.chevR + '</span></summary><div class="list">' + inner + '</div></details>';
+      '<span class="gf-r">' + (count ? '<span class="gf-n">' + String(count).replace(/^(\d+) (.*)$/, '$1<span class="gf-w"> $2</span>') + '</span>' : '') + icons.chevR + '</span></summary><div class="list">' + inner + '</div></details>';
   }
   document.addEventListener('toggle', function(e){ var d = e.target; if (d.dataset && d.dataset.fold) FOLD[d.dataset.fold] = d.open; }, true);
   function viewUpcoming(a){
@@ -592,7 +592,7 @@ div.list > :first-child{border-top:0}
     });
     return '<h2 class="page">Upcoming sessions</h2>' +
       (CAN_ICS ? '<button class="btn btn-line" type="button" data-ics="all">' + icons.cal + 'Add all to my calendar</button>' : '') +
-      groups.map(function(g){ return foldGroup('up:' + g.name, g.name, plural(g.items.length, 'session'), g.items.join(''), /^Later/.test(g.name) ? false : true); }).join('');
+      groups.map(function(g){ return foldGroup('up:' + g.name, g.name, '', g.items.join(''), /^Later/.test(g.name) ? false : true); }).join('');
   }
 
   function viewAccount(a){
@@ -872,7 +872,7 @@ div.list > :first-child{border-top:0}
         if (!gs.length) return '';
         var sel = gs.some(function(x){ return x.g === LIFTSEL; }) ? LIFTSEL : null;
         return '<div class="lgsw' + (sel ? ' has-sel' : '') + '">' + gs.map(function(x){
-            return '<button type="button" class="lgbtn' + (x.g === sel ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span class="label group-label">' + esc(x.g) + '</span><span class="lg-n">' + plural(x.items.length, 'lift') + '</span></button>';
+            return '<button type="button" class="lgbtn' + (x.g === sel ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span class="lg-txt"><span class="lg-t">' + esc(x.g) + '</span><span class="lg-n">' + plural(x.items.length, 'lift') + '</span></span><span class="lg-ch">' + icons.chevR + '</span></button>';
           }).join('') + '</div>' +
           gs.map(function(x){
             return '<div class="list lgpanel" data-lgp="' + esc(x.g) + '"' + (x.g === sel ? '' : ' hidden') + '>' + x.items.map(function(y){
@@ -1559,14 +1559,20 @@ html body details.gfold>summary .gf-r{position:absolute;right:2px;top:50%;transf
 html body .lgsw{justify-content:center}
 @media (max-width:380px){html body details.gfold .gf-w{display:none}}
 @media (max-width:410px){html body details.gfold.gf-long .gf-w{display:none}}
-/* lift group switcher */
-.lgsw{display:flex;gap:10px;flex-wrap:wrap}
-.lgbtn{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:opacity .3s,transform .2s}
-.lgbtn:active{transform:scale(.96)}
-.lgbtn .group-label{margin:0!important}
-.lgbtn .lg-n{display:none}
-.lgsw.has-sel .lgbtn:not(.on){opacity:.45}
-.lgbtn.on .group-label{box-shadow:0 0 0 2px rgba(238,111,176,.75),0 6px 18px -6px rgba(224,90,156,.6)!important}
+/* lift group switcher: two tappable cards */
+html body .lgsw{display:grid!important;grid-template-columns:1fr 1fr;gap:10px}
+.lgbtn{all:unset;box-sizing:border-box;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 14px 14px 16px;border-radius:20px;background:#1D1A20;border:1px solid rgba(255,255,255,.1);box-shadow:0 14px 30px -20px rgba(0,0,0,.8);transition:background .3s,border-color .3s,opacity .3s,transform .18s,box-shadow .3s}
+.lgbtn:active{transform:scale(.97)}
+.lg-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lg-t{font-weight:700;font-size:1.05rem;color:var(--fg)}
+.lg-n{font-size:.85rem;color:var(--muted)}
+.lg-ch{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(224,90,156,.16);color:#F08CC2;flex:none}
+.lg-ch svg{width:16px;height:16px;transform:rotate(90deg);transition:transform .35s cubic-bezier(.32,.72,0,1)}
+.lgbtn.on{background:linear-gradient(135deg,#C2478A,#8E3A8C);border-color:rgba(255,160,210,.45);box-shadow:0 12px 26px -12px rgba(224,90,156,.7)}
+.lgbtn.on .lg-t{color:#fff}.lgbtn.on .lg-n{color:rgba(255,255,255,.8)}
+.lgbtn.on .lg-ch{background:rgba(255,255,255,.2);color:#fff}
+.lgbtn.on .lg-ch svg{transform:rotate(-90deg)}
+html body .lgsw.has-sel .lgbtn:not(.on){opacity:.6}
 .lgpanel{margin-top:2px}
 html,body{overflow-x:hidden}
 .app{overflow-x:clip}
