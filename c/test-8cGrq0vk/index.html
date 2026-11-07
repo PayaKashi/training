@@ -575,8 +575,8 @@ div.list > :first-child{border-top:0}
   var FOLD = {};
   function foldGroup(id, title, count, inner, open){
     var o = FOLD[id] === undefined ? open : FOLD[id];
-    return '<details class="gfold" data-fold="' + esc(id) + '"' + (o ? ' open' : '') + '><summary><span class="label group-label">' + esc(title) + '</span>' +
-      '<span class="gf-r"><span class="gf-n">' + count + '</span>' + icons.chevR + '</span></summary><div class="list">' + inner + '</div></details>';
+    return '<details class="gfold' + (String(title).length > 12 ? ' gf-long' : '') + '" data-fold="' + esc(id) + '"' + (o ? ' open' : '') + '><summary><span class="label group-label">' + esc(title) + '</span>' +
+      '<span class="gf-r"><span class="gf-n">' + String(count).replace(/^(\d+) (.*)$/, '$1<span class="gf-w"> $2</span>') + '</span>' + icons.chevR + '</span></summary><div class="list">' + inner + '</div></details>';
   }
   document.addEventListener('toggle', function(e){ var d = e.target; if (d.dataset && d.dataset.fold) FOLD[d.dataset.fold] = d.open; }, true);
   function viewUpcoming(a){
@@ -1552,6 +1552,13 @@ details.pday .wk-list{padding-bottom:10px}
   ['pointerup', 'pointercancel'].forEach(function(t){ document.addEventListener(t, function(){ active = null; }); });
 })();</script>
 <style id="compact">
+/* centred chrome labels */
+html body .view > h2.section{align-self:center!important;margin-left:auto!important;margin-right:auto!important}
+html body details.gfold>summary{display:flex!important;justify-content:center!important;position:relative;min-height:34px}
+html body details.gfold>summary .gf-r{position:absolute;right:2px;top:50%;transform:translateY(-50%);white-space:nowrap}
+html body .lgsw{justify-content:center}
+@media (max-width:380px){html body details.gfold .gf-w{display:none}}
+@media (max-width:410px){html body details.gfold.gf-long .gf-w{display:none}}
 /* lift group switcher */
 .lgsw{display:flex;gap:10px;flex-wrap:wrap}
 .lgbtn{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:opacity .3s,transform .2s}
