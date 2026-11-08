@@ -329,7 +329,7 @@ div.list > :first-child{border-top:0}
     </button>
     <button class="tab" type="button" data-tab="account">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
-      Payments
+      My account
     </button>
   </div>
 </nav>
@@ -521,63 +521,6 @@ div.list > :first-child{border-top:0}
   }
 
   // ---- views ----
-
-  var PROGRESS_HOME = true;
-  function topGain(a){
-    var p = a.progress; if (!p) return null; var top = null;
-    p.lifts.forEach(function(l, i){
-      if (l.sessions.length < 2) return;
-      var f = l.sessions[0], b = l.best; if (!b || !better(b, f, l)) return;
-      var g = l.assisted ? f.weight - b.weight : b.weight - f.weight;
-      var score = l.assisted ? g * 0.5 : g;
-      if (!l.weighted || g <= 0) { g = b.reps - f.reps; score = g * 2; if (g <= 0) return; }
-      if (!top || score > top.score) top = { l: l, i: i, f: f, b: b, g: g, score: score };
-    });
-    return top;
-  }
-  function progHero(a){
-    var t = topGain(a), unit = (a.progress && a.progress.unit) || 'lb';
-    var now = TODAY, m0 = new Date(now.getFullYear(), now.getMonth(), 1), m1 = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    var ms = monthStats(a, m0, m1), tot = (a.sessionDates || []).length;
-    var head, sub, chart = '';
-    if (t) {
-      var nm = t.l.name.replace(/\s*\(.*\)$/, '');
-      if (t.l.assisted) { head = nm + ': ' + fmtW(t.g) + ' ' + unit + ' less help'; }
-      else if (t.l.weighted && t.b.weight > t.f.weight) { head = nm + ' up ' + fmtW(t.g) + ' ' + unit; }
-      else { head = nm + ': +' + t.g + ' reps'; }
-      sub = 'Since ' + md(parse(t.f.date)) + ' · ' + setText(t.f, unit, t.l) + ' → ' + setText(t.b, unit, t.l);
-      chart = '<div class="ph-chart">' + sparkline(t.l).replace('<svg', '<svg preserveAspectRatio="none"') + '</div>';
-    } else {
-      head = tot ? plural(tot, 'session') + ' since you started' : 'Your journey starts here';
-      sub = tot ? 'Every session counts. Your lifts will show here as we log them.' : 'Your progress will show here after your first session.';
-    }
-    return '<button class="proghero" type="button" data-go="progress"><span class="label">Your progress</span>' +
-      '<span class="ph-head">' + esc(head) + '</span><span class="ph-sub">' + esc(sub) + '</span>' + chart +
-      '<span class="ph-stats"><span><b>' + ms.sess + '</b> ' + (ms.sess === 1 ? 'session' : 'sessions') + ' in ' + now.toLocaleDateString('en-CA', { month: 'long' }) + '</span>' +
-      (a.progress ? '<span><b>' + ms.bests + '</b> new ' + (ms.bests === 1 ? 'best' : 'bests') + '</span>' : '') + '</span></button>';
-  }
-  function weekStart(d){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
-  function streakCard(a){
-    var ds = (a.sessionDates || []).map(parse).filter(function(d){ return d <= TODAY; });
-    if (!ds.length) return '';
-    var counts = {}; ds.forEach(function(d){ var k = +weekStart(d); counts[k] = (counts[k] || 0) + 1; });
-    var w = weekStart(TODAY), streak = 0;
-    if (!counts[+w]) w.setDate(w.getDate() - 7);
-    while (counts[+w]) { streak++; w.setDate(w.getDate() - 7); }
-    var dots = '', cur = weekStart(TODAY); cur.setDate(cur.getDate() - 7 * 9);
-    for (var i = 0; i < 10; i++) { var n = counts[+cur] || 0; dots += '<i class="sd sd' + Math.min(n, 3) + (i === 9 ? ' now' : '') + '" title="' + n + '"></i>'; cur.setDate(cur.getDate() + 7); }
-    var head = streak >= 2 ? streak + ' weeks in a row' : (streak === 1 ? 'Trained this week' : 'Welcome back');
-    var subl = streak >= 2 ? 'You’ve trained every week for ' + streak + ' weeks. Keep it going!' : 'Every week you train adds to your streak.';
-    return '<section class="streak"><div class="st-top"><span class="st-fire" aria-hidden="true">🔥</span><div><p class="st-h">' + head + '</p><p class="st-s">' + subl + '</p></div></div>' +
-      '<div class="st-dots" aria-label="Sessions per week, last 10 weeks">' + dots + '</div><div class="st-cap"><span>10 weeks ago</span><span>This week</span></div></section>';
-  }
-  function moneyLine(a){
-    var txt, sub = '';
-    if (a.plan === 'prepaid') { txt = money(a.credit) + ' credit'; sub = a.owed > 0 ? money(a.owed) + ' not paid yet' : (coverLine(a).replace(/<[^>]+>/g, '') || 'Prepaid'); }
-    else if (a.owed > 0) { txt = money(a.owed) + ' to pay'; sub = 'Whenever suits you · see sessions'; }
-    else { txt = 'All paid up'; sub = a.credit > 0 ? money(a.credit) + ' credit for upcoming sessions' : 'Thank you!'; }
-    return '<button class="moneyline" type="button" data-go="account"><span class="ml-ic">' + icons.check.replace('<svg', '<svg aria-hidden="true"') + '</span><span class="ml-t"><b>' + txt + '</b><small>' + esc(sub) + '</small></span>' + icons.chevR + '</button>';
-  }
   function viewHome(a){
     var next = a.upcoming[0];
     var hero = next ?
@@ -605,9 +548,6 @@ div.list > :first-child{border-top:0}
         (a.credit > 0 ? '<p class="muted">You have <b style="color:var(--fg)">' + money(a.credit) + ' in credit</b> toward upcoming sessions.</p>' : '') +
         (a.lastPayment ? '<p class="muted">Last payment: ' + money(a.lastPayment.amt) + ' on ' + md(a.lastPayment.d) + '.</p>' : '') +
         '</section>';
-    }
-    if (typeof PROGRESS_HOME !== 'undefined' && PROGRESS_HOME) {
-      return progHero(a) + hero + winLine(a) + noteCard(a) + streakCard(a) + moneyLine(a);
     }
     var recent = a.groups.slice(0, 3);
     if (a.plan === 'prepaid') {
@@ -668,7 +608,7 @@ div.list > :first-child{border-top:0}
         (a.owed <= 0 && a.credit > 0 ? '<p class="muted">You have <b style="color:var(--fg)">' + money(a.credit) + ' in credit</b> toward upcoming sessions.</p>' : '') +
         '<p class="muted">Up to date as of ' + a.asOf + '.</p></section>';
     }
-    return '<h2 class="page">Payments</h2>' + head +
+    return '<h2 class="page">My account</h2>' + head +
       '<h2 class="section" style="margin-top:8px">History</h2>' +
       (a.groups.length ? groupList(a, a.groups) : '<p class="empty-note">Your sessions and payments will show here.</p>') +
       (PINMODE ? '<div class="forget"><button class="btn btn-line" type="button" id="forget">' + 'Forget this phone</button><p class="muted small">Locks this page again. You\u2019ll need your PIN to reopen it.</p></div>' : '');
@@ -1612,34 +1552,6 @@ details.pday .wk-list{padding-bottom:10px}
   ['pointerup', 'pointercancel'].forEach(function(t){ document.addEventListener(t, function(){ active = null; }); });
 })();</script>
 <style id="compact">
-/* progress-first home */
-.proghero{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;cursor:pointer;padding:18px;border-radius:24px;background:radial-gradient(90% 80% at 100% 0%,rgba(224,90,156,.32),transparent 60%),linear-gradient(160deg,#241A24,#1A161C);border:1px solid rgba(224,90,156,.35);box-shadow:0 18px 40px -24px rgba(224,90,156,.6);-webkit-tap-highlight-color:transparent;transition:transform .18s}
-.proghero:active{transform:scale(.985)}
-.proghero .label{color:#F08CC2!important}
-.ph-head{font-family:"Fraunces",Georgia,serif;font-size:1.7rem;line-height:1.15;color:var(--fg);letter-spacing:-.01em}
-.ph-sub{color:var(--muted);font-size:.92rem}
-.ph-chart{margin:6px 0 2px}.ph-chart svg{width:100%!important;height:64px!important}
-.ph-chart svg *{vector-effect:non-scaling-stroke}.ph-chart svg polyline{stroke-width:3!important}
-.ph-stats{display:flex;gap:8px;margin-top:6px}
-.ph-stats>span{flex:1;padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.06);font-size:.85rem;color:var(--muted)}
-.ph-stats b{display:block;font-size:1.25rem;color:#F08CC2;font-weight:700}
-.streak{padding:16px 18px;border-radius:22px;background:#1D1A20;border:1px solid rgba(255,255,255,.08)}
-.st-top{display:flex;gap:12px;align-items:center}
-.st-fire{font-size:1.7rem}
-.st-h{margin:0;font-weight:700;font-size:1.15rem;color:var(--fg)}
-.st-s{margin:2px 0 0;color:var(--muted);font-size:.88rem}
-.st-dots{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-top:14px}
-.sd{display:block;height:22px;border-radius:7px;background:rgba(255,255,255,.07)}
-.sd1{background:rgba(224,90,156,.4)}.sd2{background:rgba(224,90,156,.7)}.sd3{background:#E05A9C}
-.sd.now{outline:2px solid rgba(240,140,194,.6);outline-offset:2px}
-.st-cap{display:flex;justify-content:space-between;margin-top:6px;font-size:.75rem;color:var(--muted)}
-.moneyline{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px 16px;border-radius:18px;background:transparent;border:1px solid rgba(255,255,255,.1);-webkit-tap-highlight-color:transparent}
-.moneyline .ml-ic{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.07);color:var(--muted);flex:none}
-.moneyline .ml-ic svg{width:16px;height:16px}
-.moneyline .ml-t{flex:1;display:flex;flex-direction:column}
-.moneyline b{font-weight:600;color:var(--fg);font-size:.98rem}
-.moneyline small{color:var(--muted);font-size:.82rem}
-.moneyline>svg{color:var(--muted);width:18px;height:18px}
 /* centred chrome labels */
 html body .view > h2.section{align-self:center!important;margin-left:auto!important;margin-right:auto!important}
 html body details.gfold>summary{display:flex!important;justify-content:center!important;position:relative;min-height:34px}
