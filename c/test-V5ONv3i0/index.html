@@ -292,8 +292,8 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
     var h = '<h2 class="page">Sessions</h2>';
     var mon = new Date(TODAY); mon.setDate(TODAY.getDate() - ((TODAY.getDay() + 6) % 7)); var nmon = new Date(mon); nmon.setDate(mon.getDate() + 7); var n2 = new Date(mon); n2.setDate(mon.getDate() + 14);
     var groups = [];
-    A.upcoming.forEach(function(s, i){ var g = s.d < nmon ? 'This week' : s.d < n2 ? 'Next week' : 'Later in ' + MONTHS[s.d.getMonth()]; var last = groups[groups.length-1]; if (!last || last.g !== g) groups.push(last = { g: g, items: [] }); last.items.push('<button class="li" data-up="' + i + '">' + dateBox(s.d) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + tr(s.start, s.end) + ' · ' + kind(s.partners) + '</span></span>' + CHEV + '</button>'); });
-    if (!groups.length) h += '<p class="card empty">No sessions booked right now.</p>';
+    A.upcoming.forEach(function(s, i){ if (s.d >= n2) return; var g = s.d < nmon ? 'This week' : 'Next week'; var last = groups[groups.length-1]; if (!last || last.g !== g) groups.push(last = { g: g, items: [] }); last.items.push('<button class="li" data-up="' + i + '">' + dateBox(s.d) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + tr(s.start, s.end) + ' · ' + kind(s.partners) + '</span></span>' + CHEV + '</button>'); });
+    if (!groups.length) h += '<p class="card empty">No sessions booked for the next two weeks.</p>';
     groups.forEach(function(g){ var open = FOLD[g.g] !== undefined ? FOLD[g.g] : !/^Later/.test(g.g); h += '<details class="fold" data-fold="' + esc(g.g) + '"' + (open ? ' open' : '') + '><summary>' + esc(g.g) + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + g.items.join('') + '</div></details>'; });
     if (A.past.length) {
       var byM = []; A.past.forEach(function(s, i){ var m = MONTHS[s.d.getMonth()] + ' ' + s.d.getFullYear(); var last = byM[byM.length-1]; if (!last || last.m !== m) byM.push(last = { m: m, items: [] });
