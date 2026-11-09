@@ -221,6 +221,17 @@ details.wfold>summary svg{color:var(--muted);width:18px;height:18px}
 details.wfold[open]>summary{border-color:rgba(240,140,194,.35)}
 details.wfold>.list{margin-top:8px}
 html{min-height:100%}body{min-height:100vh}
+/* money box without logo + nicer latest workout row */
+.mcard{padding:16px 18px}
+.mcard .mgo{position:relative;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(223,229,235,.08);box-shadow:inset 0 0 0 1px rgba(223,229,235,.14);color:#DFE5EB}
+.mcard .mgo svg{width:16px;height:16px}
+details.wfold>summary{justify-content:flex-start;gap:12px;padding:12px 16px 12px 12px;background:linear-gradient(118deg,rgba(223,229,235,.07),transparent 40%),#16181D}
+details.wfold>summary .wic{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;flex:none;background:linear-gradient(150deg,rgba(236,116,176,.30),rgba(178,58,119,.14));box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);color:var(--pink2)}
+details.wfold>summary .wic svg{width:20px;height:20px;transform:none;color:var(--pink2)}
+details.wfold>summary .wt{flex:1;font-size:1.05rem;font-weight:700;color:#EEF2F5}
+details.wfold>summary .wd{padding:4px 10px;border-radius:99px;background:rgba(223,229,235,.09);box-shadow:inset 0 0 0 1px rgba(223,229,235,.14);font-size:.78rem;font-weight:700;color:#DFE5EB}
+details.wfold>summary .wch{width:18px;height:18px;color:var(--muted)}
+details.wfold[open]>summary .wch{transform:rotate(90deg)}
 </style>
 </head>
 <body>
@@ -340,11 +351,11 @@ html{min-height:100%}body{min-height:100vh}
     if (A.plan === 'prepaid') { mt = A.owed > 0 ? 'Not paid yet' : 'Credit'; mv = A.owed > 0 ? money(A.owed) : money(A.credit); }
     else if (A.owed > 0) { mt = 'Amount owing'; mv = money(A.owed); }
     else { mt = A.credit > 0 ? 'Credit' : 'Balance'; mv = A.credit > 0 ? money(A.credit) : 'All paid up'; }
-    h += '<button class="mcard" data-go="payments"><span class="mt"><span class="lab">' + mt + '</span><b>' + mv + '</b></span><span class="mr"><i class="mlogo" aria-hidden="true"></i><span class="mn">' + esc((A.name || '').split(' ')[0]) + '</span></span></button>';
+    h += '<button class="mcard" data-go="payments"><span class="mt"><span class="lab">' + mt + '</span><b>' + mv + '</b></span><span class="mgo">' + CHEV + '</span></button>';
     // latest workout
     var lastW = A.wdates[A.wdates.length - 1];
     if (lastW) { var lw = A.W[lastW], nb = lw.filter(function(x){ return x.best; }).length, op = !!FOLD['home:w'];
-      h += '<details class="fold wfold" data-fold="home:w"' + (op ? ' open' : '') + '><summary><span class="t"><span class="lab" style="display:block">Latest Workout · ' + md(parse(lastW)) + '</span><b>' + plural(lw.length, 'exercise') + (nb ? ' · <em>' + plural(nb, 'new best') + '</em>' : '') + '</b></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + workoutRows(lastW) + '</div></details>'; }
+      h += '<details class="fold wfold" data-fold="home:w"' + (op ? ' open' : '') + '><summary><span class="wic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg></span><b class="wt">Latest Workout</b><span class="wd">' + md(parse(lastW)) + '</span><svg class="wch"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + workoutRows(lastW) + '</div></details>'; }
     h += noteCard();
     return h;
   }
