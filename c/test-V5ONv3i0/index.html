@@ -184,6 +184,20 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.07),tr
 .logo{box-shadow:0 0 0 1.5px rgba(223,229,235,.7),0 0 26px rgba(223,229,235,.12)}
 .sec a{color:#DFE5EB}
 .btn.q{background:linear-gradient(180deg,rgba(223,229,235,.12),rgba(223,229,235,.06));border:1px solid rgba(223,229,235,.12)}
+/* more pink */
+html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.07),transparent 70%),linear-gradient(115deg,transparent 55%,rgba(223,229,235,.035) 62%,transparent 70%),radial-gradient(70% 40% at 0% 100%,rgba(224,90,156,.16),transparent 70%),radial-gradient(50% 30% at 0% 0%,rgba(224,90,156,.10),transparent 70%),#0C0D10}
+.card.glow{background:linear-gradient(118deg,rgba(223,229,235,.14) 0%,rgba(223,229,235,.03) 32%,transparent 33%),radial-gradient(80% 90% at 100% 0%,rgba(224,90,156,.28),transparent 62%),#17191F;border-color:rgba(240,140,194,.38);box-shadow:inset 0 1px 0 rgba(223,229,235,.08),0 18px 36px -22px rgba(224,90,156,.45)}
+.pill{background:linear-gradient(135deg,#EC74B0,#B23A77)}
+.tab[aria-current=page],.tab[aria-current=page] svg{color:#fff}
+.date:not(.past){background:rgba(224,90,156,.18)}.date:not(.past) small,.date:not(.past) b{color:var(--pink2)}
+.lgbtn.on i{background:linear-gradient(135deg,#EC74B0,#B23A77);color:#fff}
+.badge.on{border:1.5px solid rgba(240,140,194,.8)}
+.stats b{-webkit-text-fill-color:var(--pink2);color:var(--pink2)}
+.chip{background:var(--soft);color:var(--pink2)}
+.sec a{color:var(--pink2)}
+.logo{box-shadow:0 0 0 1.5px rgba(240,140,194,.75),0 6px 20px rgba(224,90,156,.28)}
+.card.note{border-left:3px solid var(--pink)}
+.note .lab{color:var(--pink2)}
 </style>
 </head>
 <body>
@@ -266,7 +280,7 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.07),tr
       a.upcoming.forEach(function(s){ var p = s.price || 0; if (bal >= p) { a.coveredUntil = s.d; bal -= p; } else bal = -1; });
       a.ledger = (d.ledger || []).slice().reverse(); a.unpaid = d.unpaid || [];
     } else {
-      a.unpaidS = (d.sessions || []).filter(function(s){ return !s.paid; }).map(function(s){ return { d: parse(s.date), partners: s.partners || [], price: s.price }; });
+      a.unpaidS = (d.sessions || []).filter(function(s){ return !s.paid; }).map(function(s){ return { d: parse(s.date), partners: s.partners || [], price: s.price, owing: s.owing }; });
       a.payments = (d.payments || []).slice().reverse();
     }
     // goals: Paya's + this phone's
@@ -364,7 +378,7 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.07),tr
     } else {
       h += A.owed > 0 ? '<section class="card glow"><p class="lab pk">Amount owing</p><p class="big" style="font-size:2.8rem">' + money(A.owed) + '</p><p class="sub">For ' + plural(A.unpaidS.length, 'session') + ' · pay whenever suits you</p></section>'
         : '<section class="card glow"><p class="lab pk">Your balance</p><p class="big">All paid up ✅</p>' + (A.credit > 0 ? '<p class="sub">' + money(A.credit) + ' credit toward upcoming sessions</p>' : '<p class="sub">Thank you!</p>') + '</section>';
-      if (A.unpaidS.length) h += '<div class="sec">Not paid yet</div><div class="list">' + A.unpaidS.slice().reverse().map(function(s){ return '<div class="li" style="cursor:default">' + dateBox(s.d, true) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + kind(s.partners) + '</span></span><span class="r">' + money(s.price || 0) + '</span></div>'; }).join('') + '</div>';
+      if (A.unpaidS.length) h += '<div class="sec">Not paid yet</div><div class="list">' + A.unpaidS.slice().reverse().map(function(s){ return '<div class="li" style="cursor:default">' + dateBox(s.d, true) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + kind(s.partners) + (s.owing != null && s.price && s.owing < s.price ? ' · ' + money(s.price) + ' session, ' + money(s.price - s.owing) + ' from credit' : '') + '</span></span><span class="r">' + money(s.owing != null ? s.owing : (s.price || 0)) + '</span></div>'; }).join('') + '</div>';
       if (A.payments.length) h += '<div class="sec">Payments</div><div class="list">' + A.payments.map(function(p){ return '<div class="li" style="cursor:default"><span class="t"><b>Payment' + (p.method ? ' · ' + esc(p.method) : '') + '</b><span>' + short(parse(p.date)) + (p.covers && p.covers.length ? ' · ' + plural(p.covers.length, 'session') : '') + '</span></span><span class="r plus">+' + money(p.amount) + '</span></div>'; }).join('') + '</div>';
     }
     if (A.asOf) h += '<p class="asof">Up to date as of ' + A.asOf + '</p>';

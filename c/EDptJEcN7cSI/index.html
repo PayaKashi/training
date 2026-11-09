@@ -426,7 +426,7 @@ div.list > :first-child{border-top:0}
       a.owingRows = owing;
     } else {
       var sessions = (data.sessions || []).map(function(s){
-        var x = { d: parse(s.date), key: s.date, start: s.start, end: s.end, partners: s.partners || [], price: s.price };
+        var x = { d: parse(s.date), key: s.date, start: s.start, end: s.end, partners: s.partners || [], price: s.price, owing: s.owing };
         return { d: x.d, type: 'session', s: x, unpaid: !s.paid };
       });
       var used = {};
@@ -486,7 +486,7 @@ div.list > :first-child{border-top:0}
     return '<div class="tl-row"><div class="dot">' + (s.partners.length ? icons.two : icons.one) + '</div><div class="tl-main">' +
       '<div class="tl-top"><strong>' + esc(kindLabel(s)) + '</strong><span class="amt">' + (s.price ? money(s.price) : '') + '</span></div>' +
       '<div class="tl-sub"><span class="s">' + short(s.d) + '</span>' +
-      (r.unpaid ? '<span class="chip warn">Not paid yet</span>' : '<span class="chip ok">Paid</span>') + '</div></div></div>';
+      (r.unpaid ? (s.owing != null && s.price && s.owing < s.price ? '<span class="chip warn">' + money(s.owing) + ' to pay · ' + money(s.price - s.owing) + ' from credit</span>' : '<span class="chip warn">Not paid yet</span>') : '<span class="chip ok">Paid</span>') + '</div></div></div>';
   }
   function groupRow(a, g, i){
     if (g.kind === 'topup') return '<div class="timeline">' + tlRow(a, g.row) + '</div>';
