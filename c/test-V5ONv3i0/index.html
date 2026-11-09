@@ -136,6 +136,55 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 #pin-in:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px rgba(224,90,156,.25)}
 .pin-err{color:#FF9DB8;min-height:1.2em;font-size:.9rem;margin:4px 0 0}
 </style>
+<style id="obsidian">
+/* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
+:root{--bg:#0C0D10;--card:#16181D;--line:rgba(223,229,235,.08);--fg:#DFE5EB;--muted:#878E99;--soft:rgba(224,90,156,.14)}
+html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.07),transparent 70%),linear-gradient(115deg,transparent 55%,rgba(223,229,235,.035) 62%,transparent 70%),radial-gradient(60% 35% at 0% 100%,rgba(224,90,156,.08),transparent 70%),#0C0D10;background-attachment:fixed}
+.card,.list,.lgbtn{background:linear-gradient(180deg,rgba(223,229,235,.035),rgba(223,229,235,0) 40%),#16181D;border-color:rgba(223,229,235,.09);box-shadow:inset 0 1px 0 rgba(223,229,235,.06),0 18px 34px -22px rgba(0,0,0,.9)}
+.card.glow{background:linear-gradient(120deg,rgba(223,229,235,.08),transparent 38%),radial-gradient(90% 80% at 100% 0%,rgba(224,90,156,.22),transparent 60%),#16181D;border-color:rgba(224,90,156,.32)}
+.card.hot{background:linear-gradient(120deg,rgba(255,255,255,.16),transparent 40%),linear-gradient(160deg,#E86FB0,#B23A77 75%)}
+.top h1{color:#DFE5EB}
+.lab{color:#8A929D}
+.big{color:#EEF2F5}
+.sec{color:#8A929D}
+.stats div{background:rgba(223,229,235,.05);border:1px solid rgba(223,229,235,.06)}
+.stats b{color:#DFE5EB;background:linear-gradient(180deg,#FFFFFF,#AEB6C0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.date{background:rgba(223,229,235,.07)}.date small{color:#8A929D}.date b{color:#DFE5EB}
+.date:not(.past){background:var(--soft)}.date:not(.past) small,.date:not(.past) b{color:var(--pink2)}
+.btn.q{background:rgba(223,229,235,.08)}
+.btn.line{border-color:rgba(223,229,235,.18)}
+.badge{background:rgba(223,229,235,.03);border-color:rgba(223,229,235,.14)}
+.badge.on{background:linear-gradient(150deg,rgba(223,229,235,.18),rgba(223,229,235,.04) 50%),rgba(224,90,156,.18);border-color:rgba(240,140,194,.5)}
+.bar{background:rgba(223,229,235,.08)}
+.lgbtn i{background:rgba(223,229,235,.08);color:#DFE5EB}
+.lgbtn.on{background:linear-gradient(120deg,rgba(255,255,255,.14),transparent 45%),linear-gradient(135deg,#C2478A,#7E2F6E)}
+.tabs{background:rgba(14,15,19,.94);border-color:rgba(223,229,235,.14)}
+.tab{color:#7F8691}.tab[aria-current=page]{color:#EEF2F5}
+.pill{background:linear-gradient(180deg,rgba(223,229,235,.12),rgba(223,229,235,.05));box-shadow:inset 0 1px 0 rgba(223,229,235,.12)}
+.tab[aria-current=page] svg{color:var(--pink2)}
+.sheet{background:#14161B;border-color:rgba(223,229,235,.1)}
+.facts{background:rgba(223,229,235,.03);border-color:rgba(223,229,235,.08)}
+.field select,.field input,#pin-in{background:#0E0F13;border-color:rgba(223,229,235,.16)}
+.logo{box-shadow:0 0 0 1.5px rgba(223,229,235,.55),0 6px 18px rgba(0,0,0,.5)}
+.li .r{color:#DFE5EB}
+.note p:not(.lab){color:#EEF2F5}
+.card.glow{background:linear-gradient(118deg,rgba(223,229,235,.16) 0%,rgba(223,229,235,.04) 34%,transparent 35%,transparent 100%),linear-gradient(118deg,transparent 60%,rgba(223,229,235,.05) 61%,transparent 75%),#17191F;border-color:rgba(223,229,235,.2)}
+.card.glow .lab.pk{color:var(--pink2)}
+.date,.date:not(.past){background:rgba(223,229,235,.09)}.date small,.date:not(.past) small{color:#9AA2AD}.date b,.date:not(.past) b{color:#EEF2F5}
+.lgbtn.on{background:linear-gradient(120deg,#FFFFFF,#DFE5EB 45%,#B9C1CB);border-color:transparent;color:#111217}
+.lgbtn.on b{color:#111217}.lgbtn.on span{color:#4A515B}.lgbtn.on i{background:#111217;color:#DFE5EB}
+.badge.on{background:linear-gradient(130deg,#F4F7FA,#C9D0D8);border-color:transparent}
+.badge.on b{color:#111217}.badge.on span{color:#B23A77;font-weight:700}
+.bar i{background:linear-gradient(90deg,#AEB6C0,#DFE5EB 55%,#F08CC2)}
+.pill{background:linear-gradient(180deg,#DFE5EB,#AEB6C0)}
+.tab[aria-current=page]{color:#111217}.tab[aria-current=page] svg{color:#111217}
+.chip{background:rgba(223,229,235,.1);color:#DFE5EB}
+.stats b{background:none;-webkit-text-fill-color:#EEF2F5;color:#EEF2F5}
+.top h1 b{color:var(--pink2)}
+.logo{box-shadow:0 0 0 1.5px rgba(223,229,235,.7),0 0 26px rgba(223,229,235,.12)}
+.sec a{color:#DFE5EB}
+.btn.q{background:linear-gradient(180deg,rgba(223,229,235,.12),rgba(223,229,235,.06));border:1px solid rgba(223,229,235,.12)}
+</style>
 </head>
 <body>
 <div class="app">
