@@ -1,1 +1,287 @@
-<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>Training</title><p style="font-family:system-ui;padding:24px">Nothing to see here.</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>P² Collective · Personal Training in Toronto with Paya Kashi</title>
+<meta name="description" content="1-on-1, partner and online coaching in Toronto with Paya Kashi. Every client gets their own app to track sessions, lifts and progress. Book a free intro call.">
+<meta property="og:title" content="P² Collective · Personal Training with Paya Kashi">
+<meta property="og:description" content="Training you can actually see working. Every client gets their own app. Book a free intro call.">
+<meta property="og:image" content="https://payakashi.github.io/training/site/og.jpg">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0C0D10">
+<link rel="icon" href="site/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0D10;--card:#16181D;--ice:#DFE5EB;--hi:#F4F7FA;--muted:#9AA2AD;--dim:#6F7681;--pink:#E05A9C;--pink2:#F08CC2;--line:rgba(223,229,235,.10);--ease:cubic-bezier(.2,.7,.2,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ice);font-family:Figtree,system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(70% 40% at 100% 0%,rgba(223,229,235,.08),transparent 70%),linear-gradient(115deg,transparent 52%,rgba(223,229,235,.035) 60%,transparent 70%),radial-gradient(75% 45% at 0% 100%,rgba(224,90,156,.20),transparent 70%),radial-gradient(45% 28% at 0% 0%,rgba(224,90,156,.12),transparent 70%),var(--bg)}
+a{color:inherit;text-decoration:none}
+img,video{display:block;max-width:100%}
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding:0 22px}
+.serif{font-family:Fraunces,Georgia,serif;font-weight:400;letter-spacing:-.02em}
+.pk{color:var(--pink2)}
+.kick{font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:700;font-size:1rem;padding:15px 26px;border-radius:99px;border:0;cursor:pointer;color:#111217;background:linear-gradient(180deg,#F4F7FA,#B9C1CB);box-shadow:0 0 0 1.5px rgba(240,140,194,.7),0 18px 40px -18px rgba(224,90,156,.8);transition:transform .2s var(--ease),box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 0 1.5px rgba(240,140,194,.95),0 22px 46px -16px rgba(224,90,156,.95)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{color:var(--ice);background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.16)}
+.btn.sm{padding:10px 18px;font-size:.92rem}
+:focus-visible{outline:2px solid var(--pink2);outline-offset:3px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(12,13,16,.72);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:.02em}
+.brand img{width:36px;height:36px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(223,229,235,.7),0 0 0 4px rgba(224,90,156,.28)}
+
+/* hero */
+.hero{padding:56px 0 30px}
+.hero .wrap{display:grid;gap:44px;align-items:center}
+.hero h1{font-size:clamp(2.7rem,9.6vw,4.9rem);line-height:1.02;margin:16px 0 20px;color:var(--hi)}
+.hero p.lead{font-size:1.14rem;color:#B4BCC6;max-width:34em}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.tiny{margin-top:14px;font-size:.88rem;color:var(--dim)}
+.phone{position:relative;width:min(300px,74vw);margin:0 auto;border-radius:46px;padding:7px;background:linear-gradient(150deg,#F4F7FA,#8E96A1 30%,#2A2D34 55%,#C9D0D8);box-shadow:0 50px 100px -40px rgba(0,0,0,.9),0 0 80px -18px rgba(224,90,156,.5)}
+.phone .scr{border-radius:40px;overflow:hidden;background:#0C0D10;aspect-ratio:390/844}
+.phone video,.phone img{width:100%;height:100%;object-fit:cover}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:34px 0 0}
+.facts div{padding:16px 14px;border-radius:18px;background:linear-gradient(180deg,rgba(223,229,235,.04),transparent 50%),var(--card);border:1px solid var(--line);border-top:2px solid rgba(240,140,194,.55);text-align:center}
+.facts b{display:block;font-family:Fraunces,serif;font-weight:400;font-size:1.7rem;line-height:1.1;color:var(--hi)}
+.facts span{font-size:.82rem;color:var(--muted)}
+
+section{padding:64px 0}
+h2{font-family:Fraunces,Georgia,serif;font-weight:400;letter-spacing:-.02em;font-size:clamp(2rem,6.4vw,3.1rem);line-height:1.08;color:var(--hi);margin:12px 0 14px}
+.sub{color:#A9B1BC;max-width:36em}
+.card{background:linear-gradient(180deg,rgba(223,229,235,.04),transparent 40%),var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:inset 0 1px 0 rgba(223,229,235,.06),0 18px 34px -24px rgba(0,0,0,.9)}
+
+/* steps */
+.steps{display:grid;gap:12px;margin-top:30px;counter-reset:s}
+.steps .card{position:relative;padding-left:76px}
+.steps .card::before{counter-increment:s;content:"0" counter(s);position:absolute;left:22px;top:22px;font-family:Fraunces,serif;font-size:1.7rem;color:var(--pink2)}
+.steps h3,.svc h3{font-size:1.14rem;color:var(--hi);margin-bottom:4px}
+.steps p,.svc p{color:var(--muted);font-size:.98rem}
+
+/* app */
+.app-grid{display:grid;gap:26px;margin-top:34px}
+.feat{display:grid;grid-template-columns:118px 1fr;gap:18px;align-items:center}
+.feat .phone{width:118px;border-radius:20px;padding:3px;margin:0;box-shadow:0 20px 40px -20px rgba(0,0,0,.9),0 0 40px -14px rgba(224,90,156,.5)}
+.feat .phone .scr{border-radius:17px}
+.feat h3{font-family:Fraunces,serif;font-weight:400;font-size:1.5rem;line-height:1.12;color:var(--hi);margin-bottom:6px}
+.feat p{color:var(--muted);font-size:.98rem}
+
+/* services */
+.svc{display:grid;gap:12px;margin-top:30px}
+.svc .card{display:flex;flex-direction:column;gap:6px}
+.svc .tag{align-self:flex-start;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:99px;background:rgba(223,229,235,.08);color:var(--ice);box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);margin-bottom:8px}
+.svc .tag.soon{background:rgba(224,90,156,.16);color:var(--pink2)}
+.svc ul{list-style:none;margin-top:8px;display:grid;gap:6px}
+.svc li{position:relative;padding-left:22px;font-size:.95rem;color:#B4BCC6}
+.svc li::before{content:"";position:absolute;left:2px;top:.62em;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#EC74B0,#B23A77)}
+.price-note{margin-top:20px;padding:18px 22px;border-radius:20px;border:1px solid rgba(240,140,194,.3);background:rgba(224,90,156,.07);color:#C9D0D8;font-size:.98rem}
+
+/* about */
+.about .card{display:grid;gap:18px}
+.about p{color:#B4BCC6}
+.creds{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.creds span{font-size:.84rem;font-weight:600;padding:7px 13px;border-radius:99px;background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.13)}
+
+/* faq */
+.faq{margin-top:26px;display:grid;gap:10px}
+.faq details{border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.faq summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:700;color:var(--hi);display:flex;justify-content:space-between;gap:14px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:Fraunces,serif;font-size:1.5rem;line-height:1;color:var(--pink2);transition:transform .25s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{padding:0 20px 18px;color:var(--muted)}
+
+/* form */
+.start .card{padding:26px 22px;border-color:rgba(240,140,194,.3);background:radial-gradient(80% 60% at 100% 0%,rgba(224,90,156,.16),transparent 62%),linear-gradient(180deg,rgba(223,229,235,.05),transparent 40%),var(--card)}
+form{display:grid;gap:14px;margin-top:22px}
+.row{display:grid;gap:14px}
+label{display:grid;gap:6px;font-size:.84rem;font-weight:600;color:#C9D0D8}
+label small{font-weight:400;color:var(--dim)}
+input,select,textarea{font:inherit;font-size:1rem;color:var(--hi);background:#0E0F13;border:1px solid rgba(223,229,235,.16);border-radius:14px;padding:13px 14px;width:100%;transition:border-color .2s,box-shadow .2s}
+textarea{min-height:104px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pink2);box-shadow:0 0 0 3px rgba(240,140,194,.18)}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239AA2AD' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:38px}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+form .btn{width:100%;margin-top:6px}
+#f-msg{font-size:.94rem;color:var(--pink2);min-height:1.2em}
+.done{text-align:center;padding:26px 6px}
+.done h3{font-family:Fraunces,serif;font-weight:400;font-size:1.9rem;color:var(--hi);margin-bottom:8px}
+.done p{color:var(--muted)}
+
+footer{padding:34px 0 60px;border-top:1px solid var(--line);color:var(--dim);font-size:.88rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+@media (min-width:860px){
+  body{font-size:18px}
+  .hero{padding:84px 0 40px}
+  .hero .wrap{grid-template-columns:1.15fr .85fr;gap:60px}
+  .phone{width:320px}
+  .facts{grid-template-columns:repeat(4,1fr);margin-top:54px}
+  section{padding:92px 0}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .app-grid{grid-template-columns:repeat(3,1fr);gap:22px}
+  .feat{grid-template-columns:1fr;text-align:left;gap:20px}
+  .feat .phone{width:210px;border-radius:34px;padding:5px}.feat .phone .scr{border-radius:29px}
+  .svc{grid-template-columns:repeat(2,1fr)}
+  .about .card{grid-template-columns:1fr 1fr;gap:40px;padding:40px}
+  .row{grid-template-columns:1fr 1fr}
+  .start .card{padding:44px;max-width:760px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#top"><img src="site/logo.png" alt="" width="36" height="36"><span>P² Collective</span></a>
+  <a class="btn sm" href="#start">Get started</a>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="wrap">
+  <div>
+    <p class="kick">Personal training · Toronto</p>
+    <h1 class="serif">Training you can <span class="pk">actually see working.</span></h1>
+    <p class="lead">I'm Paya Kashi. I coach 1-on-1, partner and online clients, and every one of them gets their own app to track sessions, lifts and progress.</p>
+    <div class="cta-row"><a class="btn" href="#start">Book a free intro call</a><a class="btn ghost" href="#how">How it works</a></div>
+    <p class="tiny">15 minutes, no pressure. We talk about your goals and whether I'm the right fit.</p>
+  </div>
+  <div class="phone" aria-hidden="true"><div class="scr"><video src="site/app-demo.mp4" poster="site/app-home.webp" autoplay muted loop playsinline preload="metadata"></video></div></div>
+</div>
+<div class="wrap" style="display:block"><div class="facts rv">
+  <div><b>700+</b><span>client sessions coached in 2026</span></div>
+  <div><b>BKin</b><span>University of Toronto</span></div>
+  <div><b>MSc</b><span>Sport Sciences, in progress</span></div>
+  <div><b>3</b><span>marathons, plus HYROX races</span></div>
+</div></div>
+</section>
+
+<section id="how"><div class="wrap">
+  <p class="kick">How it works</p>
+  <h2>From first message to <span class="pk">first personal best.</span></h2>
+  <div class="steps">
+    <div class="card rv"><h3>Free intro call</h3><p>Fill out the short form below. We'll chat for 15 minutes about your goals, schedule and training history.</p></div>
+    <div class="card rv"><h3>Your first session</h3><p>We find your starting point: how you move, what you can lift, and what needs work first.</p></div>
+    <div class="card rv"><h3>Your plan and your app</h3><p>You get a program built around your goal, and a private login to your own client app.</p></div>
+    <div class="card rv"><h3>Watch the numbers climb</h3><p>Every session is logged. You see each lift go up, every new best, and how close you are to your goal.</p></div>
+  </div>
+</div></section>
+
+<section id="app"><div class="wrap">
+  <p class="kick">The client app</p>
+  <h2>Your progress, <span class="pk">in your pocket.</span></h2>
+  <p class="sub">Most people training with a coach have no idea if they're really getting stronger. My clients can check any time.</p>
+  <div class="app-grid">
+    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-home.webp" alt="Client app home screen showing the next session and latest workout" loading="lazy"></div></div><div><h3>Always know what's next</h3><p>Your next session, your latest workout and notes from me, every time you open it.</p></div></div>
+    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-progress.webp" alt="Progress screen with goals and lift history" loading="lazy"></div></div><div><h3>Every lift, tracked</h3><p>Your best set on every exercise, your goals, and how far you've come since day one.</p></div></div>
+    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-lift.webp" alt="Chart of a lift improving session by session" loading="lazy"></div></div><div><h3>Watch yourself get stronger</h3><p>Tap any lift to see the whole climb, session by session.</p></div></div>
+  </div>
+</div></section>
+
+<section id="services"><div class="wrap">
+  <p class="kick">Ways to train</p>
+  <h2>Pick what fits <span class="pk">your life.</span></h2>
+  <div class="svc">
+    <div class="card rv"><span class="tag">In person</span><h3>1-on-1 training</h3><p>Just you and me. Every session is built around your goal and adjusted to how you're moving that day.</p><ul><li>Fully personal programming</li><li>Hands-on coaching for every lift</li><li>Your own client app</li></ul></div>
+    <div class="card rv"><span class="tag">In person</span><h3>Partner training</h3><p>Train with a friend, partner or family member. Same coaching, shared session, and someone to push you.</p><ul><li>Two people per session</li><li>Each person has their own goals and app</li><li>Lower cost per person</li></ul></div>
+    <div class="card rv"><span class="tag">Anywhere</span><h3>Online coaching</h3><p>A program that progresses month to month, for your gym or your home, with me checking in along the way.</p><ul><li>Monthly program built for you</li><li>Regular check-ins and adjustments</li><li>Your workouts and progress in the app</li></ul></div>
+    <div class="card rv"><span class="tag soon">Coming soon</span><h3>Group classes</h3><p>Small-group strength and conditioning sessions. Join the waitlist and you'll hear first when they open.</p><ul><li>Small groups, real coaching</li><li>Strength and conditioning focus</li><li>Waitlist open now</li></ul></div>
+  </div>
+  <p class="price-note rv"><b>What does it cost?</b> It depends on the format and how often you train. I'll walk you through the options on your free intro call, with no pressure to commit.</p>
+</div></section>
+
+<section class="about" id="about"><div class="wrap">
+  <div class="card rv">
+    <div><p class="kick">Your coach</p><h2 style="margin-bottom:0">Hi, I'm <span class="pk">Paya.</span></h2></div>
+    <div>
+      <p>I have a Bachelor of Kinesiology from the University of Toronto and I'm completing my Master's in Sport Sciences there. I've run three marathons and I race HYROX, so I train the way I coach: with a plan, and with numbers to back it up.</p>
+      <p style="margin-top:12px">My job is to make sure you know exactly what you're doing in the gym, why you're doing it, and that it's working.</p>
+      <div class="creds"><span>BKin, U of T</span><span>MSc Sport Sciences (in progress)</span><span>Marathoner</span><span>HYROX athlete</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <p class="kick">Questions</p>
+  <h2>Good to know.</h2>
+  <div class="faq">
+    <details><summary>Do I need experience to start?</summary><p>No. Some of my clients had never lifted before, others have trained for years. Your plan starts where you are.</p></details>
+    <details><summary>Where do sessions happen?</summary><p>In-person sessions are in Toronto. I'll share the exact location when we book your first session. Online coaching works anywhere.</p></details>
+    <details><summary>How often should I train?</summary><p>Most clients train with me one to three times a week. We'll decide what makes sense for your goal and schedule on the intro call.</p></details>
+    <details><summary>How do payments work?</summary><p>You can pay per session or prepay for a block. Either way, your sessions and payments are all laid out in your app, so there's never any confusion.</p></details>
+    <details><summary>What is the client app?</summary><p>It's a private page made just for you. It shows your upcoming sessions, your lifts and personal bests, your goals and your payments. You log in with your own PIN.</p></details>
+  </div>
+</div></section>
+
+<section class="start" id="start"><div class="wrap">
+  <div class="card">
+    <div id="f-wrap">
+      <p class="kick">Get started</p>
+      <h2>Book your <span class="pk">free intro call.</span></h2>
+      <p class="sub">Tell me a bit about you and I'll get back to you within a day or two to set up a time.</p>
+      <form id="lead" novalidate>
+        <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="row">
+          <label>Your name<input name="name" required autocomplete="name"></label>
+          <label>Email<input name="email" type="email" required autocomplete="email" inputmode="email"></label>
+        </div>
+        <div class="row">
+          <label>Phone <small>(optional)</small><input name="phone" type="tel" autocomplete="tel" inputmode="tel"></label>
+          <label>I'm interested in<select name="interested_in" required>
+            <option value="">Choose one</option><option>1-on-1 training</option><option>Partner training</option><option>Online coaching</option><option>Group classes (waitlist)</option><option>Not sure yet</option></select></label>
+        </div>
+        <label>What's your main goal?<textarea name="goal" required placeholder="e.g. get stronger, lose 15 lb, run my first 10K, train consistently"></textarea></label>
+        <div class="row">
+          <label>Training experience<select name="experience">
+            <option value="">Choose one</option><option>New to training</option><option>Some experience</option><option>Train regularly</option><option>Coming back after a break</option></select></label>
+          <label>Days and times that work <small>(optional)</small><input name="availability" placeholder="e.g. weekday evenings"></label>
+        </div>
+        <label>How did you hear about me? <small>(optional)</small><input name="heard_from"></label>
+        <button class="btn" type="submit" id="f-go">Book my free intro call</button>
+        <p id="f-msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="done" id="f-done" hidden><h3>Got it. <span class="pk">Talk soon.</span></h3><p>Thanks for reaching out. I'll get back to you within a day or two to set up your intro call.</p></div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 P² Collective · Paya Kashi</span><span>Personal training · Toronto</span></div></footer>
+
+<script>
+(function(){
+  // Where applications are sent. Set once the form is connected.
+  var ENDPOINT = '';
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .12 }) : null;
+  document.querySelectorAll('.rv').forEach(function(el, i){ el.style.transitionDelay = (i % 4) * 70 + 'ms'; if (io) io.observe(el); else el.classList.add('in'); });
+  var f = document.getElementById('lead'), msg = document.getElementById('f-msg'), go = document.getElementById('f-go');
+  f.addEventListener('submit', function(e){
+    e.preventDefault(); msg.textContent = '';
+    if (f._honey.value) return;
+    var bad = [].filter.call(f.querySelectorAll('[required]'), function(x){ return !x.value.trim(); })[0];
+    if (bad) { msg.textContent = 'Please fill in your name, email, what you\'re interested in and your goal.'; bad.focus(); return; }
+    if (!/^\S+@\S+\.\S+$/.test(f.email.value.trim())) { msg.textContent = 'That email doesn\'t look right.'; f.email.focus(); return; }
+    if (!ENDPOINT) { msg.textContent = 'This form isn\'t connected yet.'; return; }
+    var data = {}; new FormData(f).forEach(function(v, k){ if (k !== '_honey') data[k] = v; });
+    data._subject = 'New training inquiry: ' + data.name + ' (' + data.interested_in + ')'; data._template = 'table'; data._captcha = 'false';
+    go.disabled = true; go.textContent = 'Sending…';
+    fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
+      .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(){ document.getElementById('f-wrap').hidden = true; document.getElementById('f-done').hidden = false; })
+      .catch(function(){ go.disabled = false; go.textContent = 'Book my free intro call'; msg.textContent = 'Something went wrong sending that. Please try again in a moment.'; });
+  });
+})();
+</script>
+</body>
+</html>
