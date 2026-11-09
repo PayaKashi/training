@@ -412,6 +412,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function upSheet(i){ var s = A.upcoming[i]; if (!s) return; var f = '<div><span>Time</span><b>' + tr(s.start, s.end) + '</b></div><div><span>Session</span><b>' + kind(s.partners) + '</b></div>';
     if (s.price) f += '<div><span>Price</span><b>' + money(s.price) + '</b></div>';
     if (A.plan !== 'prepaid' && s.price) { var run = A.owed - A.credit; for (var q = 0; q <= i; q++) run += A.upcoming[q].price || 0; f += '<div><span>Owing after this session</span><b>' + money(Math.max(0, run)) + '</b></div>'; }
+    if (A.plan === 'prepaid' && s.price) { var left = A.credit - A.owed; for (var q2 = 0; q2 <= i; q2++) left -= A.upcoming[q2].price || 0; f += left >= -0.001 ? '<div><span>Credit after this session</span><b>' + money(Math.max(0, left)) + '</b></div>' : '<div><span>Still to pay after this session</span><b>' + money(-left) + '</b></div>'; }
     openSheet('<h3>' + full(s.d) + '</h3><div class="facts">' + f + '</div>'); }
   function paySheet(id){ var rows = [], p, d;
     if (id[0] === 'p') { p = A.payments[+id.slice(1)]; if (!p) return; d = parse(p.date);
