@@ -319,7 +319,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     }
     // goals: Paya's + this phone's
     a.goals = (d.goals || []).map(function(g){ return Object.assign({ by: 'paya' }, g); }).concat(localGoals().map(function(g, i){ return Object.assign({ by: 'me', li: i }, g); }));
-    a.total = a.past.length;
+    a.total = d.totalSessions != null ? d.totalSessions : a.past.length;
     return a;
   }
   var GKEY = 'p2-goals:' + location.pathname;
