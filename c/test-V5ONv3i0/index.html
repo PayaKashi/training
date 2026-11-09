@@ -201,6 +201,10 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
 .card.note{border-left:3px solid var(--pink)}
 .note .lab{color:var(--pink2)}
 .top h1 b{color:var(--pink2)}
+.stats div{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 6px 12px;min-height:88px}
+.stats b{font-size:2rem;line-height:1}
+.stats span{margin-top:6px;font-size:.74rem;line-height:1.25;letter-spacing:.02em}
+.card.money{border:1px solid var(--line);padding:14px 18px}.card.money b{font-size:1.15rem}
 </style>
 </head>
 <body>
@@ -284,7 +288,7 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
       a.ledger = (d.ledger || []).slice().reverse(); a.unpaid = d.unpaid || [];
     } else {
       a.unpaidS = (d.sessions || []).filter(function(s){ return !s.paid; }).map(function(s){ return { d: parse(s.date), partners: s.partners || [], price: s.price, owing: s.owing }; });
-      a.payments = (d.payments || []).slice().reverse();
+      a.payments = (d.payments || []).slice().reverse(); a.allSess = d.sessions || [];
     }
     // goals: Paya's + this phone's
     a.goals = (d.goals || []).map(function(g){ return Object.assign({ by: 'paya' }, g); }).concat(localGoals().map(function(g, i){ return Object.assign({ by: 'me', li: i }, g); }));
@@ -312,62 +316,46 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
   // ---- views ----
   function viewHome(){
     var next = A.upcoming[0], h = '';
-    var lastW = A.wdates[A.wdates.length - 1], lastD = lastW ? parse(lastW) : null;
-    var sessToday = next && next.key === TODAY_KEY;
-    var recap = lastD && (dayDiff(lastD) === -1 || (dayDiff(lastD) === 0 && !sessToday));
-    if (sessToday) {
-      h += '<section class="card hot"><p class="lab">Today · session day</p><p class="big">' + tr(next.start) + ' with Paya</p><p class="sub">' + kind(next.partners) + '</p><button class="btn dark" data-up="0">Session details</button></section>';
-      if (lastW) h += '<div class="sec">Last time · ' + md(lastD) + '</div><div class="list">' + workoutRows(lastW) + '</div>';
-    } else if (recap) {
-      var bests = A.W[lastW].filter(function(x){ return x.best; }).length;
-      h += '<section class="card glow"><p class="lab pk">' + (dayDiff(lastD) === 0 ? 'Today’s' : 'Yesterday’s') + ' session · recap</p><p class="big">' + (bests ? plural(bests, 'new best') + ' 🎉' : 'Session done ✅') + '</p><p class="sub">' + plural(A.W[lastW].length, 'exercise') + ' · ' + md(lastD) + '</p></section>';
-      h += '<div class="list">' + workoutRows(lastW) + '</div>';
-      if (next) h += nextRow(next);
-    } else {
-      h += next ? '<section class="card"><p class="lab">' + (dayDiff(next.d) <= 1 ? 'Coming up' : 'Rest day') + '</p><p class="big">Next: ' + rel(next.d) + '</p><p class="sub">' + mdl(next.d) + ' · ' + tr(next.start, next.end) + '</p><p class="sub">' + kind(next.partners) + '</p><button class="btn q" data-up="0">Session details</button></section>'
-        : '<section class="card"><p class="lab">Next session</p><p class="big">Nothing booked yet</p><p class="sub">Paya will add your next session soon.</p></section>';
-      h += latestBest(14);
-    }
-    h += milestoneBanner() + noteCard();
-    if (!sessToday && !recap) h += goalMini();
+    // next session: same card every day
+    h += next ? '<section class="card glow"><p class="lab pk">Next Session</p><p class="big">' + rel(next.d) + ' · ' + tr(next.start) + '</p><p class="sub">' + mdl(next.d) + ' · ' + kind(next.partners) + '</p><button class="btn q" data-up="0">Session details</button></section>'
+      : '<section class="card glow"><p class="lab pk">Next Session</p><p class="big">Nothing booked yet</p><p class="sub">Paya will add your next session soon.</p></section>';
+    // money summary: one tappable line, details live on Payments
+    var mt, mv;
+    if (A.plan === 'prepaid') { mt = A.owed > 0 ? 'Not paid yet' : 'Credit'; mv = A.owed > 0 ? money(A.owed) : money(A.credit); }
+    else if (A.owed > 0) { mt = 'Amount owing'; mv = money(A.owed); }
+    else { mt = A.credit > 0 ? 'Credit' : 'Balance'; mv = A.credit > 0 ? money(A.credit) : 'All paid up'; }
+    h += '<button class="card mini li money" data-go="payments"><span class="t"><span class="lab" style="display:block">' + mt + '</span><b>' + mv + '</b></span>' + CHEV + '</button>';
+    // latest workout
+    var lastW = A.wdates[A.wdates.length - 1];
+    if (lastW) h += '<div class="sec">Latest Workout · ' + md(parse(lastW)) + '</div><div class="list">' + workoutRows(lastW) + '</div>';
+    h += noteCard();
     return h;
   }
   var LG = null;
   function viewProgress(){
     var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), inM = A.past.filter(function(s){ return s.d >= m0; }).length;
     var bestsM = 0; A.wdates.forEach(function(k){ if (parse(k) >= m0) A.W[k].forEach(function(x){ if (x.best) bestsM++; }); });
-    var h = '<h2 class="page">Your progress</h2><div class="stats" style="margin-bottom:12px"><div><b>' + inM + '</b><span>sessions in ' + MONTHS[TODAY.getMonth()] + '</span></div><div><b>' + bestsM + '</b><span>new bests this month</span></div><div><b>' + A.total + '</b><span>sessions in all</span></div></div>';
+    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><div><b>' + inM + '</b><span>Sessions in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + A.total + '</b><span>Total sessions</span></div></div>';
     // goals
     h += '<div class="sec">Goals <a data-newgoal="1">+ Set a goal</a></div><section class="card">' + (A.goals.length ? A.goals.map(function(g){ var p = goalProgress(g);
       return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b><small>' + (g.by === 'me' ? 'Your goal' : 'Set by Paya') + '</small></div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<button class="x" data-delgoal="' + g.li + '">Remove</button>' : '') + '</div>'; }).join('')
       : '<p class="sub" style="margin:0">No goal yet. Set one and Paya will build your sessions around it.</p><button class="btn q" data-newgoal="1">Set a goal</button>') + '</section>';
-    // milestones
-    var nextM = MILES.filter(function(x){ return x > A.total; })[0];
-    h += '<div class="sec">Milestones</div><section class="card"><p class="sub" style="margin:0">' + (nextM ? (nextM - A.total) + ' more ' + (nextM - A.total === 1 ? 'session' : 'sessions') + ' to your ' + nextM + 'th session' : 'Every milestone reached!') + '</p>' + (nextM ? '<div class="bar"><i style="width:' + Math.round(A.total / nextM * 100) + '%"></i></div>' : '') +
-      '<div class="badges">' + [10, 25, 50, 100].map(function(x){ return '<div class="badge' + (A.total >= x ? ' on' : '') + '"><b>' + x + '</b><span>' + (A.total >= x ? 'sessions ✓' : 'sessions') + '</span></div>'; }).join('') + '</div></section>';
     // lifts
-    if (!A.lifts.length) return h + '<div class="sec">Your lifts</div><p class="card empty">Your lifts will show here after your next workout with Paya.</p>';
+    if (!A.lifts.length) return h + '<div class="sec">Your Lifts</div><p class="card empty">Your lifts will show here after your next workout with Paya.</p>';
     var gs = ['Lower body', 'Upper body', 'Other'].map(function(g){ return { g: g, ls: A.lifts.filter(function(l){ return l.g === g; }).sort(function(x, y){ return x.sessions[x.sessions.length-1].date < y.sessions[y.sessions.length-1].date ? 1 : -1; }) }; }).filter(function(x){ return x.ls.length; });
     if (!gs.some(function(x){ return x.g === LG; })) LG = gs[0].g;
-    h += '<div class="sec">Your lifts</div><div class="lgsw sel">' + gs.map(function(x){ return '<button class="lgbtn' + (x.g === LG ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span><b>' + esc(x.g) + '</b><span>' + plural(x.ls.length, 'lift') + '</span></span><i>' + DOWN + '</i></button>'; }).join('') + '</div>' +
+    h += '<div class="sec">Your Lifts</div><div class="lgsw sel">' + gs.map(function(x){ return '<button class="lgbtn' + (x.g === LG ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span><b>' + esc(x.g.replace(/ b/, ' B')) + '</b><span>' + plural(x.ls.length, 'lift') + '</span></span><i>' + DOWN + '</i></button>'; }).join('') + '</div>' +
       gs.map(function(x){ return '<div class="list" data-lgp="' + esc(x.g) + '"' + (x.g === LG ? '' : ' hidden') + '>' + x.ls.map(function(l){ return '<button class="li" data-lift="' + l.i + '"><span class="t"><b>' + esc(shortName(l.name)) + '</b><span style="color:var(--pink2);font-weight:700">' + setText(l.best, l) + '</span><span>' + gainText(l) + '</span></span>' + spark(l) + CHEV + '</button>'; }).join('') + '</div>'; }).join('');
     return h;
   }
   var FOLD = {};
   function viewSessions(){
-    var h = '<h2 class="page">Sessions</h2>';
+    var h = '<h2 class="page">Upcoming Sessions</h2>';
     var mon = new Date(TODAY); mon.setDate(TODAY.getDate() - ((TODAY.getDay() + 6) % 7)); var nmon = new Date(mon); nmon.setDate(mon.getDate() + 7); var n2 = new Date(mon); n2.setDate(mon.getDate() + 14);
     var groups = [];
     A.upcoming.forEach(function(s, i){ if (s.d >= n2) return; var g = s.d < nmon ? 'This week' : 'Next week'; var last = groups[groups.length-1]; if (!last || last.g !== g) groups.push(last = { g: g, items: [] }); last.items.push('<button class="li" data-up="' + i + '">' + dateBox(s.d) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + tr(s.start, s.end) + ' · ' + kind(s.partners) + '</span></span>' + CHEV + '</button>'); });
     if (!groups.length) h += '<p class="card empty">No sessions booked for the next two weeks.</p>';
     groups.forEach(function(g){ var open = FOLD[g.g] !== undefined ? FOLD[g.g] : !/^Later/.test(g.g); h += '<details class="fold" data-fold="' + esc(g.g) + '"' + (open ? ' open' : '') + '><summary>' + esc(g.g) + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + g.items.join('') + '</div></details>'; });
-    if (A.past.length) {
-      var byM = []; A.past.forEach(function(s, i){ var m = MONTHS[s.d.getMonth()] + ' ' + s.d.getFullYear(); var last = byM[byM.length-1]; if (!last || last.m !== m) byM.push(last = { m: m, items: [] });
-        var w = A.W[s.key] || [], b = w.filter(function(x){ return x.best; }).length;
-        last.items.push('<button class="li" data-past="' + i + '">' + dateBox(s.d, true) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + (w.length ? plural(w.length, 'exercise') + (b ? ' · ' + plural(b, 'new best') : '') : kind(s.partners)) + '</span></span>' + (b ? '<span class="tag">🎉 ' + b + '</span>' : '') + CHEV + '</button>'); });
-      h += '<div class="sec">Past sessions</div>';
-      byM.forEach(function(g, i){ var open = FOLD['p:' + g.m] !== undefined ? FOLD['p:' + g.m] : i === 0; h += '<details class="fold" data-fold="p:' + esc(g.m) + '"' + (open ? ' open' : '') + '><summary>' + esc(g.m) + ' · ' + g.items.length + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + g.items.join('') + '</div></details>'; });
-    }
     return h;
   }
   function viewPayments(){
@@ -375,14 +363,14 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
     if (A.plan === 'prepaid') {
       h += '<section class="card glow"><p class="lab pk">Credit</p><p class="big" style="font-size:2.8rem">' + money(A.credit) + '</p><p class="sub">' + (A.coveredUntil ? 'Covers your sessions until ' + short(A.coveredUntil) : (A.upcoming.length ? 'Not enough for your next session yet' : 'Ready for your next booking')) + '</p></section>';
       if (A.owed > 0) h += '<section class="card"><p class="lab">Not paid yet</p><p class="big">' + money(A.owed) + '</p><p class="sub">' + A.unpaid.map(function(u){ return md(parse(u.date)); }).join(', ') + ' · whenever suits you</p></section>';
-      h += '<div class="sec">History</div><div class="list">' + A.ledger.map(function(r){ var d = parse(r.date); return r.type === 'session'
+      h += '<div class="sec">History</div><div class="list">' + A.ledger.map(function(r, ri){ var d = parse(r.date); return r.type === 'session'
         ? '<div class="li" style="cursor:default"><span class="t"><b>Session · ' + md(d) + '</b><span>' + kind(r.partners) + '</span></span><span class="r">−' + money(r.amount) + '</span></div>'
-        : '<div class="li" style="cursor:default"><span class="t"><b>' + (r.note ? esc(r.note) : 'Payment' + (r.method ? ' · ' + esc(r.method) : '')) + '</b><span>' + short(d) + '</span></span><span class="r plus">+' + money(r.amount) + '</span></div>'; }).join('') + '</div>';
+        : '<button class="li" data-pay="l' + ri + '"><span class="t"><b>' + (r.note ? esc(r.note) : 'Payment' + (r.method ? ' · ' + esc(r.method) : '')) + '</b><span>' + short(d) + '</span></span><span class="r plus">+' + money(r.amount) + '</span>' + CHEV + '</button>'; }).join('') + '</div>';
     } else {
       h += A.owed > 0 ? '<section class="card glow"><p class="lab pk">Amount owing</p><p class="big" style="font-size:2.8rem">' + money(A.owed) + '</p><p class="sub">For ' + plural(A.unpaidS.length, 'session') + ' · pay whenever suits you</p></section>'
         : '<section class="card glow"><p class="lab pk">Your balance</p><p class="big">All paid up ✅</p>' + (A.credit > 0 ? '<p class="sub">' + money(A.credit) + ' credit toward upcoming sessions</p>' : '<p class="sub">Thank you!</p>') + '</section>';
       if (A.unpaidS.length) h += '<div class="sec">Not paid yet</div><div class="list">' + A.unpaidS.slice().reverse().map(function(s){ return '<div class="li" style="cursor:default">' + dateBox(s.d, true) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + kind(s.partners) + (s.owing != null && s.price && s.owing < s.price ? ' · ' + money(s.price) + ' session, ' + money(s.price - s.owing) + ' from credit' : '') + '</span></span><span class="r">' + money(s.owing != null ? s.owing : (s.price || 0)) + '</span></div>'; }).join('') + '</div>';
-      if (A.payments.length) h += '<div class="sec">Payments</div><div class="list">' + A.payments.map(function(p){ return '<div class="li" style="cursor:default"><span class="t"><b>Payment' + (p.method ? ' · ' + esc(p.method) : '') + '</b><span>' + short(parse(p.date)) + (p.covers && p.covers.length ? ' · ' + plural(p.covers.length, 'session') : '') + '</span></span><span class="r plus">+' + money(p.amount) + '</span></div>'; }).join('') + '</div>';
+      if (A.payments.length) h += '<div class="sec">Payments</div><div class="list">' + A.payments.map(function(p, pi){ return '<button class="li" data-pay="p' + pi + '"><span class="t"><b>Payment' + (p.method ? ' · ' + esc(p.method) : '') + '</b><span>' + short(parse(p.date)) + (p.covers && p.covers.length ? ' · ' + plural(p.covers.length, 'session') : '') + '</span></span><span class="r plus">+' + money(p.amount) + '</span>' + CHEV + '</button>'; }).join('') + '</div>';
     }
     if (A.asOf) h += '<p class="asof">Up to date as of ' + A.asOf + '</p>';
     h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
@@ -397,6 +385,19 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
     if (s.price) f += '<div><span>Price</span><b>' + money(s.price) + '</b></div>';
     if (A.plan !== 'prepaid' && s.price) { var run = A.owed - A.credit; for (var q = 0; q <= i; q++) run += A.upcoming[q].price || 0; f += '<div><span>Owing after this session</span><b>' + money(Math.max(0, run)) + '</b></div>'; }
     openSheet('<h3>' + full(s.d) + '</h3><div class="facts">' + f + '</div>'); }
+  function paySheet(id){ var rows = [], p, d;
+    if (id[0] === 'p') { p = A.payments[+id.slice(1)]; if (!p) return; d = parse(p.date);
+      var byDate = {}; (A.allSess || []).forEach(function(s){ byDate[s.date] = s; });
+      rows = (p.covers || []).map(function(k){ var s = byDate[k] || {}; return { d: parse(k), what: kind(s.partners || []), amt: s.price }; });
+    } else { var L = A.ledger.slice().reverse(), at = L.length - 1 - (+id.slice(1)); p = L[at]; if (!p) return; d = parse(p.date);
+      // which sessions this payment paid for: oldest money is used first
+      var pool = [], mine = null; L.forEach(function(r, k){ if (r.type !== 'session') { var b = { left: r.amount, used: [] }; pool.push(b); if (k === at) mine = b; } else { var need = r.amount; for (var q = 0; q < pool.length && need > 0.001; q++) { var b2 = pool[q], take = Math.min(b2.left, need); if (take > 0.001) { b2.left -= take; need -= take; b2.used.push({ d: parse(r.date), what: kind(r.partners || []), amt: take, full: r.amount }); } } } });
+      rows = mine ? mine.used.slice().reverse() : []; if (mine && mine.left > 0.001) rows.left = mine.left; }
+    var f = '<div><span>Amount</span><b>' + money(p.amount) + '</b></div><div><span>Date</span><b>' + full(d) + '</b></div>' + (p.method ? '<div><span>Method</span><b>' + esc(p.method) + '</b></div>' : '');
+    var list = rows.length ? '<div class="sec" style="margin-top:16px">Paid For</div><div class="list">' + rows.map(function(r){ return '<div class="li" style="cursor:default">' + dateBox(r.d, true) + '<span class="t"><b>' + wd(r.d) + '</b><span>' + r.what + (r.full && r.full > r.amt + 0.001 ? ' · part of ' + money(r.full) : '') + '</span></span>' + (r.amt ? '<span class="r">' + money(r.amt) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '';
+    if (rows.left) list += '<p class="sub" style="margin-top:10px">' + money(rows.left) + ' still left as credit for upcoming sessions.</p>';
+    else if (!rows.length) list = '<p class="sub" style="margin-top:14px">' + (p.note ? esc(p.note) : (id[0] === 'l' ? 'Kept as credit for upcoming sessions.' : 'No sessions linked to this payment.')) + '</p>';
+    openSheet('<h3>Payment · ' + md(d) + '</h3><div class="facts">' + f + '</div>' + list); }
   function pastSheet(i){ var s = A.past[i]; var w = A.W[s.key]; openSheet('<h3>' + full(s.d) + '</h3><p class="sub">' + kind(s.partners) + (s.start ? ' · ' + tr(s.start, s.end) : '') + '</p>' + (w ? '<div class="list" style="margin-top:14px">' + workoutRows(s.key) + '</div>' : '<p class="sub" style="margin-top:14px">No workout logged for this session.</p>')); }
   function liftSheet(i){ var l = A.lifts[i], ss = l.sessions, v = ss.map(function(p){ return val(p, l); }); var W = 340, H = 150, lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1;
     var xs = v.map(function(_, k){ return ss.length < 2 ? W / 2 : 14 + k * (W - 28) / (ss.length - 1); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); });
@@ -434,6 +435,7 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
     if (t.dataset.go) { go(t.dataset.go); return; }
     if (t.dataset.up) { upSheet(+t.dataset.up); return; }
     if (t.dataset.past) { pastSheet(+t.dataset.past); return; }
+    if (t.dataset.pay) { paySheet(t.dataset.pay); return; }
     if (t.dataset.lift) { liftSheet(+t.dataset.lift); return; }
     if (t.dataset.newgoal) { goalSheet(); return; }
     if (t.id === 'g-save') { saveGoal(); return; }
