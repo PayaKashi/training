@@ -391,9 +391,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (A.plan === 'prepaid') {
       h += '<section class="card glow"><p class="lab pk">Credit</p><p class="big" style="font-size:2.8rem">' + money(A.credit) + '</p><p class="sub">' + (A.coveredUntil ? 'Covers your sessions until ' + short(A.coveredUntil) : (A.upcoming.length ? 'Not enough for your next session yet' : 'Ready for your next booking')) + '</p></section>';
       if (A.owed > 0) h += '<section class="card"><p class="lab">Not paid yet</p><p class="big">' + money(A.owed) + '</p><p class="sub">' + A.unpaid.map(function(u){ return md(parse(u.date)); }).join(', ') + ' · whenever suits you</p></section>';
-      h += '<div class="sec">History</div><div class="list">' + A.ledger.map(function(r, ri){ var d = parse(r.date); return r.type === 'session'
-        ? '<div class="li" style="cursor:default"><span class="t"><b>Session · ' + md(d) + '</b><span>' + kind(r.partners) + '</span></span><span class="r">−' + money(r.amount) + '</span></div>'
-        : '<button class="li" data-pay="l' + ri + '"><span class="t"><b>' + (r.note ? esc(r.note) : 'Payment' + (r.method ? ' · ' + esc(r.method) : '')) + '</b><span>' + short(d) + '</span></span><span class="r plus">+' + money(r.amount) + '</span>' + CHEV + '</button>'; }).join('') + '</div>';
+      var pp = prepaidPays();
+      if (pp.length) h += '<div class="sec">Payments</div><div class="list">' + pp.map(function(b, bi){ var n = b.used.length; return '<button class="li" data-pay="l' + bi + '"><span class="t"><b>' + payTitle(b.r) + '</b><span>' + short(parse(b.r.date)) + (n ? ' · ' + plural(n, 'session') : '') + (b.left > 0.001 ? ' · ' + money(b.left) + ' left' : '') + '</span></span><span class="r plus">+' + money(b.r.amount) + '</span>' + CHEV + '</button>'; }).join('') + '</div>';
     } else {
       h += A.owed > 0 ? '<section class="card glow"><p class="lab pk">Amount owing</p><p class="big" style="font-size:2.8rem">' + money(A.owed) + '</p><p class="sub">For ' + plural(A.unpaidS.length, 'session') + ' · pay whenever suits you</p></section>'
         : '<section class="card glow"><p class="lab pk">Your balance</p><p class="big">All paid up ✅</p>' + (A.credit > 0 ? '<p class="sub">' + money(A.credit) + ' credit toward upcoming sessions</p>' : '<p class="sub">Thank you!</p>') + '</section>';
@@ -414,24 +413,23 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (A.plan !== 'prepaid' && s.price) { var run = A.owed - A.credit; for (var q = 0; q <= i; q++) run += A.upcoming[q].price || 0; f += '<div><span>Owing after this session</span><b>' + money(Math.max(0, run)) + '</b></div>'; }
     if (A.plan === 'prepaid' && s.price) { var left = A.credit - A.owed; for (var q2 = 0; q2 <= i; q2++) left -= A.upcoming[q2].price || 0; f += left >= -0.001 ? '<div><span>Credit after this session</span><b>' + money(Math.max(0, left)) + '</b></div>' : '<div><span>Still to pay after this session</span><b>' + money(-left) + '</b></div>'; }
     openSheet('<h3>' + full(s.d) + '</h3><div class="facts">' + f + '</div>'); }
+  // prepaid: which sessions each payment paid for (oldest money used first; sessions waiting for money are paid by the next payment)
+  function prepaidPays(){ if (A._pp) return A._pp; var L = A.ledger.slice().reverse(), pool = [], debt = [];
+    function useFrom(b, r, need){ var take = Math.min(b.left, need); if (take > 0.001) { b.left -= take; b.used.push({ d: parse(r.date), what: kind(r.partners || []), amt: take, full: r.amount }); } return need - take; }
+    L.forEach(function(r){ if (r.type !== 'session') { var b = { r: r, left: r.amount, used: [] }; pool.push(b); debt = debt.filter(function(x){ x.need = useFrom(b, x.r, x.need); return x.need > 0.001; }); }
+      else { var need = r.amount; for (var q = 0; q < pool.length && need > 0.001; q++) need = useFrom(pool[q], r, need); if (need > 0.001) debt.push({ r: r, need: need }); } });
+    pool.forEach(function(b){ b.used.reverse(); }); return (A._pp = pool.reverse()); }
+  function payTitle(r){ return /package/i.test(r.note || '') ? esc(r.note.replace(/\s*\(.*\)$/, '')) : 'Payment' + (r.method ? ' · ' + esc(r.method) : ''); }
   function paySheet(id){ var rows = [], p, d;
     if (id[0] === 'p') { p = A.payments[+id.slice(1)]; if (!p) return; d = parse(p.date);
       var byDate = {}; (A.allSess || []).forEach(function(s){ byDate[s.date] = s; });
       rows = (p.covers || []).map(function(k){ var s = byDate[k] || {}; return { d: parse(k), what: kind(s.partners || []), amt: s.price }; });
-    } else { var L = A.ledger.slice().reverse(), at = L.length - 1 - (+id.slice(1)); p = L[at]; if (!p) return; d = parse(p.date);
-      // which sessions this payment paid for: oldest money is used first
-      var pool = [], debt = [], mine = null;
-      function useFrom(b, r, need){ var take = Math.min(b.left, need); if (take > 0.001) { b.left -= take; b.used.push({ d: parse(r.date), what: kind(r.partners || []), amt: take, full: r.amount }); } return need - take; }
-      L.forEach(function(r, k){ if (r.type !== 'session') { var b = { left: r.amount, used: [] }; pool.push(b); if (k === at) mine = b;
-          // sessions that were waiting to be paid get paid from this payment first
-          debt = debt.filter(function(x){ x.need = useFrom(b, x.r, x.need); return x.need > 0.001; }); }
-        else { var need = r.amount; for (var q = 0; q < pool.length && need > 0.001; q++) need = useFrom(pool[q], r, need); if (need > 0.001) debt.push({ r: r, need: need }); } });
-      rows = mine ? mine.used.slice().reverse() : []; if (mine && mine.left > 0.001) rows.left = mine.left; }
+    } else { var b = prepaidPays()[+id.slice(1)]; if (!b) return; p = b.r; d = parse(p.date); rows = b.used.slice(); if (b.left > 0.001) rows.left = b.left; }
     var f = '<div><span>Amount</span><b>' + money(p.amount) + '</b></div><div><span>Date</span><b>' + full(d) + '</b></div>' + (p.method ? '<div><span>Method</span><b>' + esc(p.method) + '</b></div>' : '');
     var list = rows.length ? '<div class="sec" style="margin-top:16px">Paid For</div><div class="list">' + rows.map(function(r){ return '<div class="li" style="cursor:default">' + dateBox(r.d, true) + '<span class="t"><b>' + wd(r.d) + '</b><span>' + r.what + (r.full && r.full > r.amt + 0.001 ? ' · part of ' + money(r.full) : '') + '</span></span>' + (r.amt ? '<span class="r">' + money(r.amt) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '';
     if (rows.left) list += '<p class="sub" style="margin-top:10px">' + money(rows.left) + ' still left as credit for upcoming sessions.</p>';
     else if (!rows.length) list = '<p class="sub" style="margin-top:14px">' + (p.note ? esc(p.note) : (id[0] === 'l' ? 'Kept as credit for upcoming sessions.' : 'No sessions linked to this payment.')) + '</p>';
-    openSheet('<h3>Payment · ' + md(d) + '</h3><div class="facts">' + f + '</div>' + list); }
+    openSheet('<h3>' + (id[0] === 'l' && /package/i.test(p.note || '') ? 'Package' : 'Payment') + ' · ' + md(d) + '</h3><div class="facts">' + f + '</div>' + list); }
   function pastSheet(i){ var s = A.past[i]; var w = A.W[s.key]; openSheet('<h3>' + full(s.d) + '</h3><p class="sub">' + kind(s.partners) + (s.start ? ' · ' + tr(s.start, s.end) : '') + '</p>' + (w ? '<div class="list" style="margin-top:14px">' + workoutRows(s.key) + '</div>' : '<p class="sub" style="margin-top:14px">No workout logged for this session.</p>')); }
   function liftSheet(i){ var l = A.lifts[i], ss = l.sessions, v = ss.map(function(p){ return val(p, l); }); var W = 340, H = 150, lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1;
     var xs = v.map(function(_, k){ return ss.length < 2 ? W / 2 : 14 + k * (W - 28) / (ss.length - 1); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); });
