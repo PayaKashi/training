@@ -193,8 +193,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <p class="kick">Ways to train</p>
   <h2>Pick what fits <span class="pk">your life.</span></h2>
   <div class="svc">
-    <div class="card rv"><span class="tag">In person</span><h3>1-on-1 training</h3><p>Just you and me. Every session is built around your goal and adjusted to how you're moving that day.</p><ul><li>Fully personal programming</li><li>Hands-on coaching for every lift</li><li>Your own client app</li></ul></div>
-    <div class="card rv"><span class="tag">In person</span><h3>Partner training</h3><p>Train with a friend, partner or family member. Same coaching, shared session, and someone to push you.</p><ul><li>Two people per session</li><li>Each person has their own goals and app</li><li>Lower cost per person</li></ul></div>
+    <div class="card rv"><span class="tag">In person · HigherGround</span><h3>1-on-1 training</h3><p>Just you and me. Every session is built around your goal and adjusted to how you're moving that day.</p><ul><li>Fully personal programming</li><li>Hands-on coaching for every lift</li><li>Your own client app</li></ul></div>
+    <div class="card rv"><span class="tag">In person · HigherGround</span><h3>Partner training</h3><p>Train with a friend, partner or family member. Same coaching, shared session, and someone to push you.</p><ul><li>Two people per session</li><li>Each person has their own goals and app</li><li>Lower cost per person</li></ul></div>
     <div class="card rv"><span class="tag">Anywhere</span><h3>Online coaching</h3><p>A program that progresses month to month, for your gym or your home, with me checking in along the way.</p><ul><li>Monthly program built for you</li><li>Regular check-ins and adjustments</li><li>Your workouts and progress in the app</li></ul></div>
     <div class="card rv"><span class="tag soon">Coming soon</span><h3>Group classes</h3><p>Small-group strength and conditioning sessions. Join the waitlist and you'll hear first when they open.</p><ul><li>Small groups, real coaching</li><li>Strength and conditioning focus</li><li>Waitlist open now</li></ul></div>
   </div>
@@ -217,7 +217,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <h2>Good to know.</h2>
   <div class="faq">
     <details><summary>Do I need experience to start?</summary><p>No. Some of my clients had never lifted before, others have trained for years. Your plan starts where you are.</p></details>
-    <details><summary>Where do sessions happen?</summary><p>In-person sessions are in Toronto. I'll share the exact location when we book your first session. Online coaching works anywhere.</p></details>
+    <details><summary>Where do sessions happen?</summary><p>1-on-1 and partner sessions are at HigherGround in Toronto. Online coaching works anywhere.</p></details>
     <details><summary>How often should I train?</summary><p>Most clients train with me one to three times a week. We'll decide what makes sense for your goal and schedule on the intro call.</p></details>
     <details><summary>How do payments work?</summary><p>You can pay per session or prepay for a block. Either way, your sessions and payments are all laid out in your app, so there's never any confusion.</p></details>
     <details><summary>What is the client app?</summary><p>It's a private page made just for you. It shows your upcoming sessions, your lifts and personal bests, your goals and your payments. You log in with your own PIN.</p></details>
@@ -257,12 +257,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 </div></section>
 </main>
 
-<footer><div class="wrap"><span>© 2026 P² Collective · Paya Kashi</span><span>Personal training · Toronto</span></div></footer>
+<footer><div class="wrap"><span>© 2026 P² Collective · Paya Kashi</span><a href="https://www.instagram.com/payakashi/" target="_blank" rel="noopener" style="color:var(--pink2);font-weight:700">Instagram · @payakashi</a></div></footer>
 
 <script>
 (function(){
   // Where applications are sent. Set once the form is connected.
-  var ENDPOINT = '';
+  var ENDPOINT = 'https://formsubmit.co/ajax/spayakashi@gmail.com';
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .12 }) : null;
   document.querySelectorAll('.rv').forEach(function(el, i){ el.style.transitionDelay = (i % 4) * 70 + 'ms'; if (io) io.observe(el); else el.classList.add('in'); });
   var f = document.getElementById('lead'), msg = document.getElementById('f-msg'), go = document.getElementById('f-go');
@@ -278,7 +278,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
     go.disabled = true; go.textContent = 'Sending…';
     fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
       .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function(){ document.getElementById('f-wrap').hidden = true; document.getElementById('f-done').hidden = false; })
+      .then(function(j){ if (j && String(j.success) === 'false') throw new Error('not accepted'); document.getElementById('f-wrap').hidden = true; document.getElementById('f-done').hidden = false; })
       .catch(function(){ go.disabled = false; go.textContent = 'Book my free intro call'; msg.textContent = 'Something went wrong sending that. Please try again in a moment.'; });
   });
 })();
