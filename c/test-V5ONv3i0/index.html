@@ -420,7 +420,12 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
       rows = (p.covers || []).map(function(k){ var s = byDate[k] || {}; return { d: parse(k), what: kind(s.partners || []), amt: s.price }; });
     } else { var L = A.ledger.slice().reverse(), at = L.length - 1 - (+id.slice(1)); p = L[at]; if (!p) return; d = parse(p.date);
       // which sessions this payment paid for: oldest money is used first
-      var pool = [], mine = null; L.forEach(function(r, k){ if (r.type !== 'session') { var b = { left: r.amount, used: [] }; pool.push(b); if (k === at) mine = b; } else { var need = r.amount; for (var q = 0; q < pool.length && need > 0.001; q++) { var b2 = pool[q], take = Math.min(b2.left, need); if (take > 0.001) { b2.left -= take; need -= take; b2.used.push({ d: parse(r.date), what: kind(r.partners || []), amt: take, full: r.amount }); } } } });
+      var pool = [], debt = [], mine = null;
+      function useFrom(b, r, need){ var take = Math.min(b.left, need); if (take > 0.001) { b.left -= take; b.used.push({ d: parse(r.date), what: kind(r.partners || []), amt: take, full: r.amount }); } return need - take; }
+      L.forEach(function(r, k){ if (r.type !== 'session') { var b = { left: r.amount, used: [] }; pool.push(b); if (k === at) mine = b;
+          // sessions that were waiting to be paid get paid from this payment first
+          debt = debt.filter(function(x){ x.need = useFrom(b, x.r, x.need); return x.need > 0.001; }); }
+        else { var need = r.amount; for (var q = 0; q < pool.length && need > 0.001; q++) need = useFrom(pool[q], r, need); if (need > 0.001) debt.push({ r: r, need: need }); } });
       rows = mine ? mine.used.slice().reverse() : []; if (mine && mine.left > 0.001) rows.left = mine.left; }
     var f = '<div><span>Amount</span><b>' + money(p.amount) + '</b></div><div><span>Date</span><b>' + full(d) + '</b></div>' + (p.method ? '<div><span>Method</span><b>' + esc(p.method) + '</b></div>' : '');
     var list = rows.length ? '<div class="sec" style="margin-top:16px">Paid For</div><div class="list">' + rows.map(function(r){ return '<div class="li" style="cursor:default">' + dateBox(r.d, true) + '<span class="t"><b>' + wd(r.d) + '</b><span>' + r.what + (r.full && r.full > r.amt + 0.001 ? ' · part of ' + money(r.full) : '') + '</span></span>' + (r.amt ? '<span class="r">' + money(r.amt) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '';
