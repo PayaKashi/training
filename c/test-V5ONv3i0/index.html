@@ -205,6 +205,22 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
 .stats b{font-size:2rem;line-height:1}
 .stats span{margin-top:6px;font-size:.74rem;line-height:1.25;letter-spacing:.02em}
 .card.money{border:1px solid var(--line);padding:14px 18px}.card.money b{font-size:1.15rem}
+/* home: small money card (card style, obsidian + ice + pink) */
+.mcard{position:relative;overflow:hidden;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;font:inherit;color:var(--fg);cursor:pointer;margin-bottom:12px;padding:15px 18px;border-radius:22px;border:1px solid rgba(223,229,235,.16);background:radial-gradient(60% 120% at 100% 0%,rgba(224,90,156,.30),transparent 65%),linear-gradient(118deg,rgba(223,229,235,.12) 0%,rgba(223,229,235,.03) 30%,transparent 31%),linear-gradient(160deg,#1B1D23,#121317);box-shadow:inset 0 1px 0 rgba(223,229,235,.12),0 16px 32px -22px rgba(224,90,156,.5)}
+.mcard::before{content:"";position:absolute;left:-60px;bottom:-120px;width:200px;height:170px;border-radius:50%;border:1px solid rgba(223,229,235,.16);pointer-events:none}
+.mcard::after{content:"";position:absolute;left:18px;right:18px;bottom:0;height:2px;background:linear-gradient(90deg,rgba(223,229,235,.5),rgba(240,140,194,.85));border-radius:2px;opacity:.7}
+.mcard .mt{position:relative;display:flex;flex-direction:column;gap:4px}
+.mcard .mt b{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:1.9rem;line-height:1;color:#F4F7FA;letter-spacing:-.01em}
+.mcard .mr{position:relative;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.mcard .mlogo{display:block;width:34px;height:34px;border-radius:50%;background:#1b181d var(--logo-s) center/cover;box-shadow:0 0 0 1.5px rgba(223,229,235,.75),0 0 0 3.5px rgba(224,90,156,.35)}
+.mcard .mn{font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:#C9D0D8}
+.mcard:active{transform:scale(.985)}
+details.wfold>summary{padding:14px 18px;border-radius:22px;border:1px solid rgba(223,229,235,.1);background:linear-gradient(180deg,rgba(223,229,235,.035),rgba(223,229,235,0) 40%),#16181D;text-transform:none;letter-spacing:0;color:var(--fg);box-shadow:inset 0 1px 0 rgba(223,229,235,.06)}
+details.wfold>summary .t b{font-size:1rem;font-weight:700}details.wfold>summary .t em{font-style:normal;color:var(--pink2)}
+details.wfold>summary svg{color:var(--muted);width:18px;height:18px}
+details.wfold[open]>summary{border-color:rgba(240,140,194,.35)}
+details.wfold>.list{margin-top:8px}
+html{min-height:100%}body{min-height:100vh}
 </style>
 </head>
 <body>
@@ -324,10 +340,11 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
     if (A.plan === 'prepaid') { mt = A.owed > 0 ? 'Not paid yet' : 'Credit'; mv = A.owed > 0 ? money(A.owed) : money(A.credit); }
     else if (A.owed > 0) { mt = 'Amount owing'; mv = money(A.owed); }
     else { mt = A.credit > 0 ? 'Credit' : 'Balance'; mv = A.credit > 0 ? money(A.credit) : 'All paid up'; }
-    h += '<button class="card mini li money" data-go="payments"><span class="t"><span class="lab" style="display:block">' + mt + '</span><b>' + mv + '</b></span>' + CHEV + '</button>';
+    h += '<button class="mcard" data-go="payments"><span class="mt"><span class="lab">' + mt + '</span><b>' + mv + '</b></span><span class="mr"><i class="mlogo" aria-hidden="true"></i><span class="mn">' + esc((A.name || '').split(' ')[0]) + '</span></span></button>';
     // latest workout
     var lastW = A.wdates[A.wdates.length - 1];
-    if (lastW) h += '<div class="sec">Latest Workout · ' + md(parse(lastW)) + '</div><div class="list">' + workoutRows(lastW) + '</div>';
+    if (lastW) { var lw = A.W[lastW], nb = lw.filter(function(x){ return x.best; }).length, op = !!FOLD['home:w'];
+      h += '<details class="fold wfold" data-fold="home:w"' + (op ? ' open' : '') + '><summary><span class="t"><span class="lab" style="display:block">Latest Workout · ' + md(parse(lastW)) + '</span><b>' + plural(lw.length, 'exercise') + (nb ? ' · <em>' + plural(nb, 'new best') + '</em>' : '') + '</b></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + workoutRows(lastW) + '</div></details>'; }
     h += noteCard();
     return h;
   }
