@@ -3,14 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>P² Collective · Personal Training in Toronto with Paya Kashi</title>
-<meta name="description" content="1-on-1, partner and online coaching in Toronto with Paya Kashi. Every client gets their own app to track sessions, lifts and progress. Book a free intro call.">
-<meta property="og:title" content="P² Collective · Personal Training with Paya Kashi">
-<meta property="og:description" content="Training you can actually see working. Every client gets their own app. Book a free intro call.">
+<title>P² Collective · Online Coaching & Personal Training in Toronto | Paya Kashi</title>
+<meta name="description" content="Online coaching and in-person personal training in Toronto with Paya Kashi. Custom programs, weekly check-ins and your own progress app. Book a free intro call.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://payakashi.github.io/training/">
+<meta property="og:title" content="P² Collective · Coaching that actually works">
+<meta property="og:description" content="Online coaching or in person in Toronto. A plan built for you and your own app to track every bit of progress. Book a free intro call.">
 <meta property="og:image" content="https://payakashi.github.io/training/site/og.jpg">
+<meta property="og:url" content="https://payakashi.github.io/training/">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0C0D10">
 <link rel="icon" href="site/logo.png">
+<link rel="apple-touch-icon" href="site/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -140,6 +145,37 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   .row{grid-template-columns:1fr 1fr}
   .start .card{padding:44px;max-width:760px;margin:0 auto}
 }
+
+/* v2 additions */
+.online{padding-top:30px}
+.online .card.big{padding:28px 22px;border-color:rgba(240,140,194,.32);background:radial-gradient(70% 60% at 100% 0%,rgba(224,90,156,.20),transparent 62%),linear-gradient(118deg,rgba(223,229,235,.08) 0%,rgba(223,229,235,.02) 30%,transparent 31%),var(--card)}
+.online .badge{display:inline-block;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;padding:6px 12px;border-radius:99px;background:linear-gradient(135deg,#EC74B0,#B23A77);color:#fff}
+.online .grid{display:grid;gap:12px;margin:26px 0 8px}
+.online .it{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:18px;background:rgba(12,13,16,.55);border:1px solid var(--line)}
+.online .ic{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(150deg,rgba(236,116,176,.30),rgba(178,58,119,.14));box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);color:var(--pink2)}
+.online .ic svg{width:22px;height:22px}
+.online .it h3{font-size:1.04rem;color:var(--hi);margin-bottom:2px}
+.online .it p{font-size:.94rem;color:var(--muted)}
+.online .note{margin-top:14px;color:#B4BCC6;font-size:.96rem}
+.online .cta-row{margin-top:22px}
+.princ{display:grid;gap:12px;margin-top:30px}
+.princ .card h3{font-family:Fraunces,serif;font-weight:400;font-size:1.45rem;color:var(--hi);margin-bottom:6px}
+.princ .card p{color:var(--muted);font-size:.98rem}
+.princ .card{border-left:3px solid rgba(240,140,194,.7)}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
+.who .card{padding:18px}
+.who h3{font-size:1.02rem;color:var(--hi);margin-bottom:4px}
+.who p{font-size:.9rem;color:var(--muted)}
+.who .em{display:block;font-size:1.4rem;margin-bottom:8px}
+.ip{display:grid;gap:12px;margin-top:30px}
+.facts b.w{font-size:1.25rem;padding:6px 0 3px}
+@media (min-width:860px){
+  .online .card.big{padding:48px}
+  .online .grid{grid-template-columns:1fr 1fr}
+  .princ{grid-template-columns:repeat(4,1fr)}
+  .who{grid-template-columns:repeat(4,1fr)}
+  .ip{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
@@ -151,28 +187,78 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 <main id="top">
 <section class="hero"><div class="wrap">
   <div>
-    <p class="kick">Personal training · Toronto</p>
-    <h1 class="serif">Training you can <span class="pk">actually see working.</span></h1>
-    <p class="lead">I'm Paya Kashi. I coach 1-on-1, partner and online clients, and every one of them gets their own app to track sessions, lifts and progress.</p>
-    <div class="cta-row"><a class="btn" href="#start">Book a free intro call</a><a class="btn ghost" href="#how">How it works</a></div>
-    <p class="tiny">15 minutes, no pressure. We talk about your goals and whether I'm the right fit.</p>
+    <p class="kick">P² Collective · Paya Kashi</p>
+    <h1 class="serif">Coaching that <span class="pk">actually works.</span></h1>
+    <p class="lead">Online coaching wherever you train, or in person in Toronto. Either way you get a plan built for you, real guidance, and your own app to see every bit of progress.</p>
+    <div class="cta-row"><a class="btn" href="#start">Book a free intro call</a><a class="btn ghost" href="#online">Online coaching</a></div>
+    <p class="tiny">Free, no pressure. By phone, video or in person, whichever you prefer.</p>
   </div>
   <div class="phone" aria-hidden="true"><div class="scr"><video src="site/app-demo.mp4" poster="site/app-home.webp" autoplay muted loop playsinline preload="metadata"></video></div></div>
 </div>
 <div class="wrap" style="display:block"><div class="facts rv">
-  <div><b>700+</b><span>client sessions coached in 2026</span></div>
-  <div><b>BKin</b><span>University of Toronto</span></div>
-  <div><b>MSc</b><span>Sport Sciences, in progress</span></div>
-  <div><b>3</b><span>marathons, plus HYROX races</span></div>
+  <div><b>700+</b><span>sessions coached in 2026</span></div>
+  <div><b class="w">Years</b><span>of coaching experience</span></div>
+  <div><b class="w">Many</b><span>clients trained, beginners to athletes</span></div>
+  <div><b class="w">BKin · MSc</b><span>Kinesiology and Sport Sciences, U of T</span></div>
 </div></div>
 </section>
+
+<section class="online" id="online"><div class="wrap">
+  <div class="card big rv">
+    <span class="badge">Online coaching</span>
+    <h2>Your coach, <span class="pk">wherever you train.</span></h2>
+    <p class="sub">The same coaching my in-person clients get, built around your schedule, your gym or your home setup, and adjusted every week.</p>
+    <div class="grid">
+      <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg></span><div><h3>A custom program</h3><p>Built for your goal and your equipment, and progressed every month.</p></div></div>
+      <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M8.5 13l2.5 2.5 4.5-5"/></svg></span><div><h3>Weekly check-ins</h3><p>We look at how the week went and adjust what's next.</p></div></div>
+      <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="M16 10.5l5-3v9l-5-3"/></svg></span><div><h3>Form video reviews</h3><p>Send me your lifts and get clear feedback on your technique.</p></div></div>
+      <div class="it"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg></span><div><h3>Message me any time</h3><p>Questions between check-ins? Just ask.</p></div></div>
+    </div>
+    <p class="note">You also get your own client app to follow your program and track every lift. Online coaching starts with a 3-month commitment, because that's how long it takes to see real change.</p>
+    <div class="cta-row"><a class="btn" href="#start" data-pick="Online coaching">Apply for online coaching</a></div>
+  </div>
+</div></section>
+
+<section class="about" id="about"><div class="wrap">
+  <div class="card rv">
+    <div><p class="kick">Why I coach</p><h2 style="margin-bottom:0">Hi, I'm <span class="pk">Paya.</span></h2></div>
+    <div>
+      <p>I see so many people put time and money into training that isn't getting them anywhere. Random workouts, no plan, nobody checking if it's working. I started coaching to fix that.</p>
+      <p style="margin-top:12px">I have a Bachelor of Kinesiology from the University of Toronto and I'm finishing my Master's in Sport Sciences there. I train and race too, from marathons to HYROX, so I know what it takes to keep showing up.</p>
+      <p style="margin-top:12px">My job is simple: you should always know what you're doing, why you're doing it, and that it's working.</p>
+      <div class="creds"><span>BKin, U of T</span><span>MSc Sport Sciences (in progress)</span><span>Marathoner</span><span>HYROX athlete</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="approach"><div class="wrap">
+  <p class="kick">How I coach</p>
+  <h2>No wasted time. <span class="pk">No wasted money.</span></h2>
+  <div class="princ">
+    <div class="card rv"><h3>Technique first</h3><p>We get you moving well before we load you up, so you get stronger without getting hurt.</p></div>
+    <div class="card rv"><h3>Progressive overload</h3><p>Every block builds on the last. You'll see it in your numbers, not just feel it.</p></div>
+    <div class="card rv"><h3>Sustainable habits</h3><p>No crash diets and no burnout. Just a routine you can actually keep.</p></div>
+    <div class="card rv"><h3>Accountability</h3><p>Check-ins, tracking and a coach who notices when you show up, and when you don't.</p></div>
+  </div>
+</div></section>
+
+<section id="who"><div class="wrap">
+  <p class="kick">Who I work with</p>
+  <h2>Wherever you're <span class="pk">starting from.</span></h2>
+  <div class="who">
+    <div class="card rv"><span class="em">🌱</span><h3>Beginners</h3><p>Walk into the gym knowing exactly what to do, and feel confident doing it.</p></div>
+    <div class="card rv"><span class="em">💼</span><h3>Busy professionals</h3><p>Efficient sessions that fit your week and still get results.</p></div>
+    <div class="card rv"><span class="em">🔥</span><h3>Fat loss and body composition</h3><p>Look and feel different with training and habits that last.</p></div>
+    <div class="card rv"><span class="em">🏃</span><h3>Athletes and runners</h3><p>Strength that carries over to your sport, your races and HYROX.</p></div>
+  </div>
+</div></section>
 
 <section id="how"><div class="wrap">
   <p class="kick">How it works</p>
   <h2>From first message to <span class="pk">first personal best.</span></h2>
   <div class="steps">
-    <div class="card rv"><h3>Free intro call</h3><p>Fill out the short form below. We'll chat for 15 minutes about your goals, schedule and training history.</p></div>
-    <div class="card rv"><h3>Your first session</h3><p>We find your starting point: how you move, what you can lift, and what needs work first.</p></div>
+    <div class="card rv"><h3>Free intro call</h3><p>Fill out the short form below. We'll talk about your goals, schedule and training history, by phone, video or in person at the gym.</p></div>
+    <div class="card rv"><h3>Your starting point</h3><p>We find out how you move, what you can lift and what needs work first.</p></div>
     <div class="card rv"><h3>Your plan and your app</h3><p>You get a program built around your goal, and a private login to your own client app.</p></div>
     <div class="card rv"><h3>Watch the numbers climb</h3><p>Every session is logged. You see each lift go up, every new best, and how close you are to your goal.</p></div>
   </div>
@@ -183,33 +269,22 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <h2>Your progress, <span class="pk">in your pocket.</span></h2>
   <p class="sub">Most people training with a coach have no idea if they're really getting stronger. My clients can check any time.</p>
   <div class="app-grid">
-    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-home.webp" alt="Client app home screen showing the next session and latest workout" loading="lazy"></div></div><div><h3>Always know what's next</h3><p>Your next session, your latest workout and notes from me, every time you open it.</p></div></div>
-    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-progress.webp" alt="Progress screen with goals and lift history" loading="lazy"></div></div><div><h3>Every lift, tracked</h3><p>Your best set on every exercise, your goals, and how far you've come since day one.</p></div></div>
-    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-lift.webp" alt="Chart of a lift improving session by session" loading="lazy"></div></div><div><h3>Watch yourself get stronger</h3><p>Tap any lift to see the whole climb, session by session.</p></div></div>
+    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-home.webp" alt="Client app home screen showing the next session and latest workout"></div></div><div><h3>Always know what's next</h3><p>Your next session, your latest workout and notes from me, every time you open it.</p></div></div>
+    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-progress.webp" alt="Progress screen with goals and lift history"></div></div><div><h3>Every lift, tracked</h3><p>Your best set on every exercise, your goals, and how far you've come since day one.</p></div></div>
+    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-lift.webp" alt="Chart of a lift improving session by session"></div></div><div><h3>Watch yourself get stronger</h3><p>Tap any lift to see the whole climb, session by session.</p></div></div>
   </div>
 </div></section>
 
 <section id="services"><div class="wrap">
-  <p class="kick">Ways to train</p>
-  <h2>Pick what fits <span class="pk">your life.</span></h2>
-  <div class="svc">
-    <div class="card rv"><span class="tag">In person · HigherGround</span><h3>1-on-1 training</h3><p>Just you and me. Every session is built around your goal and adjusted to how you're moving that day.</p><ul><li>Fully personal programming</li><li>Hands-on coaching for every lift</li><li>Your own client app</li></ul></div>
-    <div class="card rv"><span class="tag">In person · HigherGround</span><h3>Partner training</h3><p>Train with a friend, partner or family member. Same coaching, shared session, and someone to push you.</p><ul><li>Two people per session</li><li>Each person has their own goals and app</li><li>Lower cost per person</li></ul></div>
-    <div class="card rv"><span class="tag">Anywhere</span><h3>Online coaching</h3><p>A program that progresses month to month, for your gym or your home, with me checking in along the way.</p><ul><li>Monthly program built for you</li><li>Regular check-ins and adjustments</li><li>Your workouts and progress in the app</li></ul></div>
-    <div class="card rv"><span class="tag soon">Coming soon</span><h3>Group classes</h3><p>Small-group strength and conditioning sessions. Join the waitlist and you'll hear first when they open.</p><ul><li>Small groups, real coaching</li><li>Strength and conditioning focus</li><li>Waitlist open now</li></ul></div>
+  <p class="kick">In person</p>
+  <h2>Train with me at <span class="pk">HigherGround.</span></h2>
+  <p class="sub">60-minute sessions in Toronto. Pay per session or save with a package. Mornings, afternoons, evenings and weekends, depending on the day.</p>
+  <div class="ip">
+    <div class="card rv svc1"><span class="tag" style="align-self:flex-start;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:99px;background:rgba(223,229,235,.08);box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);margin-bottom:12px;display:inline-block">1-on-1</span><h3 style="font-size:1.14rem;color:var(--hi);margin-bottom:4px">1-on-1 training</h3><p style="color:var(--muted);font-size:.98rem">Just you and me. Every session is built around your goal and adjusted to how you're moving that day.</p><a class="btn ghost sm" style="margin-top:16px" href="#start" data-pick="1-on-1 training">Ask about 1-on-1</a></div>
+    <div class="card rv"><span class="tag" style="font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:99px;background:rgba(223,229,235,.08);box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);margin-bottom:12px;display:inline-block">Partner</span><h3 style="font-size:1.14rem;color:var(--hi);margin-bottom:4px">Partner training</h3><p style="color:var(--muted);font-size:.98rem">Train with a friend, partner or family member. Same coaching, shared session, lower cost per person, and each of you gets your own app.</p><a class="btn ghost sm" style="margin-top:16px" href="#start" data-pick="Partner training">Ask about partner training</a></div>
+    <div class="card rv"><span class="tag" style="font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:99px;background:rgba(224,90,156,.16);color:var(--pink2);margin-bottom:12px;display:inline-block">Coming soon</span><h3 style="font-size:1.14rem;color:var(--hi);margin-bottom:4px">Group classes</h3><p style="color:var(--muted);font-size:.98rem">Small-group strength and conditioning. Join the waitlist and you'll hear first when they open.</p><a class="btn ghost sm" style="margin-top:16px" href="#start" data-pick="Group classes (waitlist)">Join the waitlist</a></div>
   </div>
   <p class="price-note rv"><b>What does it cost?</b> It depends on the format and how often you train. I'll walk you through the options on your free intro call, with no pressure to commit.</p>
-</div></section>
-
-<section class="about" id="about"><div class="wrap">
-  <div class="card rv">
-    <div><p class="kick">Your coach</p><h2 style="margin-bottom:0">Hi, I'm <span class="pk">Paya.</span></h2></div>
-    <div>
-      <p>I have a Bachelor of Kinesiology from the University of Toronto and I'm completing my Master's in Sport Sciences there. I've run three marathons and I race HYROX, so I train the way I coach: with a plan, and with numbers to back it up.</p>
-      <p style="margin-top:12px">My job is to make sure you know exactly what you're doing in the gym, why you're doing it, and that it's working.</p>
-      <div class="creds"><span>BKin, U of T</span><span>MSc Sport Sciences (in progress)</span><span>Marathoner</span><span>HYROX athlete</span></div>
-    </div>
-  </div>
 </div></section>
 
 <section id="faq"><div class="wrap">
@@ -217,9 +292,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <h2>Good to know.</h2>
   <div class="faq">
     <details><summary>Do I need experience to start?</summary><p>No. Some of my clients had never lifted before, others have trained for years. Your plan starts where you are.</p></details>
-    <details><summary>Where do sessions happen?</summary><p>1-on-1 and partner sessions are at HigherGround in Toronto. Online coaching works anywhere.</p></details>
+    <details><summary>How does online coaching work?</summary><p>You get a custom program for your goal and equipment, weekly check-ins, feedback on your form videos, and you can message me any time. Your program and progress live in your own app. It starts with a 3-month commitment.</p></details>
+    <details><summary>Where do in-person sessions happen?</summary><p>1-on-1 and partner sessions are at HigherGround in Toronto. Sessions are 60 minutes.</p></details>
     <details><summary>How often should I train?</summary><p>Most clients train with me one to three times a week. We'll decide what makes sense for your goal and schedule on the intro call.</p></details>
-    <details><summary>How do payments work?</summary><p>You can pay per session or prepay for a block. Either way, your sessions and payments are all laid out in your app, so there's never any confusion.</p></details>
+    <details><summary>How do payments work?</summary><p>In person, you can pay per session or buy a package. Online coaching is billed monthly. I take e-transfer and cash, and all your sessions and payments are laid out in your app.</p></details>
+    <details><summary>What happens on the intro call?</summary><p>It's free and there's no pressure. We talk about your goals, your schedule and your training history, and figure out whether online or in person fits you best. Phone, video or in person at the gym, your choice.</p></details>
     <details><summary>What is the client app?</summary><p>It's a private page made just for you. It shows your upcoming sessions, your lifts and personal bests, your goals and your payments. You log in with your own PIN.</p></details>
   </div>
 </div></section>
@@ -239,15 +316,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
         <div class="row">
           <label>Phone <small>(optional)</small><input name="phone" type="tel" autocomplete="tel" inputmode="tel"></label>
           <label>I'm interested in<select name="interested_in" required>
-            <option value="">Choose one</option><option>1-on-1 training</option><option>Partner training</option><option>Online coaching</option><option>Group classes (waitlist)</option><option>Not sure yet</option></select></label>
+            <option value="">Choose one</option><option>Online coaching</option><option>1-on-1 training</option><option>Partner training</option><option>Group classes (waitlist)</option><option>Not sure yet</option></select></label>
         </div>
         <label>What's your main goal?<textarea name="goal" required placeholder="e.g. get stronger, lose 15 lb, run my first 10K, train consistently"></textarea></label>
         <div class="row">
           <label>Training experience<select name="experience">
             <option value="">Choose one</option><option>New to training</option><option>Some experience</option><option>Train regularly</option><option>Coming back after a break</option></select></label>
-          <label>Days and times that work <small>(optional)</small><input name="availability" placeholder="e.g. weekday evenings"></label>
+          <label>Intro call by<select name="call_by">
+            <option value="">Any is fine</option><option>Phone</option><option>Video</option><option>In person at the gym</option></select></label>
         </div>
-        <label>How did you hear about me? <small>(optional)</small><input name="heard_from"></label>
+        <div class="row">
+          <label>Days and times that work <small>(optional)</small><input name="availability" placeholder="e.g. weekday evenings"></label>
+          <label>How did you hear about me? <small>(optional)</small><input name="heard_from"></label>
+        </div>
         <button class="btn" type="submit" id="f-go">Book my free intro call</button>
         <p id="f-msg" role="status" aria-live="polite"></p>
       </form>
@@ -257,7 +338,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 </div></section>
 </main>
 
-<footer><div class="wrap"><span>© 2026 P² Collective · Paya Kashi</span><a href="https://www.instagram.com/payakashi/" target="_blank" rel="noopener" style="color:var(--pink2);font-weight:700">Instagram · @payakashi</a></div></footer>
+<footer><div class="wrap"><span>© 2026 P² Collective · Paya Kashi · Toronto</span><a href="https://www.instagram.com/payakashi/" target="_blank" rel="noopener" style="color:var(--pink2);font-weight:700">Instagram · @payakashi</a></div></footer>
 
 <script>
 (function(){
@@ -282,6 +363,12 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       .catch(function(){ go.disabled = false; go.textContent = 'Book my free intro call'; msg.textContent = 'Something went wrong sending that. Please try again in a moment.'; });
   });
 })();
+</script>
+<script>
+document.querySelectorAll('[data-pick]').forEach(function(a){ a.addEventListener('click', function(){ var s = document.querySelector('select[name=interested_in]'); if (s) s.value = a.getAttribute('data-pick'); }); });
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HealthAndBeautyBusiness","name":"P² Collective","alternateName":"Paya Kashi Personal Training","description":"Online coaching and in-person personal training in Toronto with Paya Kashi. 1-on-1 and partner sessions at HigherGround.","url":"https://payakashi.github.io/training/","image":"https://payakashi.github.io/training/site/og.jpg","founder":{"@type":"Person","name":"Paya Kashi"},"areaServed":"Toronto, ON","address":{"@type":"PostalAddress","addressLocality":"Toronto","addressRegion":"ON","addressCountry":"CA"},"sameAs":["https://www.instagram.com/payakashi/"]}
 </script>
 </body>
 </html>
