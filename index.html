@@ -280,6 +280,15 @@ section[id],#start{scroll-margin-top:112px}
   .start .card{padding:34px;max-width:700px}
 }
 @media (min-width:1000px){section[id],#start{scroll-margin-top:70px}}
+
+.fine{font-size:.8rem;color:var(--dim);text-align:center;margin-top:-4px}
+.alt{text-align:center;font-size:.92rem;color:var(--muted);margin-top:2px}
+.alt a{color:var(--pink2);font-weight:700}
+.stick{position:fixed;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;justify-content:center;align-items:center;padding:14px;border-radius:99px;font-weight:700;font-size:.98rem;color:#111217;background:linear-gradient(180deg,#F4F7FA,#B9C1CB);box-shadow:0 0 0 1.5px rgba(240,140,194,.75),0 16px 40px -10px rgba(0,0,0,.9),0 0 30px -6px rgba(224,90,156,.6);transform:translateY(140%);opacity:0;transition:transform .35s var(--ease),opacity .3s;pointer-events:none}
+.stick.show{transform:none;opacity:1;pointer-events:auto}
+@media (min-width:860px){.stick{display:none}}
+footer{padding-bottom:96px}
+@media (min-width:860px){footer{padding-bottom:60px}}
 </style>
 </head>
 <body>
@@ -448,12 +457,15 @@ section[id],#start{scroll-margin-top:112px}
         </div>
         <button class="btn" type="submit" id="f-go">Book My Free Intro Call</button>
         <p id="f-msg" role="status" aria-live="polite"></p>
+        <p class="fine">Your details are only used to contact you about training. Never shared, never sold.</p>
+        <p class="alt">Rather message? <a href="https://ig.me/m/payakashi" target="_blank" rel="noopener">DM Me on Instagram</a></p>
       </form>
     </div>
     <div class="done" id="f-done" hidden><h3>Got It. <span class="pk">Talk Soon.</span></h3><p>Thanks for reaching out. I'll get back to you within a day or two to set up your intro call.</p></div>
   </div>
 </div></section>
 </main>
+<a class="stick" id="stick" href="#start" aria-hidden="true" tabindex="-1">Book a Free Intro Call</a>
 
 <footer><div class="wrap"><span>© 2026 P² Collective · Paya Kashi · Toronto</span><a href="https://www.instagram.com/payakashi/" target="_blank" rel="noopener" style="color:var(--pink2);font-weight:700">Instagram · @payakashi</a></div></footer>
 
@@ -495,6 +507,16 @@ document.querySelectorAll('[data-pick]').forEach(function(a){ a.addEventListener
   var io=new IntersectionObserver(function(es){ es.forEach(function(e){ vis[e.target.id]=e.isIntersecting?e.intersectionRatio:0; });
     var best=null,b=0; ids.forEach(function(id){ if((vis[id]||0)>b){b=vis[id];best=id;} }); mark(best); },{rootMargin:'-130px 0px -45% 0px',threshold:[0,.1,.3,.6]});
   ids.forEach(function(id){ var el=document.getElementById(id); if(el) io.observe(el); });
+})();
+</script>
+<script>
+(function(){
+  var st=document.getElementById('stick'), hero=document.querySelector('.hero .cta-row'), form=document.getElementById('start');
+  if(!st||!('IntersectionObserver' in window)) return;
+  var heroVis=true, formVis=false;
+  function upd(){ var on=!heroVis&&!formVis; st.classList.toggle('show',on); st.setAttribute('aria-hidden',on?'false':'true'); st.tabIndex=on?0:-1; }
+  new IntersectionObserver(function(es){ heroVis=es[0].isIntersecting; upd(); }).observe(hero);
+  new IntersectionObserver(function(es){ formVis=es[0].isIntersecting; upd(); },{threshold:.05}).observe(form);
 })();
 </script>
 <script type="application/ld+json">
