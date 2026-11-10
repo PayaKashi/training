@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Get Started · P² Collective</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0C0D10">
+<link rel="icon" href="../site/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0D10;--card:#16181D;--ice:#DFE5EB;--hi:#F4F7FA;--muted:#9AA2AD;--dim:#6F7681;--pink:#E05A9C;--pink2:#F08CC2;--line:rgba(223,229,235,.10);--ease:cubic-bezier(.2,.7,.2,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ice);font-family:Figtree,system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(70% 40% at 100% 0%,rgba(223,229,235,.08),transparent 70%),linear-gradient(115deg,transparent 52%,rgba(223,229,235,.035) 60%,transparent 70%),radial-gradient(75% 45% at 0% 100%,rgba(224,90,156,.20),transparent 70%),radial-gradient(45% 28% at 0% 0%,rgba(224,90,156,.12),transparent 70%),var(--bg)}
+a{color:inherit;text-decoration:none}
+img,video{display:block;max-width:100%}
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding:0 22px}
+.serif{font-family:Fraunces,Georgia,serif;font-weight:400;letter-spacing:-.02em}
+.pk{color:var(--pink2)}
+.kick{font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:700;font-size:1rem;padding:15px 26px;border-radius:99px;border:0;cursor:pointer;color:#111217;background:linear-gradient(180deg,#F4F7FA,#B9C1CB);box-shadow:0 0 0 1.5px rgba(240,140,194,.7),0 18px 40px -18px rgba(224,90,156,.8);transition:transform .2s var(--ease),box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 0 1.5px rgba(240,140,194,.95),0 22px 46px -16px rgba(224,90,156,.95)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{color:var(--ice);background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.16)}
+.btn.sm{padding:10px 18px;font-size:.92rem}
+:focus-visible{outline:2px solid var(--pink2);outline-offset:3px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(12,13,16,.72);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:.02em}
+.brand img{width:36px;height:36px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(223,229,235,.7),0 0 0 4px rgba(224,90,156,.28)}
+
+/* hero */
+.hero{padding:56px 0 30px}
+.hero .wrap{display:grid;gap:44px;align-items:center}
+.hero h1{font-size:clamp(2.7rem,9.6vw,4.9rem);line-height:1.02;margin:16px 0 20px;color:var(--hi)}
+.hero p.lead{font-size:1.14rem;color:#B4BCC6;max-width:34em}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.tiny{margin-top:14px;font-size:.88rem;color:var(--dim)}
+.phone{position:relative;width:min(300px,74vw);margin:0 auto;border-radius:46px;padding:7px;background:linear-gradient(150deg,#F4F7FA,#8E96A1 30%,#2A2D34 55%,#C9D0D8);box-shadow:0 50px 100px -40px rgba(0,0,0,.9),0 0 80px -18px rgba(224,90,156,.5)}
+.phone .scr{border-radius:40px;overflow:hidden;background:#0C0D10;aspect-ratio:390/844}
+.phone video,.phone img{width:100%;height:100%;object-fit:cover}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:34px 0 0}
+.facts div{padding:16px 14px;border-radius:18px;background:linear-gradient(180deg,rgba(223,229,235,.04),transparent 50%),var(--card);border:1px solid var(--line);border-top:2px solid rgba(240,140,194,.55);text-align:center}
+.facts b{display:block;font-family:Fraunces,serif;font-weight:400;font-size:1.7rem;line-height:1.1;color:var(--hi)}
+.facts span{font-size:.82rem;color:var(--muted)}
+
+section{padding:64px 0}
+h2{font-family:Fraunces,Georgia,serif;font-weight:400;letter-spacing:-.02em;font-size:clamp(2rem,6.4vw,3.1rem);line-height:1.08;color:var(--hi);margin:12px 0 14px}
+.sub{color:#A9B1BC;max-width:36em}
+.card{background:linear-gradient(180deg,rgba(223,229,235,.04),transparent 40%),var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:inset 0 1px 0 rgba(223,229,235,.06),0 18px 34px -24px rgba(0,0,0,.9)}
+
+/* steps */
+.steps{display:grid;gap:12px;margin-top:30px;counter-reset:s}
+.steps .card{position:relative;padding-left:76px}
+.steps .card::before{counter-increment:s;content:"0" counter(s);position:absolute;left:22px;top:22px;font-family:Fraunces,serif;font-size:1.7rem;color:var(--pink2)}
+.steps h3,.svc h3{font-size:1.14rem;color:var(--hi);margin-bottom:4px}
+.steps p,.svc p{color:var(--muted);font-size:.98rem}
+
+/* app */
+.app-grid{display:grid;gap:26px;margin-top:34px}
+.feat{display:grid;grid-template-columns:118px 1fr;gap:18px;align-items:center}
+.feat .phone{width:118px;border-radius:20px;padding:3px;margin:0;box-shadow:0 20px 40px -20px rgba(0,0,0,.9),0 0 40px -14px rgba(224,90,156,.5)}
+.feat .phone .scr{border-radius:17px}
+.feat h3{font-family:Fraunces,serif;font-weight:400;font-size:1.5rem;line-height:1.12;color:var(--hi);margin-bottom:6px}
+.feat p{color:var(--muted);font-size:.98rem}
+
+/* services */
+.svc{display:grid;gap:12px;margin-top:30px}
+.svc .card{display:flex;flex-direction:column;gap:6px}
+.svc .tag{align-self:flex-start;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:99px;background:rgba(223,229,235,.08);color:var(--ice);box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);margin-bottom:8px}
+.svc .tag.soon{background:rgba(224,90,156,.16);color:var(--pink2)}
+.svc ul{list-style:none;margin-top:8px;display:grid;gap:6px}
+.svc li{position:relative;padding-left:22px;font-size:.95rem;color:#B4BCC6}
+.svc li::before{content:"";position:absolute;left:2px;top:.62em;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#EC74B0,#B23A77)}
+.price-note{margin-top:20px;padding:18px 22px;border-radius:20px;border:1px solid rgba(240,140,194,.3);background:rgba(224,90,156,.07);color:#C9D0D8;font-size:.98rem}
+
+/* about */
+.about .card{display:grid;gap:18px}
+.about p{color:#B4BCC6}
+.creds{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.creds span{font-size:.84rem;font-weight:600;padding:7px 13px;border-radius:99px;background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.13)}
+
+/* faq */
+.faq{margin-top:26px;display:grid;gap:10px}
+.faq details{border:1px solid var(--line);border-radius:18px;background:var(--card);overflow:hidden}
+.faq summary{list-style:none;cursor:pointer;padding:18px 20px;font-weight:700;color:var(--hi);display:flex;justify-content:space-between;gap:14px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:Fraunces,serif;font-size:1.5rem;line-height:1;color:var(--pink2);transition:transform .25s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{padding:0 20px 18px;color:var(--muted)}
+
+/* form */
+.start .card{padding:26px 22px;border-color:rgba(240,140,194,.3);background:radial-gradient(80% 60% at 100% 0%,rgba(224,90,156,.16),transparent 62%),linear-gradient(180deg,rgba(223,229,235,.05),transparent 40%),var(--card)}
+form{display:grid;gap:14px;margin-top:22px}
+.row{display:grid;gap:14px}
+label{display:grid;gap:6px;font-size:.84rem;font-weight:600;color:#C9D0D8}
+label small{font-weight:400;color:var(--dim)}
+input,select,textarea{font:inherit;font-size:1rem;color:var(--hi);background:#0E0F13;border:1px solid rgba(223,229,235,.16);border-radius:14px;padding:13px 14px;width:100%;transition:border-color .2s,box-shadow .2s}
+textarea{min-height:104px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pink2);box-shadow:0 0 0 3px rgba(240,140,194,.18)}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239AA2AD' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:38px}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+form .btn{width:100%;margin-top:6px}
+#f-msg{font-size:.94rem;color:var(--pink2);min-height:1.2em}
+.done{text-align:center;padding:26px 6px}
+.done h3{font-family:Fraunces,serif;font-weight:400;font-size:1.9rem;color:var(--hi);margin-bottom:8px}
+.done p{color:var(--muted)}
+
+footer{padding:34px 0 60px;border-top:1px solid var(--line);color:var(--dim);font-size:.88rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+@media (min-width:860px){
+  body{font-size:18px}
+  .hero{padding:84px 0 40px}
+  .hero .wrap{grid-template-columns:1.15fr .85fr;gap:60px}
+  .phone{width:320px}
+  .facts{grid-template-columns:repeat(4,1fr);margin-top:54px}
+  section{padding:92px 0}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .app-grid{grid-template-columns:repeat(3,1fr);gap:22px}
+  .feat{grid-template-columns:1fr;text-align:left;gap:20px}
+  .feat .phone{width:210px;border-radius:34px;padding:5px}.feat .phone .scr{border-radius:29px}
+  .svc{grid-template-columns:repeat(2,1fr)}
+  .about .card{grid-template-columns:1fr 1fr;gap:40px;padding:40px}
+  .row{grid-template-columns:1fr 1fr}
+  .start .card{padding:44px;max-width:760px;margin:0 auto}
+}
+
+/* v2 additions */
+.online{padding-top:30px}
+.online .card.big{padding:28px 22px;border-color:rgba(240,140,194,.32);background:radial-gradient(70% 60% at 100% 0%,rgba(224,90,156,.20),transparent 62%),linear-gradient(118deg,rgba(223,229,235,.08) 0%,rgba(223,229,235,.02) 30%,transparent 31%),var(--card)}
+.online .badge{display:inline-block;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;padding:6px 12px;border-radius:99px;background:linear-gradient(135deg,#EC74B0,#B23A77);color:#fff}
+.online .grid{display:grid;gap:12px;margin:26px 0 8px}
+.online .it{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:18px;background:rgba(12,13,16,.55);border:1px solid var(--line)}
+.online .ic{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(150deg,rgba(236,116,176,.30),rgba(178,58,119,.14));box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);color:var(--pink2)}
+.online .ic svg{width:22px;height:22px}
+.online .it h3{font-size:1.04rem;color:var(--hi);margin-bottom:2px}
+.online .it p{font-size:.94rem;color:var(--muted)}
+.online .note{margin-top:14px;color:#B4BCC6;font-size:.96rem}
+.online .cta-row{margin-top:22px}
+.princ{display:grid;gap:12px;margin-top:30px}
+.princ .card h3{font-family:Fraunces,serif;font-weight:400;font-size:1.45rem;color:var(--hi);margin-bottom:6px}
+.princ .card p{color:var(--muted);font-size:.98rem}
+.princ .card{border-left:3px solid rgba(240,140,194,.7)}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:28px}
+.who .card{padding:18px}
+.who h3{font-size:1.02rem;color:var(--hi);margin-bottom:4px}
+.who p{font-size:.9rem;color:var(--muted)}
+.who .em{display:block;font-size:1.4rem;margin-bottom:8px}
+.ip{display:grid;gap:12px;margin-top:30px}
+.facts b.w{font-size:1.25rem;padding:6px 0 3px}
+@media (min-width:860px){
+  .online .card.big{padding:48px}
+  .online .grid{grid-template-columns:1fr 1fr}
+  .princ{grid-template-columns:repeat(4,1fr)}
+  .who{grid-template-columns:repeat(4,1fr)}
+  .ip{grid-template-columns:repeat(3,1fr)}
+}
+
+.exp{margin:30px auto 0;max-width:30em;text-align:center;font-family:Fraunces,Georgia,serif;font-size:1.32rem;line-height:1.35;color:var(--hi)}
+.facts{grid-template-columns:repeat(2,1fr)!important;max-width:620px;margin-left:auto;margin-right:auto}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}
+.res .card{padding:18px}
+.res .card:last-child{grid-column:1/-1}
+.res .em{display:block;font-size:1.4rem;margin-bottom:8px}
+.res h3{font-size:1.02rem;color:var(--hi);margin-bottom:4px}
+.res p{font-size:.9rem;color:var(--muted)}
+@media (min-width:860px){.exp{font-size:1.6rem;margin-top:44px}.res{grid-template-columns:repeat(5,1fr)}.res .card:last-child{grid-column:auto}}
+
+/* section navigation */
+.nav .links{display:none}
+.chips{border-top:1px solid var(--line)}
+.chips .wrap{display:flex;gap:8px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scroll-padding-inline:22px;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.chips .wrap::-webkit-scrollbar{display:none}
+.chips a,.nav .links a{flex:none;font-size:.86rem;font-weight:600;color:#C9D0D8;padding:8px 14px;border-radius:99px;background:rgba(223,229,235,.06);box-shadow:inset 0 0 0 1px rgba(223,229,235,.12);white-space:nowrap;transition:background .2s,color .2s,box-shadow .2s;scroll-snap-align:start}
+.chips a.on,.nav .links a.on{color:#fff;background:rgba(224,90,156,.22);box-shadow:inset 0 0 0 1px rgba(240,140,194,.55)}
+.chips a:active{transform:scale(.97)}
+section[id],#start{scroll-margin-top:122px}
+@media (min-width:1000px){
+  .chips{display:none}
+  .nav .links{display:flex;gap:4px;margin:0 auto 0 28px}
+  .nav .links a{background:none;box-shadow:none;padding:8px 12px}
+  .nav .links a:hover{color:#fff;background:rgba(223,229,235,.06)}
+  section[id],#start{scroll-margin-top:76px}
+}
+
+/* compact: fit more on one screen */
+html{font-size:15px}
+body{font-size:15px}
+.wrap{max-width:1040px}
+section{padding:46px 0}
+.hero{padding:34px 0 18px}
+.hero h1{font-size:clamp(2.2rem,8.2vw,3.5rem);margin:12px 0 14px}
+.hero p.lead{font-size:1.02rem}
+.cta-row{margin-top:20px;gap:10px}
+.btn{padding:12px 22px;font-size:.95rem}
+.btn.sm{padding:8px 15px;font-size:.86rem}
+h2{font-size:clamp(1.65rem,5.4vw,2.3rem);margin:8px 0 10px}
+.sub{font-size:.97rem}
+.kick{font-size:.68rem}
+.card{padding:18px;border-radius:20px}
+.phone{width:min(250px,64vw)}
+.facts{margin-top:18px;gap:8px}
+.facts div{padding:12px 10px}
+.facts b{font-size:1.45rem}
+.exp{font-size:1.15rem;margin-top:22px}
+.online{padding-top:18px}
+.online .card.big{padding:22px 18px}
+.online .grid{gap:8px;margin:18px 0 6px}
+.online .it{padding:12px;gap:12px}
+.online .ic{width:36px;height:36px;border-radius:11px}
+.online .ic svg{width:19px;height:19px}
+.online .it h3{font-size:.98rem}
+.online .it p{font-size:.88rem}
+.online .note{font-size:.9rem}
+.online .cta-row{margin-top:16px}
+.princ,.steps,.svc,.ip,.app-grid,.faq{margin-top:20px;gap:10px}
+.princ .card h3{font-size:1.2rem}
+.princ .card p,.steps p,.who p,.res p{font-size:.88rem}
+.steps .card{padding-left:64px}
+.steps .card::before{left:18px;top:17px;font-size:1.4rem}
+.steps h3{font-size:1rem}
+.who,.res{margin-top:18px;gap:8px}
+.who .card,.res .card{padding:14px}
+.who .em,.res .em{font-size:1.2rem;margin-bottom:6px}
+.who h3,.res h3{font-size:.95rem}
+.feat{grid-template-columns:96px 1fr;gap:14px}
+.feat .phone{width:96px}
+.feat h3{font-size:1.25rem}
+.feat p{font-size:.9rem}
+.ip .card h3{font-size:1.02rem!important}
+.ip .card p{font-size:.9rem!important}
+.ip .card .btn{margin-top:12px!important}
+.price-note{margin-top:14px;padding:14px 16px;font-size:.9rem}
+.about .card{gap:12px}
+.about p{font-size:.95rem}
+.faq{gap:8px}
+.faq summary{padding:14px 16px;font-size:.95rem}
+.faq p{padding:0 16px 14px;font-size:.9rem}
+.start .card{padding:22px 18px}
+form{gap:12px;margin-top:16px}
+input,select,textarea{padding:11px 12px;font-size:.95rem;border-radius:12px}
+textarea{min-height:84px}
+.nav .wrap{height:58px}
+.brand img{width:32px;height:32px}
+section[id],#start{scroll-margin-top:112px}
+@media (min-width:860px){
+  html{font-size:15px}
+  body{font-size:15.5px}
+  section{padding:64px 0}
+  .hero{padding:52px 0 24px}
+  .hero .wrap{gap:48px}
+  .phone{width:270px}
+  .facts{margin-top:30px}
+  .exp{font-size:1.3rem;margin-top:30px}
+  .online .card.big{padding:34px}
+  .feat .phone{width:170px;border-radius:28px}.feat .phone .scr{border-radius:24px}
+  .feat{grid-template-columns:1fr;gap:14px}
+  .about .card{padding:30px;gap:30px}
+  .start .card{padding:34px;max-width:700px}
+}
+@media (min-width:1000px){section[id],#start{scroll-margin-top:70px}}
+
+.fine{font-size:.8rem;color:var(--dim);text-align:center;margin-top:-4px}
+.alt{text-align:center;font-size:.92rem;color:var(--muted);margin-top:2px}
+.alt a{color:var(--pink2);font-weight:700}
+.stick{position:fixed;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;justify-content:center;align-items:center;padding:14px;border-radius:99px;font-weight:700;font-size:.98rem;color:#111217;background:linear-gradient(180deg,#F4F7FA,#B9C1CB);box-shadow:0 0 0 1.5px rgba(240,140,194,.75),0 16px 40px -10px rgba(0,0,0,.9),0 0 30px -6px rgba(224,90,156,.6);transform:translateY(140%);opacity:0;transition:transform .35s var(--ease),opacity .3s;pointer-events:none}
+.stick.show{transform:none;opacity:1;pointer-events:auto}
+@media (min-width:860px){.stick{display:none}}
+footer{padding-bottom:96px}
+@media (min-width:860px){footer{padding-bottom:60px}}
+
+.intake{padding:28px 0 70px}
+.intake .card{max-width:720px;margin:0 auto 14px;padding:22px 18px}
+.intake h1{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:clamp(2rem,7vw,2.8rem);line-height:1.06;color:var(--hi);margin:10px 0 10px;letter-spacing:-.02em}
+.intake h2{font-size:clamp(1.3rem,4.6vw,1.6rem);margin:0 0 4px}
+.intake .step{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--pink2)}
+fieldset{border:0;padding:0;margin:0}
+.yn{padding:12px 0;border-top:1px solid var(--line)}
+.yn:first-of-type{border-top:0}
+.yn legend{font-size:.92rem;color:#C9D0D8;font-weight:600;margin-bottom:8px;line-height:1.4}
+.yn label,.ck{display:inline-flex;align-items:center;gap:8px;margin:0 8px 8px 0;padding:9px 14px;border-radius:99px;background:#0E0F13;border:1px solid rgba(223,229,235,.16);font-size:.9rem;font-weight:600;color:var(--ice);cursor:pointer}
+.yn label:has(input:checked),.ck:has(input:checked){border-color:var(--pink2);background:rgba(224,90,156,.16)}
+.yn input,.ck input{accent-color:#E05A9C;width:16px;height:16px;padding:0;margin:0}
+.flag{display:none;margin-top:10px;padding:12px 14px;border-radius:14px;background:rgba(224,90,156,.10);border:1px solid rgba(240,140,194,.35);font-size:.88rem;color:#E7D3DD}
+.flag.on{display:block}
+.waiver{font-size:.9rem;color:#B4BCC6;line-height:1.55;padding:14px;border-radius:14px;background:rgba(12,13,16,.6);border:1px solid var(--line)}
+.waiver p+p{margin-top:8px}
+.agree{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:.92rem;color:var(--ice);font-weight:600}
+.agree input{accent-color:#E05A9C;width:18px;height:18px;margin-top:2px;flex:none;padding:0}
+.intake form{display:block;margin:0}
+.intake form .card{width:100%}
+.intake label{display:grid;gap:6px;font-size:.84rem;font-weight:600;color:#C9D0D8}
+#i-msg{font-size:.94rem;color:var(--pink2);min-height:1.2em;text-align:center}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="brand" href="../"><img src="../site/logo.png" alt="" width="32" height="32"><span>P² Collective</span></a></div></header>
+<main class="intake"><div class="wrap">
+<div id="i-wrap">
+<section class="card" style="background:radial-gradient(70% 60% at 100% 0%,rgba(224,90,156,.18),transparent 62%),var(--card);border-color:rgba(240,140,194,.3)">
+  <p class="kick">Online Coaching · Welcome</p>
+  <h1>Let's Get You <span class="pk">Started.</span></h1>
+  <p class="sub">This takes about 5 minutes. Your answers help me build a program that fits your goals, your schedule, your equipment and your body. Everything stays between you and me.</p>
+</section>
+<form id="intake" novalidate>
+<input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+<section class="card"><p class="step">Step 1 of 5</p><h2>About You</h2>
+  <div class="row" style="margin-top:12px"><label>Full Name<input name="name" required autocomplete="name"></label><label>Email<input name="email" type="email" required autocomplete="email"></label></div>
+  <div class="row" style="margin-top:12px"><label>Phone<input name="phone" type="tel" required autocomplete="tel"></label><label>Age<input name="age" type="number" inputmode="numeric" min="16" max="99" required></label></div>
+  <div class="row" style="margin-top:12px"><label>Height <small>(optional)</small><input name="height" placeholder="e.g. 5'9&quot;"></label><label>Weight <small>(optional)</small><input name="weight" placeholder="e.g. 165 lb"></label></div>
+</section>
+<section class="card"><p class="step">Step 2 of 5</p><h2>Your Goals</h2>
+  <label style="margin-top:12px">What's Your Main Goal?<textarea name="goal" required placeholder="e.g. get stronger, lose 15 lb, run a half marathon, train pain-free"></textarea></label>
+  <label style="margin-top:12px">Why Now? <small>(optional)</small><textarea name="why" placeholder="What made you want to start?"></textarea></label>
+  <label style="margin-top:12px">Anything Coming Up? <small>(optional)</small><input name="event" placeholder="e.g. a race, a wedding, a season starting"></label>
+</section>
+<section class="card"><p class="step">Step 3 of 5</p><h2>Your Training</h2>
+  <div class="row" style="margin-top:12px"><label>Training Experience<select name="experience" required><option value="">Choose one</option><option>New to training</option><option>Some experience</option><option>Train regularly</option><option>Coming back after a break</option></select></label>
+  <label>Days Per Week You Can Train<select name="days" required><option value="">Choose one</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></label></div>
+  <div class="row" style="margin-top:12px"><label>Time Per Workout<select name="length" required><option value="">Choose one</option><option>30 minutes</option><option>45 minutes</option><option>60 minutes</option><option>75+ minutes</option></select></label>
+  <label>Where Will You Train?<select name="where" required><option value="">Choose one</option><option>Commercial gym</option><option>Home</option><option>Both</option></select></label></div>
+  <p style="margin:14px 0 8px;font-size:.84rem;font-weight:600;color:#C9D0D8">Equipment You Have</p><label class="ck"><input type="checkbox" name="equipment" value="Full gym"> Full gym</label><label class="ck"><input type="checkbox" name="equipment" value="Dumbbells"> Dumbbells</label><label class="ck"><input type="checkbox" name="equipment" value="Barbell and plates"> Barbell and plates</label><label class="ck"><input type="checkbox" name="equipment" value="Kettlebells"> Kettlebells</label><label class="ck"><input type="checkbox" name="equipment" value="Resistance bands"> Resistance bands</label><label class="ck"><input type="checkbox" name="equipment" value="Pull-up bar"> Pull-up bar</label><label class="ck"><input type="checkbox" name="equipment" value="Cardio machine"> Cardio machine</label><label class="ck"><input type="checkbox" name="equipment" value="Bodyweight only"> Bodyweight only</label>
+  <label style="margin-top:6px">What Do You Do Now for Exercise? <small>(optional)</small><textarea name="current" placeholder="e.g. run twice a week, gym on and off"></textarea></label>
+</section>
+<section class="card"><p class="step">Step 4 of 5</p><h2>Health Check</h2>
+  <p class="sub" style="margin-bottom:8px">A standard pre-exercise screening. Answer honestly; a "yes" doesn't mean you can't train, it just means we plan around it.</p>
+  <fieldset class="yn"><legend>1. Has your doctor ever said that you have a heart condition or high blood pressure?</legend><label><input type="radio" name="parq1" value="No" required> No</label><label><input type="radio" name="parq1" value="Yes"> Yes</label></fieldset><fieldset class="yn"><legend>2. Do you feel pain in your chest at rest, during daily activities, or when you do physical activity?</legend><label><input type="radio" name="parq2" value="No" required> No</label><label><input type="radio" name="parq2" value="Yes"> Yes</label></fieldset><fieldset class="yn"><legend>3. Do you lose balance because of dizziness, or have you lost consciousness in the last 12 months?</legend><label><input type="radio" name="parq3" value="No" required> No</label><label><input type="radio" name="parq3" value="Yes"> Yes</label></fieldset><fieldset class="yn"><legend>4. Have you ever been diagnosed with another chronic medical condition (other than heart disease or high blood pressure)?</legend><label><input type="radio" name="parq4" value="No" required> No</label><label><input type="radio" name="parq4" value="Yes"> Yes</label></fieldset><fieldset class="yn"><legend>5. Are you currently taking prescribed medication for a chronic medical condition?</legend><label><input type="radio" name="parq5" value="No" required> No</label><label><input type="radio" name="parq5" value="Yes"> Yes</label></fieldset><fieldset class="yn"><legend>6. Do you currently have, or have you had in the past 12 months, a bone, joint or soft tissue problem that could get worse with more physical activity?</legend><label><input type="radio" name="parq6" value="No" required> No</label><label><input type="radio" name="parq6" value="Yes"> Yes</label></fieldset><fieldset class="yn"><legend>7. Has your doctor ever said that you should only do medically supervised physical activity?</legend><label><input type="radio" name="parq7" value="No" required> No</label><label><input type="radio" name="parq7" value="Yes"> Yes</label></fieldset>
+  <div class="flag" id="flag">Thanks for letting me know. Depending on your answer, I may ask you to check with your doctor before we start, so we can train safely.</div>
+  <label style="margin-top:14px">Injuries, Pain or Surgeries <small>(past or current)</small><textarea name="injuries" placeholder="What happened, when, and does it still bother you?"></textarea></label>
+  <label style="margin-top:12px">Anything Else I Should Know? <small>(optional)</small><textarea name="health_other" placeholder="e.g. pregnancy, conditions, movements that feel off"></textarea></label>
+</section>
+<section class="card"><p class="step">Step 5 of 5</p><h2>Agreement</h2>
+  <div class="waiver" style="margin-top:12px">
+    <p>I understand that exercise involves some risk of injury. I confirm the information I've given is accurate and complete, and I'll tell Paya about any changes to my health.</p>
+    <p>I'll follow the program within my own limits, and I'll stop and seek medical advice if I feel pain, dizziness, chest discomfort or anything unusual. Online coaching means I train on my own, without Paya there in person.</p>
+    <p>I'm taking part voluntarily and accept these risks. I understand online coaching starts with a 3-month commitment.</p>
+  </div>
+  <label class="agree"><input type="checkbox" name="agree" value="Agreed" required> I've read and agree to the above.</label>
+  <label style="margin-top:12px">Type Your Full Name to Sign<input name="signature" required autocomplete="name"></label>
+</section>
+<section class="card" style="text-align:center">
+  <button class="btn" type="submit" id="i-go" style="width:100%">Send to Paya</button>
+  <p id="i-msg" role="status" aria-live="polite" style="margin-top:10px"></p>
+  <p class="fine">Your answers go only to Paya and are used only for your coaching.</p>
+</section>
+</form>
+</div>
+<section class="card done" id="i-done" hidden style="max-width:720px;margin:0 auto"><h3>All Set. <span class="pk">Thank You!</span></h3><p>I'll go through your answers and get back to you within a day or two with next steps for your program.</p></section>
+</div></main>
+<script>
+(function(){
+  var ENDPOINT = 'https://formsubmit.co/ajax/cc0640974cf9d5457ec4d574b3539c97';
+  var f = document.getElementById('intake'), msg = document.getElementById('i-msg'), go = document.getElementById('i-go'), flag = document.getElementById('flag');
+  f.addEventListener('change', function(){ flag.classList.toggle('on', !!f.querySelector('.yn input[value="Yes"]:checked')); });
+  f.addEventListener('submit', function(e){
+    e.preventDefault(); msg.textContent = '';
+    if (f._honey.value) return;
+    var bad = [].filter.call(f.querySelectorAll('[required]'), function(x){ if (x.type === 'radio') return !f.querySelector('input[name="' + x.name + '"]:checked'); if (x.type === 'checkbox') return !x.checked; return !x.value.trim(); })[0];
+    if (bad) { msg.textContent = 'A few answers are still missing. The first one is highlighted.'; var c = bad.closest('fieldset') || bad; c.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (bad.focus && bad.type !== 'radio') setTimeout(function(){ bad.focus(); }, 400); return; }
+    if (!/^\S+@\S+\.\S+$/.test(f.email.value.trim())) { msg.textContent = 'That email doesn’t look right.'; f.email.focus(); return; }
+    var data = {}; new FormData(f).forEach(function(v, k){ if (k === '_honey') return; data[k] = data[k] ? data[k] + ', ' + v : v; });
+    var yes = Object.keys(data).filter(function(k){ return /^parq/.test(k) && data[k] === 'Yes'; }).length;
+    data['Health screen'] = yes ? yes + ' YES answer(s), review before programming' : 'All no';
+    data.signed_on = new Date().toLocaleDateString('en-CA');
+    data._subject = 'P2 Intake · ' + data.name + (yes ? ' · health flag' : ''); data._template = 'table'; data._captcha = 'false';
+    go.disabled = true; go.textContent = 'Sending…';
+    fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
+      .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(j){ if (j && String(j.success) === 'false') throw new Error('x'); document.getElementById('i-wrap').hidden = true; document.getElementById('i-done').hidden = false; window.scrollTo(0, 0); })
+      .catch(function(){ go.disabled = false; go.textContent = 'Send to Paya'; msg.textContent = 'Something went wrong sending that. Please try again in a moment.'; });
+  });
+})();
+</script>
+</body>
+</html>

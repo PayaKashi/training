@@ -136,6 +136,37 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 #pin-in{display:block;width:100%;margin:18px 0 6px;padding:14px 10px;font-size:2rem;letter-spacing:.6em;text-indent:.6em;text-align:center;border-radius:14px;border:1.5px solid rgba(255,255,255,.14);background:#141216;color:var(--fg);font-family:inherit}
 #pin-in:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px rgba(224,90,156,.25)}
 .pin-err{color:#FF9DB8;min-height:1.2em;font-size:.9rem;margin:4px 0 0}
+
+/* ---- online coaching ---- */
+.wk{display:flex;gap:6px;margin:12px 0 4px}
+.wk i{flex:1;height:8px;border-radius:8px;background:rgba(223,229,235,.10)}
+.wk i.on{background:linear-gradient(90deg,#EC74B0,#F08CC2)}
+.day{display:flex;align-items:center;gap:14px}
+.day .dk{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:13px;font-family:Fraunces,Georgia,serif;font-size:1.3rem;color:var(--pink2);background:linear-gradient(150deg,rgba(236,116,176,.24),rgba(178,58,119,.10));box-shadow:inset 0 0 0 1px rgba(240,140,194,.32)}
+.day.done .dk{color:#111217;background:linear-gradient(180deg,#EEF2F5,#B9C1CB);box-shadow:none}
+.exl{margin-top:12px}
+.exl .li{cursor:default}
+.exl .li .t span{white-space:normal}
+.lg-ex{margin-top:16px;padding:14px;border-radius:16px;background:rgba(223,229,235,.04);border:1px solid var(--line)}
+.lg-ex h4{font-size:1rem;margin:0 0 2px;color:#EEF2F5}
+.lg-ex .tgt{font-size:.82rem;color:var(--muted);margin:0 0 10px}
+.lg-ex .tgt em{font-style:normal;color:var(--pink2)}
+.srow{display:grid;grid-template-columns:28px 1fr 1fr;gap:8px;align-items:center;margin-top:8px}
+.srow b{font-size:.8rem;color:var(--muted);text-align:center}
+.srow label{position:relative;display:block}
+.srow input{width:100%;padding:11px 40px 11px 12px;border-radius:12px;border:1px solid rgba(223,229,235,.16);background:#0E0F13;color:var(--fg);font:inherit;font-size:1rem}
+.srow input:focus{outline:0;border-color:var(--pink2)}
+.srow label span{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--muted);pointer-events:none}
+.addset{margin-top:10px;background:none;border:0;color:var(--pink2);font:inherit;font-weight:700;font-size:.88rem;cursor:pointer;padding:4px 0}
+.ci-q{margin-top:16px}
+.ci-q p{font-size:.9rem;font-weight:600;margin:0 0 8px;color:#EEF2F5}
+.ci-q .sc{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ci-q .sc button{padding:10px 0;border-radius:12px;border:1px solid rgba(223,229,235,.16);background:#0E0F13;color:var(--fg);font:inherit;font-weight:700;cursor:pointer}
+.ci-q .sc button.on{background:linear-gradient(135deg,#EC74B0,#B23A77);border-color:transparent;color:#fff}
+.ci-q .ends{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px}
+.field textarea{width:100%;min-height:76px;padding:12px 14px;border-radius:14px;border:1px solid rgba(223,229,235,.16);background:#0E0F13;color:var(--fg);font:inherit;font-size:1rem;resize:vertical}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:60;padding:12px 18px;border-radius:99px;background:#EEF2F5;color:#111217;font-weight:700;font-size:.9rem;box-shadow:0 0 0 1.5px rgba(240,140,194,.7),0 18px 40px -12px rgba(0,0,0,.8);transition:opacity .25s,transform .35s cubic-bezier(.2,.7,.2,1);pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -321,6 +352,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     // goals: Paya's + this phone's
     a.goals = (d.goals || []).map(function(g){ return Object.assign({ by: 'paya' }, g); }).concat(localGoals().map(function(g, i){ return Object.assign({ by: 'me', li: i }, g); }));
     a.total = d.totalSessions != null ? d.totalSessions : a.past.length;
+    if (d.coach) onlineBuild(a, d);
     return a;
   }
   var GKEY = 'p2-goals:' + location.pathname;
@@ -340,6 +372,121 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function nextRow(s, label){ return '<button class="card mini li" style="border:1px solid var(--line)" data-up="0">' + dateBox(s.d) + '<span class="t"><span class="lab" style="display:block">' + (label || 'Next session') + '</span><b>' + rel(s.d) + ' · ' + tr(s.start) + '</b></span>' + CHEV + '</button>'; }
   function goalMini(){ var g = A.goals[0]; if (!g) return ''; var p = goalProgress(g); return '<button class="card li" style="display:block;border:1px solid var(--line);padding:16px 18px" data-go="progress"><p class="lab">Goal · ' + esc(g.text) + '</p>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + p.pct + '% there</p>' : '') + '</button>'; }
   function workoutRows(k){ return (A.W[k] || []).map(function(x){ return '<button class="li" data-lift="' + x.l.i + '"><span class="t"><b>' + esc(shortName(x.l.name)) + '</b><span>' + setText(x.s, x.l) + '</span></span>' + (x.best ? '<span class="tag">' + (x.prev && x.s.weight !== x.prev.weight ? (x.l.assisted ? fmtW(x.prev.weight - x.s.weight) + ' lb less help' : '+' + fmtW(x.s.weight - x.prev.weight) + ' lb') : '+' + (x.s.reps - (x.prev ? x.prev.reps : 0)) + ' reps') + ' best</span>' : '') + '</button>'; }).join(''); }
+
+  // ---- online coaching ----
+  var ENDPOINT = 'https://formsubmit.co/ajax/cc0640974cf9d5457ec4d574b3539c97';
+  var LKEY = 'p2-logs:' + location.pathname, CKEY = 'p2-checkins:' + location.pathname, OKEY = 'p2-outbox:' + location.pathname, DRAFT = 'p2-draft:' + location.pathname;
+  function jget(k, dflt){ try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? dflt : v; } catch (e) { return dflt; } }
+  function jset(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function monday(d){ var m = new Date(d); m.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return m; }
+  function onlineBuild(a, d){
+    var C = a.C = d.coach; a.online = true;
+    // logs = Paya's copy (from emails) + this phone's, de-duplicated by id
+    var seen = {}, logs = [];
+    (C.logs || []).concat(jget(LKEY, [])).forEach(function(l){ if (!l || !l.id || seen[l.id]) return; seen[l.id] = 1; logs.push(l); });
+    logs.sort(function(x, y){ return x.date < y.date ? -1 : x.date > y.date ? 1 : 0; });
+    a.logs = logs;
+    var cis = {}, ci = [];
+    (C.checkins || []).concat(jget(CKEY, [])).forEach(function(c){ if (!c || !c.id || cis[c.id]) return; cis[c.id] = 1; ci.push(c); });
+    a.checkins = ci;
+    // lifts from logs: best set per exercise per day
+    var by = {};
+    logs.forEach(function(l){ (l.ex || []).forEach(function(e){ var best = null; (e.sets || []).forEach(function(st){ var w = +st.w || 0, r = +st.r || 0; if (!r) return; if (!best || w > best.weight || (w === best.weight && r > best.reps)) best = { date: l.date, weight: w, reps: r }; });
+      if (!best) return; var L = by[e.name] = by[e.name] || {}; var cur = L[l.date]; if (!cur || best.weight > cur.weight || (best.weight === cur.weight && best.reps > cur.reps)) L[l.date] = best; }); });
+    a.lifts = Object.keys(by).map(function(n){ return { name: n, sessions: Object.keys(by[n]).sort().map(function(k){ return by[n][k]; }) }; });
+    a.lifts.forEach(function(l, i){ l.i = i; l.weighted = l.sessions.some(function(s){ return s.weight > 0; }); l.assisted = /assisted/i.test(l.name);
+      l.best = l.sessions.reduce(function(b, s){ return !b || better(s, b, l) ? s : b; }, null); l.g = liftGroup(l); });
+    var W = {};
+    a.lifts.forEach(function(l){ var prev = null; l.sessions.forEach(function(s){ var isBest = prev && better(s, prev, l); (W[s.date] = W[s.date] || []).push({ l: l, s: s, best: !!isBest, prev: prev }); if (!prev || better(s, prev, l)) prev = s; }); });
+    a.W = W; a.wdates = Object.keys(W).sort();
+    a.past = logs.map(function(l){ return { key: l.date, d: parse(l.date), partners: [] }; }).reverse();
+    a.total = logs.length;
+    a.days = C.days || [];
+    var m = key(monday(TODAY)); a.weekLogs = logs.filter(function(l){ return l.date >= m; });
+    a.ciThisWeek = ci.some(function(c){ return c.date >= m; });
+    a.week = C.start ? Math.max(1, Math.floor((TODAY - parse(C.start)) / 604800000) + 1) : null;
+  }
+  function setStr(st){ return (st.w ? fmtW(st.w) + '×' : '') + st.r; }
+  function lastSets(name){ for (var i = A.logs.length - 1; i >= 0; i--) { var e = (A.logs[i].ex || []).filter(function(x){ return x.name === name; })[0]; if (e && e.sets && e.sets.length) return e.sets; } return null; }
+  function tgtText(e){ var sets = e.sets || []; if (!sets.length) return ''; var reps = sets.map(function(s){ return s.reps || s.dur || ''; }); var same = reps.every(function(r){ return r === reps[0]; });
+    var w = sets.map(function(s){ return s.weight; }).filter(function(x){ return x; }); return sets.length + ' × ' + (same ? reps[0] : reps.join('/')) + (w.length ? ' @ ' + fmtW(Math.max.apply(null, w)) + ' lb' : ''); }
+  function doneThisWeek(dk){ return A.weekLogs.some(function(l){ return l.day === dk; }); }
+  function nextDay(){ for (var i = 0; i < A.days.length; i++) if (!doneThisWeek(A.days[i].key)) return A.days[i]; return null; }
+  function viewHomeOnline(){
+    var C = A.C, per = C.perWeek || A.days.length || 3, done = A.weekLogs.length, h = '';
+    var nd = nextDay();
+    h += '<section class="card glow"><p class="lab pk">This Week' + (A.week ? ' · Week ' + A.week : '') + '</p><p class="big">' + Math.min(done, per) + ' of ' + plural(per, 'workout') + '</p><div class="wk">' + Array.apply(null, Array(per)).map(function(_, i){ return '<i' + (i < done ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
+      (nd ? '<p class="sub">Up next: ' + esc(nd.name) + '</p><button class="btn" data-day="' + esc(nd.key) + '">Start ' + esc(nd.name) + '</button>' : (A.days.length ? '<p class="sub">Every workout done this week. Nice work! 🎉</p>' : '<p class="sub">Paya is building your program. It will show up here.</p>')) + '</section>';
+    var sun = new Date(monday(TODAY)); sun.setDate(sun.getDate() + 6);
+    h += A.ciThisWeek ? '<div class="mcard" style="cursor:default"><span class="mt"><span class="lab">Weekly Check-In</span><b style="font-size:1.25rem">Done for this week ✓</b></span></div>'
+      : '<button class="mcard" data-checkin="1"><span class="mt"><span class="lab">Weekly Check-In · Due ' + (dayDiff(sun) === 0 ? 'Today' : 'Sunday') + '</span><b style="font-size:1.25rem">2 minutes, sent to Paya</b></span><span class="mgo">' + CHEV + '</span></button>';
+    var lastW = A.wdates[A.wdates.length - 1];
+    if (lastW) { var op = !!FOLD['home:w'];
+      h += '<details class="fold wfold" data-fold="home:w"' + (op ? ' open' : '') + '><summary><span class="wic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg></span><b class="wt">Latest Workout</b><span class="wd">' + md(parse(lastW)) + '</span><svg class="wch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + workoutRows(lastW) + '</div></details>'; }
+    h += noteCard();
+    return h;
+  }
+  function viewProgram(){
+    var C = A.C, h = '<h2 class="page">Your Program</h2>';
+    if (C.phase || C.focus) h += '<section class="card"><p class="lab pk">' + esc(C.phase || 'This block') + (A.week ? ' · Week ' + A.week : '') + '</p>' + (C.focus ? '<p class="sub" style="margin-top:6px">' + esc(C.focus) + '</p>' : '') + '</section>';
+    if (!A.days.length) return h + '<p class="card empty">Paya is building your program. Your workouts will show up here.</p>';
+    h += '<div class="sec">This Week</div><div class="list">' + A.days.map(function(d){ var dn = doneThisWeek(d.key);
+      return '<button class="li day' + (dn ? ' done' : '') + '" data-dayview="' + esc(d.key) + '"><span class="dk">' + (dn ? '✓' : esc(d.key)) + '</span><span class="t"><b>' + esc(d.name) + '</b><span>' + plural((d.exercises || []).length, 'exercise') + (dn ? ' · done this week' : '') + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
+    if (C.next) h += '<section class="card note" style="margin-top:12px"><p class="lab">Coming Next</p><p>' + esc(C.next) + '</p></section>';
+    return h;
+  }
+  function dayByKey(k){ return A.days.filter(function(d){ return d.key === k; })[0]; }
+  function daySheet(k){ var d = dayByKey(k); if (!d) return;
+    openSheet('<p class="lab pk">Workout ' + esc(d.key) + '</p><h3>' + esc(d.name) + '</h3>' + (d.note ? '<p class="sub">' + esc(d.note) + '</p>' : '') + '<div class="list exl">' + (d.exercises || []).map(function(e){ var ls = lastSets(e.name);
+      return '<div class="li"><span class="t"><b>' + esc(shortName(e.name)) + '</b><span>' + esc(tgtText(e)) + (e.note ? ' · ' + esc(e.note) : '') + '</span>' + (ls ? '<span style="color:var(--pink2)">Last time: ' + ls.map(setStr).join(', ') + '</span>' : '') + '</span></div>'; }).join('') + '</div><button class="btn" data-day="' + esc(d.key) + '" style="margin-top:16px">Start Workout</button>'); }
+  function logSheet(k){ var d = dayByKey(k); if (!d) return; var dr = jget(DRAFT, null); if (!dr || dr.day !== k || dr.date !== TODAY_KEY) dr = null;
+    var body = (d.exercises || []).map(function(e, ei){ var ls = lastSets(e.name), tg = e.sets || [], n = Math.max(tg.length, 1), rows = '';
+      var saved = dr && dr.ex[ei] ? dr.ex[ei].sets : null; if (saved) n = saved.length;
+      for (var j = 0; j < n; j++) { var t = tg[j] || tg[tg.length - 1] || {}, l = ls && (ls[j] || ls[ls.length - 1]), sv = saved && saved[j];
+        var wv = sv ? sv.w : '', rv = sv ? sv.r : '', wp = l && l.w ? fmtW(l.w) : (t.weight ? fmtW(t.weight) : '0'), rp = l ? l.r : (t.reps || '');
+        rows += '<div class="srow"><b>' + (j + 1) + '</b><label><input type="number" inputmode="decimal" data-w placeholder="' + wp + '" value="' + esc(wv) + '"><span>lb</span></label><label><input type="number" inputmode="numeric" data-r placeholder="' + rp + '" value="' + esc(rv) + '"><span>reps</span></label></div>'; }
+      return '<div class="lg-ex" data-ex="' + ei + '"><h4>' + esc(shortName(e.name)) + '</h4><p class="tgt">Target: ' + esc(tgtText(e) || 'see notes') + (e.note ? ' · ' + esc(e.note) : '') + (ls ? ' · <em>last: ' + ls.map(setStr).join(', ') + '</em>' : '') + '</p>' + rows + '<button class="addset" data-addset="' + ei + '">+ Add set</button></div>'; }).join('');
+    openSheet('<p class="lab pk">Logging · ' + md(TODAY) + '</p><h3>' + esc(d.name) + '</h3><p class="sub">Grey numbers are your last time or your target. Type what you actually did. Boxes you leave empty use the grey number.</p><div id="logf" data-day="' + esc(k) + '">' + body + '</div><label class="field"><span>Notes for Paya (optional)</span><textarea id="lg-note" placeholder="How did it feel? Anything hurt?">' + esc(dr ? dr.note || '' : '') + '</textarea></label><button class="btn" id="lg-done" style="margin-top:16px">Finish and Send to Paya</button>'); }
+  function readLog(){ var f = document.getElementById('logf'); if (!f) return null; var d = dayByKey(f.dataset.day);
+    var ex = [].map.call(f.querySelectorAll('.lg-ex'), function(box){ var e = d.exercises[+box.dataset.ex]; return { name: e.name, sets: [].map.call(box.querySelectorAll('.srow'), function(r){ var w = r.querySelector('[data-w]'), rp = r.querySelector('[data-r]'); return { w: parseFloat(w.value || w.placeholder) || 0, r: parseInt(rp.value || rp.placeholder, 10) || 0 }; }) }; });
+    return { day: d.key, dayName: d.name, ex: ex, note: (document.getElementById('lg-note') || {}).value || '' }; }
+  function saveDraft(){ var f = document.getElementById('logf'); if (!f) return; var d = dayByKey(f.dataset.day);
+    jset(DRAFT, { day: d.key, date: TODAY_KEY, note: (document.getElementById('lg-note') || {}).value || '', ex: [].map.call(f.querySelectorAll('.lg-ex'), function(box){ return { sets: [].map.call(box.querySelectorAll('.srow'), function(r){ return { w: r.querySelector('[data-w]').value, r: r.querySelector('[data-r]').value }; }) }; }) }); }
+  function finishLog(){ var L = readLog(); if (!L) return; L.ex.forEach(function(e){ e.sets = e.sets.filter(function(s){ return s.r > 0; }); }); L.ex = L.ex.filter(function(e){ return e.sets.length; });
+    if (!L.ex.length) { toast('Add at least one set first'); return; }
+    var log = { id: TODAY_KEY + '-' + L.day + '-' + Date.now().toString(36), date: TODAY_KEY, day: L.day, dayName: L.dayName, ex: L.ex, note: L.note };
+    var mine = jget(LKEY, []); mine.push(log); jset(LKEY, mine); try { localStorage.removeItem(DRAFT); } catch (e) {}
+    var txt = log.ex.map(function(e){ return shortName(e.name) + ': ' + e.sets.map(function(s){ return (s.w ? fmtW(s.w) + ' lb × ' : '') + s.r; }).join(', '); }).join(' | ');
+    queue({ _subject: 'P2 Log · ' + A.name + ' · ' + log.dayName + ' · ' + md(TODAY), Client: A.name, Workout: log.dayName, Date: full(TODAY), Lifts: txt, Notes: log.note || '-', kind: 'log', p2: pack(log) });
+    A = build(RAW); closeSheet(); render(true); celebrate(log); }
+  function celebrate(log){ var bests = (A.W[log.date] || []).filter(function(x){ return x.best; }).length; toast(bests ? '🎉 ' + plural(bests, 'new best') + '! Sent to Paya' : 'Workout sent to Paya ✓'); }
+  function pack(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  var CIQ = [['energy', 'Energy this week', 'Low', 'Great'], ['sleep', 'Sleep', 'Poor', 'Great'], ['soreness', 'Soreness', 'Very sore', 'Fresh'], ['stress', 'Stress', 'High', 'Low']];
+  function checkinSheet(){ openSheet('<p class="lab pk">Weekly Check-In</p><h3>How Was Your Week?</h3><p class="sub">Takes 2 minutes. Paya reads every one and adjusts your plan.</p>' +
+      CIQ.map(function(q){ return '<div class="ci-q" data-q="' + q[0] + '"><p>' + q[1] + '</p><div class="sc">' + [1,2,3,4,5].map(function(n){ return '<button type="button" data-sc="' + n + '">' + n + '</button>'; }).join('') + '</div><div class="ends"><span>' + q[2] + '</span><span>' + q[3] + '</span></div></div>'; }).join('') +
+      '<label class="field"><span>Bodyweight (optional)</span><input id="ci-bw" type="number" inputmode="decimal" placeholder="lb"></label><label class="field"><span>What went well?</span><textarea id="ci-win"></textarea></label><label class="field"><span>What was hard, or is anything hurting?</span><textarea id="ci-hard"></textarea></label><label class="field"><span>Questions for Paya</span><textarea id="ci-q"></textarea></label><p class="pin-err" id="ci-err"></p><button class="btn" id="ci-done" style="margin-top:12px">Send Check-In</button>'); }
+  function finishCheckin(){ var sc = {}; CIQ.forEach(function(q){ var on = document.querySelector('[data-q="' + q[0] + '"] .on'); if (on) sc[q[0]] = +on.dataset.sc; });
+    if (Object.keys(sc).length < CIQ.length) { document.getElementById('ci-err').textContent = 'Tap a number for each of the four questions.'; return; }
+    var c = { id: 'ci-' + TODAY_KEY + '-' + Date.now().toString(36), date: TODAY_KEY, scores: sc, bw: parseFloat(document.getElementById('ci-bw').value) || null, win: document.getElementById('ci-win').value, hard: document.getElementById('ci-hard').value, q: document.getElementById('ci-q').value, workouts: A.weekLogs.length };
+    var mine = jget(CKEY, []); mine.push(c); jset(CKEY, mine);
+    queue({ _subject: 'P2 Check-In · ' + A.name + ' · week of ' + md(monday(TODAY)), Client: A.name, Week: 'Week of ' + full(monday(TODAY)), 'Workouts this week': String(c.workouts), Energy: sc.energy + '/5', Sleep: sc.sleep + '/5', Soreness: sc.soreness + '/5 (5 = fresh)', Stress: sc.stress + '/5 (5 = low)', Bodyweight: c.bw ? c.bw + ' lb' : '-', 'Went well': c.win || '-', 'Was hard': c.hard || '-', Questions: c.q || '-', kind: 'checkin', p2: pack(c) });
+    A = build(RAW); closeSheet(); render(true); toast('Check-in sent to Paya ✓'); }
+  function queue(msg){ var ob = jget(OKEY, []); ob.push(msg); jset(OKEY, ob); flush(); }
+  var flushing = false;
+  function flush(){ if (flushing || window.P2_NOSEND) return; var ob = jget(OKEY, []); if (!ob.length || !window.fetch) return; flushing = true; var m = ob[0];
+    fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(Object.assign({ _template: 'table', _captcha: 'false' }, m)) })
+      .then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(j){ if (j && String(j.success) === 'false') throw 0; var rest = jget(OKEY, []); rest.shift(); jset(OKEY, rest); flushing = false; if (rest.length) setTimeout(flush, 1500); })
+      .catch(function(){ flushing = false; toast('Saved on your phone. It will send when you are back online.'); }); }
+  window.addEventListener('online', flush);
+  function toast(t){ var el = document.getElementById('toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); } el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('on'); }, 2600); }
+  function viewPaymentsOnline(){ var C = A.C, h = '<h2 class="page">Payments</h2>', pt = C.paidThrough ? parse(C.paidThrough) : null;
+    h += '<section class="card glow"><p class="lab pk">Online Coaching</p>' + (pt ? '<p class="big">Paid through ' + md(pt) + '</p><p class="sub">' + (dayDiff(pt) <= 14 && dayDiff(pt) >= 0 ? 'Your next block starts ' + mdl(pt) + '. Paya will check in with you about it.' : (C.block || '3-month block') + (C.price ? ' · ' + money(C.price) + ' a month' : '')) + '</p>' : '<p class="big">Getting set up</p><p class="sub">Paya will add your first payment here.</p>') + '</section>';
+    var ps = (C.payments || []).slice().reverse();
+    if (ps.length) h += '<div class="sec">Payments</div><div class="list">' + ps.map(function(p){ return '<div class="li" style="cursor:default"><span class="t"><b>' + esc(p.what || 'Payment') + '</b><span>' + short(parse(p.date)) + (p.method ? ' · ' + esc(p.method) : '') + '</span></span><span class="r plus">+' + money(p.amount) + '</span></div>'; }).join('') + '</div>';
+    if (A.asOf) h += '<p class="asof">Up to date as of ' + A.asOf + '</p>';
+    h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
+    return h; }
+  var RAW = null;
 
   // ---- views ----
   function viewHome(){
@@ -364,13 +511,13 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function viewProgress(){
     var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), inM = A.past.filter(function(s){ return s.d >= m0; }).length;
     var bestsM = 0; A.wdates.forEach(function(k){ if (parse(k) >= m0) A.W[k].forEach(function(x){ if (x.best) bestsM++; }); });
-    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><div><b>' + inM + '</b><span>Sessions in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + A.total + '</b><span>Total sessions</span></div></div>';
+    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><div><b>' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + A.total + '</b><span>Total ' + (A.online ? 'workouts' : 'sessions') + '</span></div></div>';
     // goals
     h += '<div class="sec">Goals <a data-newgoal="1">+ Set a goal</a></div><section class="card">' + (A.goals.length ? A.goals.map(function(g){ var p = goalProgress(g);
       return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b>' + (g.by === 'me' ? '<small>Your goal</small>' : '') + '</div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<button class="x" data-delgoal="' + g.li + '">Remove</button>' : '') + '</div>'; }).join('')
       : '<p class="sub" style="margin:0">No goal yet. Set one and Paya will build your sessions around it.</p><button class="btn q" data-newgoal="1">Set a goal</button>') + '</section>';
     // lifts
-    if (!A.lifts.length) return h + '<div class="sec">Your Lifts</div><p class="card empty">Your lifts will show here after your next workout with Paya.</p>';
+    if (!A.lifts.length) return h + '<div class="sec">Your Lifts</div><p class="card empty">' + (A.online ? 'Log your first workout and your lifts will show up here.' : 'Your lifts will show here after your next workout with Paya.') + '</p>';
     var gs = ['Lower body', 'Upper body', 'Other'].map(function(g){ return { g: g, ls: A.lifts.filter(function(l){ return l.g === g; }).sort(function(x, y){ return x.sessions[x.sessions.length-1].date < y.sessions[y.sessions.length-1].date ? 1 : -1; }) }; }).filter(function(x){ return x.ls.length; });
     if (!gs.some(function(x){ return x.g === LG; })) LG = gs[0].g;
     h += '<div class="sec">Your Lifts</div><div class="lgsw sel">' + gs.map(function(x){ return '<button class="lgbtn' + (x.g === LG ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span><b>' + esc(x.g.replace(/ b/, ' B')) + '</b><span>' + plural(x.ls.length, 'lift') + '</span></span><i>' + DOWN + '</i></button>'; }).join('') + '</div>' +
@@ -404,7 +551,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
     return h;
   }
-  var views = { home: viewHome, progress: viewProgress, sessions: viewSessions, payments: viewPayments };
+  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
 
   // ---- sheets ----
   function openSheet(html){ var r = document.getElementById('sheet-root'); r.innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + html + '<button class="btn q" data-close="1">Close</button></div></div>'; document.documentElement.classList.add('sheet-open'); }
@@ -471,11 +618,19 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (t.dataset.pay) { paySheet(t.dataset.pay); return; }
     if (t.dataset.lift) { liftSheet(+t.dataset.lift); return; }
     if (t.dataset.newgoal) { goalSheet(); return; }
+    if (t.dataset.dayview) { daySheet(t.dataset.dayview); return; }
+    if (t.dataset.day) { logSheet(t.dataset.day); return; }
+    if (t.dataset.addset !== undefined) { var box = document.querySelector('.lg-ex[data-ex="' + t.dataset.addset + '"]'), rows = box.querySelectorAll('.srow'), last = rows[rows.length - 1], nr = last.cloneNode(true); nr.querySelector('b').textContent = rows.length + 1; [].forEach.call(nr.querySelectorAll('input'), function(i, ii){ var src = last.querySelectorAll('input')[ii]; i.placeholder = src.value || src.placeholder; i.value = ''; }); box.insertBefore(nr, t); saveDraft(); return; }
+    if (t.id === 'lg-done') { finishLog(); return; }
+    if (t.dataset.checkin) { checkinSheet(); return; }
+    if (t.dataset.sc) { [].forEach.call(t.parentNode.children, function(b){ b.classList.toggle('on', b === t); }); return; }
+    if (t.id === 'ci-done') { finishCheckin(); return; }
     if (t.id === 'g-save') { saveGoal(); return; }
     if (t.dataset.delgoal !== undefined) { var all = localGoals(); all.splice(+t.dataset.delgoal, 1); saveGoals(all); A.goals = A.goals.filter(function(x){ return x.by === 'paya'; }).concat(all.map(function(x, i){ return Object.assign({ by: 'me', li: i }, x); })); render(true); return; }
     if (t.dataset.lg) { LG = t.dataset.lg; var sw = t.parentNode; [].forEach.call(sw.children, function(b){ b.classList.toggle('on', b === t); }); [].forEach.call(document.querySelectorAll('[data-lgp]'), function(p){ var show = p.dataset.lgp === LG; if (show && p.hidden) { p.hidden = false; if (p.animate) p.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: EASE }); } else if (!show) p.hidden = true; }); return; }
     if (t.id === 'forget') { try { localStorage.removeItem(DKEY); localStorage.removeItem(SLUG_KEY); } catch (x) {} location.reload(); }
   });
+  document.addEventListener('input', function(e){ if (e.target.closest && e.target.closest('#logf, #lg-note')) saveDraft(); });
   document.addEventListener('toggle', function(e){ var d = e.target; if (d.dataset && d.dataset.fold) FOLD[d.dataset.fold] = d.open; }, true);
   // chart scrub
   function scrub(e){ var c = e.target.closest && e.target.closest('[data-chart]'); if (!c) return; var l = A.lifts[+c.dataset.chart], ss = l.sessions, r = c.getBoundingClientRect(), x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left; var k = ss.length < 2 ? 0 : Math.max(0, Math.min(ss.length - 1, Math.round((x / r.width * 340 - 14) / ((340 - 28) / (ss.length - 1))))); var s = ss[k];
@@ -535,7 +690,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
       return rawAes(b64u(saved)).then(function(k){ return aesOpen(k, x); }).catch(function(){ try { localStorage.removeItem(DKEY); } catch (e) {} return askPin(x); });
     }); }
   document.getElementById('view').innerHTML = '<p class="empty">Loading…</p>';
-  getData().then(function(d){ A = build(d); greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
+  getData().then(function(d){ RAW = d; A = build(d);
+    if (A.online) { var sb = document.querySelector('.tab[data-tab="sessions"]'); if (sb) { sb.dataset.tab = 'program'; sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Program'; } setTimeout(flush, 800); } greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
     .catch(function(){ document.getElementById('view').innerHTML = '<section class="card"><p class="sub" style="margin:0 0 12px">Your account didn’t load. Check your connection and try again. If it keeps happening, ask Paya to resend your link.</p><button class="btn q" onclick="location.reload()">Try again</button></section>'; });
 })();
 </script>
