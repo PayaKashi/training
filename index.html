@@ -289,15 +289,25 @@ section[id],#start{scroll-margin-top:112px}
 @media (min-width:860px){.stick{display:none}}
 footer{padding-bottom:96px}
 @media (min-width:860px){footer{padding-bottom:60px}}
+
+/* trimmed layout */
+.res{grid-template-columns:1fr 1fr}
+.res .card{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.res .card i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(236,116,176,.14);color:var(--pink2)}
+.res .card i svg{width:15px;height:15px}
+.res h3{margin:0!important}
+@media (min-width:860px){.res{grid-template-columns:repeat(5,1fr)}.res .card{flex-direction:column;text-align:center;padding:18px 12px}}
+.app-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px;max-width:760px}
+.app-row .phone{width:100%;max-width:220px;margin:0 auto}
 </style>
 </head>
 <body>
 <header class="nav"><div class="wrap">
   <a class="brand" href="#top"><img src="site/logo.png" alt="" width="36" height="36"><span>P² Collective</span></a>
-  <nav class="links" aria-label="Sections"><a href="#online">Online Coaching</a><a href="#services">In Person</a><a href="#results">Results</a><a href="#about">About Me</a><a href="#how">How It Works</a><a href="#app">The App</a><a href="#faq">FAQ</a></nav>
+  <nav class="links" aria-label="Sections"><a href="#online">Online</a><a href="#services">In Person</a><a href="#about">About</a><a href="#faq">FAQ</a></nav>
   <a class="btn sm" href="#start">Get Started</a>
 </div>
-<nav class="chips" aria-label="Sections"><div class="wrap"><a href="#online">Online Coaching</a><a href="#services">In Person</a><a href="#results">Results</a><a href="#about">About Me</a><a href="#how">How It Works</a><a href="#app">The App</a><a href="#faq">FAQ</a></div></nav>
+<nav class="chips" aria-label="Sections"><div class="wrap"><a href="#online">Online</a><a href="#services">In Person</a><a href="#about">About</a><a href="#faq">FAQ</a></div></nav>
 </header>
 
 <main id="top">
@@ -333,75 +343,6 @@ footer{padding-bottom:96px}
   </div>
 </div></section>
 
-<section class="about" id="about"><div class="wrap">
-  <div class="card rv">
-    <div><p class="kick">Why I coach</p><h2 style="margin-bottom:0">Hi, I'm <span class="pk">Paya.</span></h2></div>
-    <div>
-      <p>So many people put time and money into training that isn't getting them anywhere. Random workouts, no plan, nobody checking if it's working. I coach because I want to fix that.</p>
-      <p style="margin-top:12px">I have a Bachelor of Kinesiology from the University of Toronto and I'm finishing my Master's in Sport Sciences there. I train and race too, from marathons to HYROX, so I try to be my own lab rat as often as I can.</p>
-      <p style="margin-top:12px">This whole fitness thing is simple, honestly: you should always know what you're doing, why you're doing it, and that it's working. It's my job to explain why you're getting value out of everything we do, not to ask you to blindly follow what I recommend.</p>
-    </div>
-  </div>
-</div></section>
-
-
-<section id="results"><div class="wrap">
-  <p class="kick">What I help with</p>
-  <h2>Real Goals. <span class="pk">Real Results.</span></h2>
-  <p class="sub">Over the years I've helped clients:</p>
-  <div class="res">
-    <div class="card rv"><h3>Overcome Injuries</h3><p>Rebuild strength safely and move without pain again.</p></div>
-    <div class="card rv"><h3>Return to Their Sport</h3><p>Get back on the field, the court or the trail, stronger than before.</p></div>
-    <div class="card rv"><h3>Reach Weight Loss Goals</h3><p>Lose the weight and keep it off with habits that last.</p></div>
-    <div class="card rv"><h3>Get Stronger</h3><p>Lift more than they thought they could, and see it on paper.</p></div>
-    <div class="card rv"><h3>Train for Races</h3><p>Prepare for 10Ks, marathons and HYROX with strength that carries over.</p></div>
-  </div>
-</div></section>
-
-<section id="approach"><div class="wrap">
-  <p class="kick">How I coach</p>
-  <h2>No Wasted Time. <span class="pk">No Wasted Money.</span></h2>
-  <div class="princ">
-    <div class="card rv"><h3>Technique First</h3><p>We get you moving well before we load you up, so you get stronger without getting hurt.</p></div>
-    <div class="card rv"><h3>Progressive Overload</h3><p>Every block builds on the last. You'll see it in your numbers, not just feel it.</p></div>
-    <div class="card rv"><h3>Sustainable Habits</h3><p>No crash diets and no burnout. Just a routine you can actually keep.</p></div>
-    <div class="card rv"><h3>Accountability</h3><p>Check-ins, tracking and a coach who notices when you show up, and when you don't.</p></div>
-  </div>
-</div></section>
-
-<section id="who"><div class="wrap">
-  <p class="kick">Who I work with</p>
-  <h2>Wherever You're <span class="pk">Starting From.</span></h2>
-  <div class="who">
-    <div class="card rv"><h3>Beginners</h3><p>Walk into the gym knowing exactly what to do, and feel confident doing it.</p></div>
-    <div class="card rv"><h3>Busy Professionals</h3><p>Efficient sessions that fit your week and still get results.</p></div>
-    <div class="card rv"><h3>Fat Loss and Body Composition</h3><p>Look and feel different with training and habits that last.</p></div>
-    <div class="card rv"><h3>Athletes and Runners</h3><p>Strength that carries over to your sport, your races and HYROX.</p></div>
-  </div>
-</div></section>
-
-<section id="how"><div class="wrap">
-  <p class="kick">How it works</p>
-  <h2>From First Message to <span class="pk">First Personal Best.</span></h2>
-  <div class="steps">
-    <div class="card rv"><h3>Free Intro Call</h3><p>Fill out the short form below. We'll talk about your goals, schedule and training history, by phone, video or in person at the gym.</p></div>
-    <div class="card rv"><h3>Your Starting Point</h3><p>We find out how you move, what you can lift and what needs work first.</p></div>
-    <div class="card rv"><h3>Your Plan and Your App</h3><p>You get a program built around your goal, and a private login to your own client app.</p></div>
-    <div class="card rv"><h3>Watch the Numbers Climb</h3><p>Every session is logged. You see each lift go up, every new best, and how close you are to your goal.</p></div>
-  </div>
-</div></section>
-
-<section id="app"><div class="wrap">
-  <p class="kick">The client app</p>
-  <h2>Your Progress, <span class="pk">in Your Pocket.</span></h2>
-  <p class="sub">Most people training with a coach have no idea if they're really getting stronger. My clients can check any time.</p>
-  <div class="app-grid">
-    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-home.webp" alt="Client app home screen showing the next session and latest workout"></div></div><div><h3>Always Know What's Next</h3><p>Your next session, your latest workout and notes from me, every time you open it.</p></div></div>
-    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-progress.webp" alt="Progress screen with goals and lift history"></div></div><div><h3>Every Lift, Tracked</h3><p>Your best set on every exercise, your goals, and how far you've come since day one.</p></div></div>
-    <div class="feat rv"><div class="phone"><div class="scr"><img src="site/app-lift.webp" alt="Chart of a lift improving session by session"></div></div><div><h3>Watch Yourself Get Stronger</h3><p>Tap any lift to see the whole climb, session by session.</p></div></div>
-  </div>
-</div></section>
-
 <section id="services"><div class="wrap">
   <p class="kick">In person</p>
   <h2>Train with Me in <span class="pk">Toronto.</span></h2>
@@ -414,16 +355,47 @@ footer{padding-bottom:96px}
   <p class="price-note rv"><b>What does it cost?</b> It depends on the format and how often you train. I'll walk you through the options on your free intro call, with no pressure to commit.</p>
 </div></section>
 
+<section class="about" id="about"><div class="wrap">
+  <div class="card rv">
+    <div><p class="kick">Why I coach</p><h2 style="margin-bottom:0">Hi, I'm <span class="pk">Paya.</span></h2></div>
+    <div>
+      <p>So many people put time and money into training that isn't getting them anywhere. I have a Bachelor of Kinesiology from U of T, I'm finishing my Master's in Sport Sciences there, and I train and race myself, from marathons to HYROX, so I try to be my own lab rat as often as I can.</p>
+      <p style="margin-top:12px">You should always know what you're doing, why you're doing it, and that it's working. Technique first, progress you can see in your numbers, and habits you can actually keep. It's my job to explain why, not to ask you to follow blindly.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="results"><div class="wrap">
+  <p class="kick">What I help with</p>
+  <h2>Real Goals. <span class="pk">Real Results.</span></h2>
+  <p class="sub">From complete beginners to athletes, I've helped clients:</p>
+  <div class="res">
+    <div class="card rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><h3>Overcome Injuries</h3></div>
+    <div class="card rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><h3>Return to Their Sport</h3></div>
+    <div class="card rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><h3>Reach Weight Loss Goals</h3></div>
+    <div class="card rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><h3>Get Stronger</h3></div>
+    <div class="card rv"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><h3>Train for Races</h3></div>
+  </div>
+</div></section>
+
+<section id="app"><div class="wrap">
+  <p class="kick">The client app</p>
+  <h2>Your Progress, <span class="pk">in Your Pocket.</span></h2>
+  <p class="sub">Every client gets a private app with their next session, every lift tracked, their goals, and notes from me.</p>
+  <div class="app-row">
+    <div class="phone rv"><div class="scr"><img src="site/app-home.webp" alt="Client app home screen showing the next session and latest workout" loading="lazy"></div></div>
+    <div class="phone rv"><div class="scr"><img src="site/app-progress.webp" alt="Progress screen with goals and lift history" loading="lazy"></div></div>
+    <div class="phone rv"><div class="scr"><img src="site/app-lift.webp" alt="Chart of a lift improving session by session" loading="lazy"></div></div>
+  </div>
+</div></section>
+
 <section id="faq"><div class="wrap">
   <p class="kick">Questions</p>
   <h2>Good to Know.</h2>
   <div class="faq">
     <details><summary>Do I Need Experience to Start?</summary><p>No. Some of my clients had never lifted before, others have trained for years. Your plan starts where you are.</p></details>
-    <details><summary>How Does Online Coaching Work?</summary><p>You get a custom program for your goal and equipment, weekly check-ins, feedback on your form videos, and you can message me any time. Your program and progress live in your own app. It starts with a 3-month commitment.</p></details>
-    <details><summary>Where Do In-Person Sessions Happen?</summary><p>1-on-1 and semi-private sessions are in person in Toronto. Sessions are 60 minutes.</p></details>
     <details><summary>How Often Should I Train?</summary><p>Most clients train with me one to three times a week. We'll decide what makes sense for your goal and schedule on the intro call.</p></details>
-    <details><summary>What Happens on the Intro Call?</summary><p>It's free and there's no pressure. We talk about your goals, your schedule and your training history, and figure out whether online or in person fits you best. Phone, video or in person at the gym, your choice.</p></details>
-    <details><summary>What Is the Client App?</summary><p>It's a private page made just for you. It shows your upcoming sessions, your lifts and personal bests, your goals and your payments. You log in with your own PIN.</p></details>
+    <details><summary>What Happens on the Intro Call?</summary><p>It's free and there's no pressure. We talk about your goals, your schedule and your training history, and figure out whether online or in person fits you best. Phone, video or in person, your choice.</p></details>
   </div>
 </div></section>
 
@@ -446,13 +418,8 @@ footer{padding-bottom:96px}
         </div>
         <label>What's Your Main Goal?<textarea name="goal" required placeholder="e.g. get stronger, lose 15 lb, run my first 10K, train consistently"></textarea></label>
         <div class="row">
-          <label>Training Experience<select name="experience">
-            <option value="">Choose one</option><option>New to training</option><option>Some experience</option><option>Train regularly</option><option>Coming back after a break</option></select></label>
           <label>Intro Call Preference<select name="call_by">
             <option value="">Any is fine</option><option>Phone</option><option>Video</option><option>In person at the gym</option></select></label>
-        </div>
-        <div class="row">
-          <label>Days and Times That Work <small>(optional)</small><input name="availability" placeholder="e.g. weekday evenings"></label>
           <label>How Did You Hear About Me? <small>(optional)</small><input name="heard_from"></label>
         </div>
         <button class="btn" type="submit" id="f-go">Book My Free Intro Call</button>
