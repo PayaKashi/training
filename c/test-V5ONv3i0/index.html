@@ -234,6 +234,59 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 .lvsets{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .lvsets span{padding:7px 11px;border-radius:10px;background:rgba(223,229,235,.06);font-size:.88rem;font-weight:600;color:#EEF2F5}
 .lvsets i{font-style:normal;color:var(--muted);margin-right:7px;font-size:.78rem}
+
+/* ---- studio look (tester) ---- */
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .055 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.app,.tabs{position:relative;z-index:1}
+.tabs{position:fixed}
+.top{margin-bottom:22px;align-items:center}
+.top small{letter-spacing:.02em;text-transform:none;font-size:.86rem;font-weight:500}
+.top h1{font-weight:300;font-size:2.55rem;line-height:1;letter-spacing:-.035em;background:linear-gradient(178deg,#fff 8%,#DDE3EA 45%,#8D95A0 98%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-bottom:.08em}
+.top h1 b{display:block;-webkit-text-fill-color:var(--pink2);font-style:italic;font-weight:300}
+h2.page{font-weight:300;font-size:2.7rem;line-height:1;letter-spacing:-.035em;margin:2px 2px 18px;background:linear-gradient(178deg,#fff 8%,#DDE3EA 45%,#8D95A0 98%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-bottom:.08em}
+.sec{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:1.45rem;letter-spacing:-.02em;text-transform:none;color:#EEF2F5;margin:28px 2px 12px;align-items:baseline}
+.sec a{font-family:Figtree,sans-serif}
+.lab{letter-spacing:.02em;text-transform:none;font-size:.86rem;font-weight:600}
+/* hero card with the client's own climb drawn behind it */
+.card.glow{position:relative;overflow:hidden;padding:20px 20px 18px;border-radius:26px;background:radial-gradient(90% 90% at 100% 0%,rgba(224,90,156,.24),transparent 62%),#14161B;border-color:rgba(240,140,194,.3);box-shadow:0 30px 60px -34px #000,0 0 60px -30px rgba(224,90,156,.7)}
+.card.glow>*{position:relative;z-index:1}
+.card.glow .big{font-weight:300;font-size:2.35rem;letter-spacing:-.03em;line-height:1.02;margin-top:10px}
+.climb{position:absolute!important;inset:0;z-index:0!important;pointer-events:none}
+.climb svg{position:absolute;inset:0;width:100%;height:100%}
+.climb .ar{fill:url(#cg);opacity:0;animation:cfade 1.4s .8s forwards}
+.climb .ln{fill:none;stroke:url(#cl);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:cdraw 1.9s .15s cubic-bezier(.5,.1,.2,1) forwards}
+.climb i{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;opacity:0;animation:cpop .7s 1.8s cubic-bezier(.2,.7,.2,1) forwards;filter:drop-shadow(0 0 6px rgba(240,140,194,1)) drop-shadow(0 0 16px rgba(224,90,156,.9))}
+.climb i svg{position:static;width:100%;height:100%;fill:#fff}
+@keyframes cdraw{to{stroke-dashoffset:0}}@keyframes cfade{to{opacity:1}}
+@keyframes cpop{0%{opacity:0;transform:scale(.2) rotate(-40deg)}60%{opacity:1;transform:scale(1.3) rotate(8deg)}100%{opacity:1;transform:none}}
+.climbcap{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:6px 12px 6px 9px;border-radius:99px;font-size:.82rem;font-weight:600;color:#DFE5EB;background:rgba(10,11,14,.55);box-shadow:inset 0 0 0 1px rgba(240,140,194,.35);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.climbcap svg{width:12px;height:12px;fill:var(--pink2)}
+.climbcap em{font-style:normal;color:var(--pink2)}
+.card.glow .btn.q{margin-top:14px}
+/* stats: big numbers, no boxes */
+.stats{gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 2px 6px!important}
+.stats div,.stats button{background:none!important;border:0!important;border-radius:0;min-height:0;padding:16px 4px 14px;align-items:flex-start;text-align:left;box-shadow:none}
+.stats button+button{border-left:1px solid var(--line)!important;padding-left:14px}
+.stats b{font-weight:300;font-size:2.9rem;letter-spacing:-.04em;background:linear-gradient(178deg,#fff 8%,#DDE3EA 45%,#8D95A0 98%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-variant-numeric:tabular-nums}
+.stats span{margin-top:4px}
+.stats button::after{right:6px;top:14px}
+/* goals: the star rides the bar */
+.bar{position:relative;height:3px;overflow:visible;margin:18px 12px 14px 0;background:rgba(223,229,235,.12)}
+.bar i{position:relative;height:3px;background:linear-gradient(90deg,rgba(178,58,119,.3),#F08CC2)}
+.bar i::after{content:"";position:absolute;right:-11px;top:50%;width:22px;height:22px;margin-top:-11px;background:#fff;clip-path:path("M11 1C12.5 8 14 9.5 21 11 14 12.5 12.5 14 11 21 9.5 14 8 12.5 1 11 8 9.5 9.5 8 11 1Z");filter:drop-shadow(0 0 6px rgba(240,140,194,1))}
+.bar::after{content:"";position:absolute;right:-3px;top:-4px;width:1px;height:11px;background:rgba(223,229,235,.4)}
+.goal b{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:1.4rem;letter-spacing:-.02em}
+/* sparklines end on a star */
+.spark{width:84px;height:34px;overflow:visible}
+.spark polyline{stroke:url(#sg);stroke-width:2}
+.spark path{fill:#fff;filter:drop-shadow(0 0 4px rgba(240,140,194,1))}
+/* lift chart draws itself */
+.chart svg polyline{stroke-dasharray:1;stroke-dashoffset:1;animation:cdraw 1.2s .25s cubic-bezier(.5,.1,.2,1) forwards}
+.chart svg polygon{opacity:0;animation:cfade .9s .9s forwards}
+.chart svg .pk{fill:#fff;filter:drop-shadow(0 0 6px rgba(240,140,194,1)) drop-shadow(0 0 14px rgba(224,90,156,.9));opacity:0;animation:cfade .5s 1.3s forwards}
+.sheet h3{font-weight:300;font-size:2.1rem;letter-spacing:-.03em;line-height:1.05}
+.readout b{font-family:Fraunces,Georgia,serif;font-weight:300;font-size:1.7rem;letter-spacing:-.02em}
+@media (prefers-reduced-motion:reduce){.climb .ln,.chart svg polyline{animation:none;stroke-dashoffset:0}.climb .ar,.climb i,.chart svg polygon,.chart svg .pk{animation:none;opacity:1}}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -336,7 +389,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
 <body>
 <div class="app">
   <span id="client" data-name="" hidden></span>
-  <header class="top"><div><small id="today-line"></small><h1 id="greeting">Hello</h1></div><div class="logo" aria-hidden="true"></div></header>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B23A77" stop-opacity=".35"/><stop offset="1" stop-color="#F08CC2"/></linearGradient><linearGradient id="cl" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#B23A77" stop-opacity=".15"/><stop offset=".55" stop-color="#E05A9C"/><stop offset="1" stop-color="#F8C2DE"/></linearGradient><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".22"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs></svg><header class="top"><div><small id="today-line"></small><h1 id="greeting">Hello</h1></div><div class="logo" aria-hidden="true"></div></header>
   <main id="view" aria-live="polite"></main>
   <div class="foot"><div class="logo" aria-hidden="true"></div></div>
 </div>
@@ -388,8 +441,17 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (b.reps > f.reps && b.weight === f.weight) return 'Up ' + (b.reps - f.reps) + ' reps since ' + md(parse(f.date));
     return plural(s.length, 'session') + ' logged'; }
   function val(p, l){ return (l.weighted ? (p.weight || 0) : p.reps) * (l.assisted ? -1 : 1); }
+  var STAR = 'M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z';
   function spark(l){ var v = l.sessions.map(function(p){ return val(p, l); }); if (v.length < 2) return ''; var lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1;
-    return '<svg class="spark" viewBox="0 0 76 32" aria-hidden="true"><polyline points="' + v.map(function(x, i){ return (2 + i * 72 / (v.length - 1)).toFixed(1) + ',' + (28 - (x - lo) / sp * 24).toFixed(1); }).join(' ') + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+    var P = v.map(function(x, i){ return [2 + i * 68 / (v.length - 1), 28 - (x - lo) / sp * 22]; }), e = P[P.length - 1];
+    return '<svg class="spark" viewBox="0 0 80 34" aria-hidden="true"><polyline points="' + P.map(function(p){ return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="' + STAR + '" transform="translate(' + e[0].toFixed(1) + ' ' + e[1].toFixed(1) + ') scale(.55)"/></svg>'; }
+  // the client's most-improved lift, drawn behind the hero card
+  function climb(){ var best = null; (A.lifts || []).forEach(function(l){ if (l.sessions.length < 3 || l.assisted) return; var v = l.sessions.map(function(p){ return val(p, l); }), g = v[0] > 0 ? (Math.max.apply(null, v) - v[0]) / v[0] : 0; if (g > 0 && (!best || g > best.g)) best = { l: l, v: v, g: g }; });
+    if (!best) return { bg: '', cap: '' }; var v = best.v, lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1, run = v[0], pts = v.map(function(x, i){ run = Math.max(run, x); return [i / (v.length - 1) * 94, 86 - (run - lo) / sp * 62]; });
+    var d = 'M' + pts.map(function(p){ return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L'), e = pts[pts.length - 1];
+    return { bg: '<div class="climb" aria-hidden="true"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path class="ar" d="' + d + 'L' + e[0] + ' 100L0 100Z"/><path class="ln" pathLength="1" vector-effect="non-scaling-stroke" d="' + d + '"/></svg><i style="left:' + e[0] + '%;top:' + e[1] + '%"><svg viewBox="-10 -10 20 20"><path d="' + STAR + '"/></svg></i></div>',
+      cap: '<button class="climbcap" data-lift="' + best.l.i + '"><svg viewBox="-10 -10 20 20"><path d="' + STAR + '"/></svg>' + esc(shortName(best.l.name)) + ' <em>' + gainText(best.l).replace(/ since.*/, '') + '</em></button>' }; }
+
 
   // ---- build ----
   var A = null;
@@ -483,7 +545,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function viewHomeOnline(){
     var C = A.C, per = C.perWeek || A.days.length || 3, done = A.weekLogs.length, h = '';
     var nd = nextDay();
-    h += '<section class="card glow"><p class="lab pk">This Week' + (A.week ? ' · Week ' + A.week : '') + '</p><p class="big">' + Math.min(done, per) + ' of ' + plural(per, 'workout') + '</p><div class="wk">' + Array.apply(null, Array(per)).map(function(_, i){ return '<i' + (i < done ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
+    var cb = climb();
+    h += '<section class="card glow">' + cb.bg + '<p class="lab pk">This Week' + (A.week ? ' · Week ' + A.week : '') + '</p><p class="big">' + Math.min(done, per) + ' of ' + plural(per, 'workout') + '</p><div class="wk">' + Array.apply(null, Array(per)).map(function(_, i){ return '<i' + (i < done ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
       (nd ? '<p class="sub">Up next: ' + esc(nd.name) + '</p><button class="btn" data-day="' + esc(nd.key) + '">Start ' + esc(nd.name) + '</button>' : (A.days.length ? '<p class="sub">Every workout done this week. Nice work! 🎉</p>' : '<p class="sub">Paya is building your program. It will show up here.</p>')) + '</section>';
     var lastW = A.wdates[A.wdates.length - 1];
     if (lastW) { var op = !!FOLD['home:w'];
@@ -580,7 +643,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function viewHome(){
     var next = A.upcoming[0], h = '';
     // next session: same card every day
-    h += next ? '<section class="card glow"><p class="lab pk">Next Session</p><p class="big">' + rel(next.d) + ' · ' + tr(next.start) + '</p><p class="sub">' + mdl(next.d) + ' · ' + kind(next.partners) + '</p><button class="btn q" data-up="0">Session details</button></section>'
+    var cb = climb();
+    h += next ? '<section class="card glow">' + cb.bg + '<p class="lab pk">Next Session</p><p class="big">' + rel(next.d) + '<br>' + tr(next.start) + '</p><p class="sub">' + mdl(next.d) + ' · ' + kind(next.partners) + '</p>' + cb.cap + '<button class="btn q" data-up="0">Session details</button></section>'
       : '<section class="card glow"><p class="lab pk">Next Session</p><p class="big">Nothing booked yet</p><p class="sub">Paya will add your next session soon.</p></section>';
     // money summary: one tappable line, details live on Payments
     var mt, mv;
@@ -599,7 +663,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function viewProgress(){
     var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), inM = A.past.filter(function(s){ return s.d >= m0; }).length;
     var bestsM = 0; A.wdates.forEach(function(k){ if (parse(k) >= m0) A.W[k].forEach(function(x){ if (x.best) bestsM++; }); });
-    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><button data-stat="month"><b>' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="bests"><b>' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="total"><b>' + A.total + '</b><span>Total ' + (A.online ? 'workouts' : 'sessions') + '</span></button></div>';
+    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><button data-stat="month"><b data-n="' + inM + '">' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="bests"><b data-n="' + bestsM + '">' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="total"><b data-n="' + A.total + '">' + A.total + '</b><span>Total ' + (A.online ? 'workouts' : 'sessions') + '</span></button></div>';
     // goals
     h += '<div class="sec">Goals <a data-newgoal="1">+ Set a goal</a></div><section class="card">' + (A.goals.length ? A.goals.map(function(g){ var p = goalProgress(g);
       return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b>' + (g.by === 'me' ? '<small>Your goal</small>' : '') + '</div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<button class="x" data-delgoal="' + g.li + '">Remove</button>' : '') + '</div>'; }).join('')
@@ -686,7 +750,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function liftSheet(i){ var l = A.lifts[i], ss = l.sessions, v = ss.map(function(p){ return val(p, l); }); var W = 340, H = 150, lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1;
     var xs = v.map(function(_, k){ return ss.length < 2 ? W / 2 : 14 + k * (W - 28) / (ss.length - 1); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); });
     var pts = xs.map(function(x, k){ return x.toFixed(1) + ',' + ys[k].toFixed(1); }).join(' ');
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".35"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs>' + (ss.length > 1 ? '<polygon points="' + pts + ' ' + xs[xs.length-1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#lg)"/><polyline points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' : '') + xs.map(function(x, k){ return '<circle cx="' + x + '" cy="' + ys[k] + '" r="3.5" fill="#F08CC2"/>'; }).join('') + '<line class="cur" x1="0" x2="0" y1="0" y2="' + H + '" stroke="rgba(255,255,255,.35)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0"/></svg>';
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".35"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs>' + (ss.length > 1 ? '<polygon points="' + pts + ' ' + xs[xs.length-1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#lg)"/><polyline pathLength="1" points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' : '') + xs.map(function(x, k){ return '<circle cx="' + x + '" cy="' + ys[k] + '" r="3.5" fill="#F08CC2"/>'; }).join('') + '<line class="cur" x1="0" x2="0" y1="0" y2="' + H + '" stroke="rgba(255,255,255,.35)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0"/></svg>';
     var last = ss[ss.length - 1];
     openSheet('<p class="lab pk">' + esc(l.g) + '</p><h3>' + esc(shortName(l.name)) + '</h3><p class="sub">' + gainText(l) + '</p><div class="chart" data-chart="' + i + '">' + svg + '</div><div class="readout"><b id="ro-v">' + setText(last, l) + '</b><span id="ro-d">' + short(parse(last.date)) + '</span></div><p class="sub" style="font-size:.82rem">Slide your finger across the chart</p>' +
       '<div class="facts"><div><span>Best</span><b>' + setText(l.best, l) + '</b></div><div><span>First logged</span><b>' + setText(ss[0], l) + ' · ' + md(parse(ss[0].date)) + '</b></div><div><span>Sessions</span><b>' + ss.length + '</b></div></div>'); }
@@ -702,7 +766,9 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   var cur = 'home';
   function tabsList(){ return [].slice.call(document.querySelectorAll('.tabs .tab')); }
   function pill(anim){ var t = document.querySelector('.tab[data-tab="' + cur + '"]'), p = document.querySelector('.tabs .pill'); if (!t || !p) return; if (!anim) p.style.transition = 'none'; p.style.width = t.offsetWidth + 'px'; p.style.transform = 'translateX(' + t.offsetLeft + 'px)'; if (!anim) { void p.offsetWidth; p.style.transition = ''; } }
-  function render(keepScroll){ var v = document.getElementById('view'); v.innerHTML = A ? views[cur]() : ''; tabsList().forEach(function(t){ if (t.dataset.tab === cur) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); }); pill(true); if (!keepScroll) window.scrollTo(0, 0); }
+  function countUp(root){ if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; [].forEach.call(root.querySelectorAll('[data-n]'), function(el){ var n = +el.dataset.n, t0 = null; if (!n) return; el.textContent = '0';
+      requestAnimationFrame(function step(t){ if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(n * e); if (k < 1) requestAnimationFrame(step); }); }); }
+  function render(keepScroll){ var v = document.getElementById('view'); v.innerHTML = A ? views[cur]() : ''; if (!keepScroll) countUp(v); tabsList().forEach(function(t){ if (t.dataset.tab === cur) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); }); pill(true); if (!keepScroll) window.scrollTo(0, 0); }
   var busy = false, EASE = 'cubic-bezier(.32,.72,0,1)', RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function go(t, dir, fromX){ if (t === cur || busy) return; var v = document.getElementById('view');
     if (RM || !v.animate) { cur = t; render(); return; }
