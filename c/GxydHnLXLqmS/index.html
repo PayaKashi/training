@@ -61,7 +61,7 @@ h2.page{font-family:Fraunces,Georgia,serif;font-weight:400;font-size:2rem;margin
 .chip{display:inline-block;padding:3px 9px;border-radius:99px;background:var(--soft);color:var(--pink2);font-size:.78rem;font-weight:700;white-space:nowrap}
 .tag{display:inline-block;font-size:.74rem;font-weight:700;color:var(--green);background:rgba(80,200,130,.14);padding:3px 8px;border-radius:99px;white-space:nowrap}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
-.stats div{background:rgba(255,255,255,.05);border-radius:14px;padding:10px 11px}
+.stats div,.stats button{background:rgba(255,255,255,.05);border-radius:14px;padding:10px 11px}
 .stats b{display:block;font-family:Fraunces,Georgia,serif;font-weight:400;font-size:1.7rem;color:var(--pink2);line-height:1.1}
 .stats span{font-size:.78rem;color:var(--muted)}
 .bar{height:9px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
@@ -184,6 +184,44 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 .useg{flex:none;display:flex;padding:3px;border-radius:99px;background:rgba(12,13,16,.7);box-shadow:inset 0 0 0 1px rgba(223,229,235,.14)}
 .useg button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.85rem;padding:7px 14px;border-radius:99px;cursor:pointer}
 .useg button.on{background:linear-gradient(180deg,#EEF2F5,#B9C1CB);color:#111217}
+
+/* tappable stats + collapsible lift groups */
+.stats button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,border-color .25s;position:relative}
+.stats button:active{transform:scale(.96)}
+.stats button span{color:var(--muted)}
+.stats button::after{content:"";position:absolute;right:8px;top:8px;width:5px;height:5px;border-right:1.6px solid rgba(240,140,194,.75);border-top:1.6px solid rgba(240,140,194,.75);transform:rotate(45deg)}
+.mbar{display:grid;grid-template-columns:44px 1fr 28px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.mbar:last-child{border-bottom:0}
+.mbar span{font-size:.86rem;color:var(--muted)}
+.mbar i{display:block;height:10px;border-radius:10px;background:linear-gradient(90deg,#EC74B0,#F08CC2);min-width:6px}
+.mbar b{text-align:right;font-weight:700;color:#EEF2F5}
+.lgsw.sel .lgbtn:not(.on){opacity:.55}
+.lgsw:not(.sel) .lgbtn{opacity:1}
+
+/* logger v2 */
+.lgtop{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.lgcount{flex:none;margin-bottom:8px;padding:6px 12px;border-radius:99px;font-size:.8rem;font-weight:700;color:var(--muted);background:rgba(223,229,235,.07);transition:background .3s,color .3s}
+.lgcount.full{background:linear-gradient(135deg,#EC74B0,#B23A77);color:#fff}
+.lg-ex{margin-top:14px;padding:14px 14px 10px}
+.lgh{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.lgh h4{margin:0}
+.lgh .tgt{margin:0;font-size:.8rem;color:var(--muted);white-space:nowrap}
+.lgn{margin:4px 0 0;font-size:.8rem;color:var(--muted)}
+.shead,.lg-ex .srow{display:grid;grid-template-columns:30px 1fr 1fr 46px;gap:8px;align-items:center}
+.shead{margin-top:10px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.shead span{text-align:center}
+.lg-ex .srow{margin-top:6px;border-radius:12px;transition:background .25s}
+.lg-ex .srow input{padding:11px 6px;text-align:center;font-weight:700}
+.lg-ex .srow.ok{background:rgba(236,116,176,.10)}
+.lg-ex .srow.ok input{border-color:rgba(240,140,194,.35);background:rgba(14,15,19,.6)}
+.tick{width:42px;height:42px;border-radius:12px;border:1px solid rgba(223,229,235,.16);background:#0E0F13;color:rgba(223,229,235,.35);display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s,transform .12s}
+.tick svg{width:20px;height:20px}
+.tick:active{transform:scale(.9)}
+.srow.ok .tick{background:linear-gradient(135deg,#EC74B0,#B23A77);border-color:transparent;color:#fff}
+.lgnote{margin-top:14px}
+.lgnote summary{list-style:none;cursor:pointer;color:var(--pink2);font-weight:700;font-size:.9rem;padding:4px 0}
+.lgnote summary::-webkit-details-marker{display:none}
+.lgnote textarea{margin-top:8px;width:100%;min-height:76px;padding:12px 14px;border-radius:14px;border:1px solid rgba(223,229,235,.16);background:#0E0F13;color:var(--fg);font:inherit;font-size:1rem;resize:vertical}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -196,7 +234,7 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.07),tr
 .lab{color:#8A929D}
 .big{color:#EEF2F5}
 .sec{color:#8A929D}
-.stats div{background:rgba(223,229,235,.05);border:1px solid rgba(223,229,235,.06)}
+.stats div,.stats button{background:rgba(223,229,235,.05);border:1px solid rgba(223,229,235,.06)}
 .stats b{color:#DFE5EB;background:linear-gradient(180deg,#FFFFFF,#AEB6C0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .date{background:rgba(223,229,235,.07)}.date small{color:#8A929D}.date b{color:#DFE5EB}
 .date:not(.past){background:var(--soft)}.date:not(.past) small,.date:not(.past) b{color:var(--pink2)}
@@ -242,7 +280,7 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
 .lgbtn.on i{background:linear-gradient(135deg,#EC74B0,#B23A77);color:#fff}
 .lgbtn.on{box-shadow:0 0 0 1.5px rgba(240,140,194,.7),0 14px 30px -16px rgba(224,90,156,.6)}
 .badge.on{border:1.5px solid rgba(240,140,194,.8)}
-.stats div{border-top:2px solid rgba(240,140,194,.6)}
+.stats div,.stats button{border-top:2px solid rgba(240,140,194,.6)}
 .stats b{-webkit-text-fill-color:#EEF2F5;color:#EEF2F5}
 .chip{background:rgba(223,229,235,.1);color:#DFE5EB;box-shadow:inset 0 0 0 1px rgba(240,140,194,.35)}
 .sec a{color:var(--pink2)}
@@ -250,7 +288,7 @@ html,body{background:radial-gradient(80% 40% at 100% 0%,rgba(223,229,235,.08),tr
 .card.note{border-left:3px solid var(--pink)}
 .note .lab{color:var(--pink2)}
 .top h1 b{color:var(--pink2)}
-.stats div{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 6px 12px;min-height:88px}
+.stats div,.stats button{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px 6px 12px;min-height:88px}
 .stats b{font-size:2rem;line-height:1}
 .stats span{margin-top:6px;font-size:.74rem;line-height:1.25;letter-spacing:.02em}
 .card.money{border:1px solid var(--line);padding:14px 18px}.card.money b{font-size:1.15rem}
@@ -435,9 +473,6 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     var nd = nextDay();
     h += '<section class="card glow"><p class="lab pk">This Week' + (A.week ? ' · Week ' + A.week : '') + '</p><p class="big">' + Math.min(done, per) + ' of ' + plural(per, 'workout') + '</p><div class="wk">' + Array.apply(null, Array(per)).map(function(_, i){ return '<i' + (i < done ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
       (nd ? '<p class="sub">Up next: ' + esc(nd.name) + '</p><button class="btn" data-day="' + esc(nd.key) + '">Start ' + esc(nd.name) + '</button>' : (A.days.length ? '<p class="sub">Every workout done this week. Nice work! 🎉</p>' : '<p class="sub">Paya is building your program. It will show up here.</p>')) + '</section>';
-    var sun = new Date(monday(TODAY)); sun.setDate(sun.getDate() + 6);
-    h += A.ciThisWeek ? '<div class="mcard" style="cursor:default"><span class="mt"><span class="lab">Weekly Check-In</span><b style="font-size:1.25rem">Done for this week ✓</b></span></div>'
-      : '<button class="mcard" data-checkin="1"><span class="mt"><span class="lab">Weekly Check-In · Due ' + (dayDiff(sun) === 0 ? 'Today' : 'Sunday') + '</span><b style="font-size:1.25rem">2 minutes, sent to Paya</b></span><span class="mgo">' + CHEV + '</span></button>';
     var lastW = A.wdates[A.wdates.length - 1];
     if (lastW) { var op = !!FOLD['home:w'];
       h += '<details class="fold wfold" data-fold="home:w"' + (op ? ' open' : '') + '><summary><span class="wic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg></span><b class="wt">Latest Workout</b><span class="wd">' + md(parse(lastW)) + '</span><svg class="wch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + workoutRows(lastW) + '</div></details>'; }
@@ -455,46 +490,40 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   }
   function dayByKey(k){ return A.days.filter(function(d){ return d.key === k; })[0]; }
   function daySheet(k){ var d = dayByKey(k); if (!d) return;
-    openSheet('<p class="lab pk">Workout ' + esc(d.key) + '</p><h3>' + esc(d.name) + '</h3>' + (d.note ? '<p class="sub">' + esc(d.note) + '</p>' : '') + '<div class="list exl">' + (d.exercises || []).map(function(e){ var ls = lastSets(e.name);
-      return '<div class="li"><span class="t"><b>' + esc(shortName(e.name)) + '</b><span>' + esc(tgtText(e)) + (e.note ? ' · ' + esc(e.note) : '') + '</span>' + (ls ? '<span style="color:var(--pink2)">Last time: ' + ls.map(setStr).join(', ') + '</span>' : '') + '</span></div>'; }).join('') + '</div><button class="btn" data-day="' + esc(d.key) + '" style="margin-top:16px">Start Workout</button>'); }
+    openSheet('<p class="lab pk">Workout ' + esc(d.key) + '</p><h3>' + esc(d.name) + '</h3>' + (d.note ? '<p class="sub">' + esc(d.note) + '</p>' : '') + '<div class="list exl">' + (d.exercises || []).map(function(e){
+      return '<div class="li"><span class="t"><b>' + esc(shortName(e.name)) + '</b><span>' + esc(tgtText(e)) + (e.note ? ' · ' + esc(e.note) : '') + '</span></span></div>'; }).join('') + '</div><button class="btn" data-day="' + esc(d.key) + '" style="margin-top:16px">Start Workout</button>'); }
   function logSheet(k){ var d = dayByKey(k); if (!d) return; var dr = jget(DRAFT, null); if (!dr || dr.day !== k || dr.date !== TODAY_KEY) dr = null;
     var body = (d.exercises || []).map(function(e, ei){ var ls = lastSets(e.name), tg = e.sets || [], n = Math.max(tg.length, 1), rows = '';
       var saved = dr && dr.ex[ei] ? dr.ex[ei].sets : null; if (saved) n = saved.length;
       for (var j = 0; j < n; j++) { var t = tg[j] || tg[tg.length - 1] || {}, l = ls && (ls[j] || ls[ls.length - 1]), sv = saved && saved[j];
-        var wv = sv ? sv.w : '', rv = sv ? sv.r : '', wp = l && l.w ? fmtW(l.w) : (t.weight ? fmtW(t.weight) : '0'), rp = l ? l.r : (t.reps || '');
-        rows += '<div class="srow"><b>' + (j + 1) + '</b><label><input type="number" inputmode="decimal" data-w placeholder="' + wp + '" value="' + esc(wv) + '"><span>lb</span></label><label><input type="number" inputmode="numeric" data-r placeholder="' + rp + '" value="' + esc(rv) + '"><span>reps</span></label></div>'; }
-      return '<div class="lg-ex" data-ex="' + ei + '"><h4>' + esc(shortName(e.name)) + '</h4><p class="tgt">Target: ' + esc(tgtText(e) || 'see notes') + (e.note ? ' · ' + esc(e.note) : '') + (ls ? ' · <em>last: ' + ls.map(setStr).join(', ') + '</em>' : '') + '</p>' + rows + '<button class="addset" data-addset="' + ei + '">+ Add set</button></div>'; }).join('');
-    openSheet('<p class="lab pk">Logging · ' + md(TODAY) + '</p><h3>' + esc(d.name) + '</h3><p class="sub">Grey numbers are your last time or your target. Type what you actually did. Boxes you leave empty use the grey number.</p><div id="logf" data-day="' + esc(k) + '">' + body + '</div><label class="field"><span>Notes for Paya (optional)</span><textarea id="lg-note" placeholder="How did it feel? Anything hurt?">' + esc(dr ? dr.note || '' : '') + '</textarea></label><button class="btn" id="lg-done" style="margin-top:16px">Finish and Send to Paya</button>'); }
+        var wv = sv ? sv.w : (l && l.w ? fmtW(l.w) : (t.weight ? fmtW(t.weight) : '')), rv = sv ? sv.r : (t.reps || (l ? l.r : ''));
+        rows += setRow(j + 1, wv, rv, sv && sv.ok); }
+      return '<div class="lg-ex" data-ex="' + ei + '"><div class="lgh"><h4>' + esc(shortName(e.name)) + '</h4><span class="tgt">' + esc(tgtText(e) || '') + '</span></div>' + (e.note ? '<p class="lgn">' + esc(e.note) + '</p>' : '') +
+        '<div class="shead"><span>Set</span><span>lb</span><span>Reps</span><span></span></div>' + rows + '<button class="addset" data-addset="' + ei + '">+ Add Set</button></div>'; }).join('');
+    openSheet('<div class="lgtop"><div><p class="lab pk">' + md(TODAY) + '</p><h3>' + esc(d.name) + '</h3></div><span class="lgcount" id="lg-count"></span></div><p class="sub">Tap ✓ after each set. Change the numbers if you did something different.</p><div id="logf" data-day="' + esc(k) + '">' + body + '</div><details class="lgnote"' + (dr && dr.note ? ' open' : '') + '><summary>+ Add a Note</summary><textarea id="lg-note" placeholder="How did it feel? Anything hurt?">' + esc(dr ? dr.note || '' : '') + '</textarea></details><button class="btn" id="lg-done" style="margin-top:14px">Finish Workout</button>');
+    countSets(); }
+  function setRow(n, w, r, ok){ return '<div class="srow' + (ok ? ' ok' : '') + '"><b>' + n + '</b><input type="number" inputmode="decimal" data-w value="' + esc(w) + '" placeholder="0" aria-label="Weight in lb"><input type="number" inputmode="numeric" data-r value="' + esc(r) + '" placeholder="0" aria-label="Reps"><button type="button" class="tick" data-tick="1" aria-label="Set done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>'; }
+  function countSets(){ var f = document.getElementById('logf'), c = document.getElementById('lg-count'); if (!f || !c) return; var all = f.querySelectorAll('.srow').length, ok = f.querySelectorAll('.srow.ok').length; c.textContent = ok + ' / ' + all + ' sets'; c.classList.toggle('full', all > 0 && ok === all); }
   function readLog(){ var f = document.getElementById('logf'); if (!f) return null; var d = dayByKey(f.dataset.day);
-    var ex = [].map.call(f.querySelectorAll('.lg-ex'), function(box){ var e = d.exercises[+box.dataset.ex]; return { name: e.name, sets: [].map.call(box.querySelectorAll('.srow'), function(r){ var w = r.querySelector('[data-w]'), rp = r.querySelector('[data-r]'); return { w: parseFloat(w.value || w.placeholder) || 0, r: parseInt(rp.value || rp.placeholder, 10) || 0 }; }) }; });
+    var ex = [].map.call(f.querySelectorAll('.lg-ex'), function(box){ var e = d.exercises[+box.dataset.ex]; return { name: e.name, sets: [].filter.call(box.querySelectorAll('.srow'), function(r){ return r.classList.contains('ok'); }).map(function(r){ return { w: parseFloat(r.querySelector('[data-w]').value) || 0, r: parseInt(r.querySelector('[data-r]').value, 10) || 0 }; }) }; });
     return { day: d.key, dayName: d.name, ex: ex, note: (document.getElementById('lg-note') || {}).value || '' }; }
   function saveDraft(){ var f = document.getElementById('logf'); if (!f) return; var d = dayByKey(f.dataset.day);
-    jset(DRAFT, { day: d.key, date: TODAY_KEY, note: (document.getElementById('lg-note') || {}).value || '', ex: [].map.call(f.querySelectorAll('.lg-ex'), function(box){ return { sets: [].map.call(box.querySelectorAll('.srow'), function(r){ return { w: r.querySelector('[data-w]').value, r: r.querySelector('[data-r]').value }; }) }; }) }); }
+    jset(DRAFT, { day: d.key, date: TODAY_KEY, note: (document.getElementById('lg-note') || {}).value || '', ex: [].map.call(f.querySelectorAll('.lg-ex'), function(box){ return { sets: [].map.call(box.querySelectorAll('.srow'), function(r){ return { w: r.querySelector('[data-w]').value, r: r.querySelector('[data-r]').value, ok: r.classList.contains('ok') }; }) }; }) }); }
   function finishLog(){ var L = readLog(); if (!L) return; L.ex.forEach(function(e){ e.sets = e.sets.filter(function(s){ return s.r > 0; }); }); L.ex = L.ex.filter(function(e){ return e.sets.length; });
-    if (!L.ex.length) { toast('Add at least one set first'); return; }
+    if (!L.ex.length) { toast('Tap ✓ on at least one set first'); return; }
     var log = { id: TODAY_KEY + '-' + L.day + '-' + Date.now().toString(36), date: TODAY_KEY, day: L.day, dayName: L.dayName, ex: L.ex, note: L.note };
     var mine = jget(LKEY, []); mine.push(log); jset(LKEY, mine); try { localStorage.removeItem(DRAFT); } catch (e) {}
     var txt = log.ex.map(function(e){ return shortName(e.name) + ': ' + e.sets.map(function(s){ return (s.w ? fmtW(s.w) + ' lb × ' : '') + s.r; }).join(', '); }).join(' | ');
     queue({ _subject: 'P2 Log · ' + A.name + ' · ' + log.dayName + ' · ' + md(TODAY), Client: A.name, Workout: log.dayName, Date: full(TODAY), Lifts: txt, Notes: log.note || '-', kind: 'log', p2: pack(log) });
     A = build(RAW); closeSheet(); render(true); celebrate(log); }
-  function celebrate(log){ var bests = (A.W[log.date] || []).filter(function(x){ return x.best; }).length; toast(bests ? '🎉 ' + plural(bests, 'new best') + '! Sent to Paya' : 'Workout sent to Paya ✓'); }
+  function celebrate(log){ var bests = (A.W[log.date] || []).filter(function(x){ return x.best; }).length; toast(bests ? '🎉 ' + plural(bests, 'new best') + '!' : 'Workout saved ✓'); }
   function pack(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-  var CIQ = [['energy', 'Energy this week', 'Low', 'Great'], ['sleep', 'Sleep', 'Poor', 'Great'], ['soreness', 'Soreness', 'Very sore', 'Fresh'], ['stress', 'Stress', 'High', 'Low']];
-  function checkinSheet(){ openSheet('<p class="lab pk">Weekly Check-In</p><h3>How Was Your Week?</h3><p class="sub">Takes 2 minutes. Paya reads every one and adjusts your plan.</p>' +
-      CIQ.map(function(q){ return '<div class="ci-q" data-q="' + q[0] + '"><p>' + q[1] + '</p><div class="sc">' + [1,2,3,4,5].map(function(n){ return '<button type="button" data-sc="' + n + '">' + n + '</button>'; }).join('') + '</div><div class="ends"><span>' + q[2] + '</span><span>' + q[3] + '</span></div></div>'; }).join('') +
-      '<label class="field"><span>Bodyweight (optional)</span><input id="ci-bw" type="number" inputmode="decimal" placeholder="lb"></label><label class="field"><span>What went well?</span><textarea id="ci-win"></textarea></label><label class="field"><span>What was hard, or is anything hurting?</span><textarea id="ci-hard"></textarea></label><label class="field"><span>Questions for Paya</span><textarea id="ci-q"></textarea></label><p class="pin-err" id="ci-err"></p><button class="btn" id="ci-done" style="margin-top:12px">Send Check-In</button>'); }
-  function finishCheckin(){ var sc = {}; CIQ.forEach(function(q){ var on = document.querySelector('[data-q="' + q[0] + '"] .on'); if (on) sc[q[0]] = +on.dataset.sc; });
-    if (Object.keys(sc).length < CIQ.length) { document.getElementById('ci-err').textContent = 'Tap a number for each of the four questions.'; return; }
-    var c = { id: 'ci-' + TODAY_KEY + '-' + Date.now().toString(36), date: TODAY_KEY, scores: sc, bw: parseFloat(document.getElementById('ci-bw').value) || null, win: document.getElementById('ci-win').value, hard: document.getElementById('ci-hard').value, q: document.getElementById('ci-q').value, workouts: A.weekLogs.length };
-    var mine = jget(CKEY, []); mine.push(c); jset(CKEY, mine);
-    queue({ _subject: 'P2 Check-In · ' + A.name + ' · week of ' + md(monday(TODAY)), Client: A.name, Week: 'Week of ' + full(monday(TODAY)), 'Workouts this week': String(c.workouts), Energy: sc.energy + '/5', Sleep: sc.sleep + '/5', Soreness: sc.soreness + '/5 (5 = fresh)', Stress: sc.stress + '/5 (5 = low)', Bodyweight: c.bw ? c.bw + ' lb' : '-', 'Went well': c.win || '-', 'Was hard': c.hard || '-', Questions: c.q || '-', kind: 'checkin', p2: pack(c) });
-    A = build(RAW); closeSheet(); render(true); toast('Check-in sent to Paya ✓'); }
   function queue(msg){ var ob = jget(OKEY, []); ob.push(msg); jset(OKEY, ob); flush(); }
   var flushing = false;
   function flush(){ if (flushing || window.P2_NOSEND) return; var ob = jget(OKEY, []); if (!ob.length || !window.fetch) return; flushing = true; var m = ob[0];
     fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(Object.assign({ _template: 'table', _captcha: 'false' }, m)) })
       .then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(j){ if (j && String(j.success) === 'false') throw 0; var rest = jget(OKEY, []); rest.shift(); jset(OKEY, rest); flushing = false; if (rest.length) setTimeout(flush, 1500); })
-      .catch(function(){ flushing = false; toast('Saved on your phone. It will send when you are back online.'); }); }
+      .catch(function(){ flushing = false; }); }
   window.addEventListener('online', flush);
   function toast(t){ var el = document.getElementById('toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); } el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('on'); }, 2600); }
   function viewPaymentsOnline(){ var C = A.C, h = '<h2 class="page">Payments</h2>', pt = C.paidThrough ? parse(C.paidThrough) : null;
@@ -542,7 +571,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function viewProgress(){
     var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), inM = A.past.filter(function(s){ return s.d >= m0; }).length;
     var bestsM = 0; A.wdates.forEach(function(k){ if (parse(k) >= m0) A.W[k].forEach(function(x){ if (x.best) bestsM++; }); });
-    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><div><b>' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></div><div><b>' + A.total + '</b><span>Total ' + (A.online ? 'workouts' : 'sessions') + '</span></div></div>';
+    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><button data-stat="month"><b>' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="bests"><b>' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="total"><b>' + A.total + '</b><span>Total ' + (A.online ? 'workouts' : 'sessions') + '</span></button></div>';
     // goals
     h += '<div class="sec">Goals <a data-newgoal="1">+ Set a goal</a></div><section class="card">' + (A.goals.length ? A.goals.map(function(g){ var p = goalProgress(g);
       return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b>' + (g.by === 'me' ? '<small>Your goal</small>' : '') + '</div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<button class="x" data-delgoal="' + g.li + '">Remove</button>' : '') + '</div>'; }).join('')
@@ -550,8 +579,9 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     // lifts
     if (!A.lifts.length) return h + '<div class="sec">Your Lifts</div><p class="card empty">' + (A.online ? 'Log your first workout and your lifts will show up here.' : 'Your lifts will show here after your next workout with Paya.') + '</p>';
     var gs = ['Lower body', 'Upper body', 'Other'].map(function(g){ return { g: g, ls: A.lifts.filter(function(l){ return l.g === g; }).sort(function(x, y){ return x.sessions[x.sessions.length-1].date < y.sessions[y.sessions.length-1].date ? 1 : -1; }) }; }).filter(function(x){ return x.ls.length; });
-    if (!gs.some(function(x){ return x.g === LG; })) LG = gs[0].g;
-    h += '<div class="sec">Your Lifts</div><div class="lgsw sel">' + gs.map(function(x){ return '<button class="lgbtn' + (x.g === LG ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span><b>' + esc(x.g.replace(/ b/, ' B')) + '</b><span>' + plural(x.ls.length, 'lift') + '</span></span><i>' + DOWN + '</i></button>'; }).join('') + '</div>' +
+    if (LG === null) { try { var sv = localStorage.getItem('p2-lg:' + location.pathname); if (sv !== null) LG = sv; } catch (e) {} }
+    if (LG !== '' && !gs.some(function(x){ return x.g === LG; })) LG = gs[0].g;
+    h += '<div class="sec">Your Lifts</div><div class="lgsw' + (LG ? ' sel' : '') + '">' + gs.map(function(x){ return '<button class="lgbtn' + (x.g === LG ? ' on' : '') + '" data-lg="' + esc(x.g) + '"><span><b>' + esc(x.g.replace(/ b/, ' B')) + '</b><span>' + plural(x.ls.length, 'lift') + '</span></span><i>' + DOWN + '</i></button>'; }).join('') + '</div>' +
       gs.map(function(x){ return '<div class="list" data-lgp="' + esc(x.g) + '"' + (x.g === LG ? '' : ' hidden') + '>' + x.ls.map(function(l){ return '<button class="li" data-lift="' + l.i + '"><span class="t"><b>' + esc(shortName(l.name)) + '</b><span style="color:var(--pink2);font-weight:700">' + setText(l.best, l) + '</span><span>' + gainText(l) + '</span></span>' + spark(l) + CHEV + '</button>'; }).join('') + '</div>'; }).join('');
     return h;
   }
@@ -609,6 +639,21 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (rows.left) list += '<p class="sub" style="margin-top:10px">' + money(rows.left) + ' still left as credit for upcoming sessions.</p>';
     else if (!rows.length) list = '<p class="sub" style="margin-top:14px">' + (p.note ? esc(p.note) : (id[0] === 'l' ? 'Kept as credit for upcoming sessions.' : 'No sessions linked to this payment.')) + '</p>';
     openSheet('<h3>' + (id[0] === 'l' && /package/i.test(p.note || '') ? 'Package' : 'Payment') + ' · ' + md(d) + '</h3><div class="facts">' + f + '</div>' + list); }
+  function statSheet(k){
+    var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), mon = MONTHS[TODAY.getMonth()], word = A.online ? 'workout' : 'session';
+    if (k === 'month') {
+      var ss = []; A.past.forEach(function(s, i){ if (s.d >= m0) ss.push([s, i]); });
+      openSheet('<h3>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + mon + '</h3><p class="sub">' + (ss.length ? plural(ss.length, word) + ' so far this month' : 'None yet this month') + '</p>' + (ss.length ? '<div class="list" style="margin-top:14px">' + ss.map(function(p){ var s = p[0], w = A.W[s.key], nb = w ? w.filter(function(x){ return x.best; }).length : 0; return '<button class="li" data-past="' + p[1] + '">' + dateBox(s.d, true) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + kind(s.partners) + (s.start ? ' · ' + tr(s.start) : '') + '</span></span>' + (nb ? '<span class="tag">' + plural(nb, 'best') + '</span>' : '') + CHEV + '</button>'; }).join('') + '</div>' : ''));
+    } else if (k === 'bests') {
+      var ks = A.wdates.filter(function(d){ return parse(d) >= m0 && A.W[d].some(function(x){ return x.best; }); }).sort().reverse();
+      openSheet('<h3>New Bests in ' + mon + '</h3>' + (ks.length ? ks.map(function(d){ return '<div class="sec" style="margin-top:16px">' + wd(parse(d)) + ' · ' + md(parse(d)) + '</div><div class="list">' + A.W[d].filter(function(x){ return x.best; }).map(function(x){ return '<button class="li" data-lift="' + x.l.i + '"><span class="t"><b>' + esc(shortName(x.l.name)) + '</b><span>' + setText(x.s, x.l) + (x.prev ? ' · was ' + setText(x.prev, x.l) : '') + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>'; }).join('') : '<p class="sub" style="margin-top:10px">No new bests yet this month. They will show up here as you hit them.</p>'));
+    } else {
+      var bm = (RAW && RAW.sessionsByMonth) || {}, keys = Object.keys(bm).filter(function(x){ return bm[x] > 0; }).sort().reverse();
+      if (!keys.length) { A.past.forEach(function(s){ var y = s.key.slice(0, 7); bm[y] = (bm[y] || 0) + 1; }); keys = Object.keys(bm).sort().reverse(); }
+      var mx = Math.max.apply(null, keys.map(function(x){ return bm[x]; }).concat([1]));
+      openSheet('<h3>' + plural(A.total, word) + '</h3><p class="sub">Every ' + word + ' you have done, month by month</p><div class="card" style="margin-top:14px;padding:6px 16px">' + keys.map(function(x){ var y = +x.slice(0, 4), mm = +x.slice(5, 7) - 1; return '<div class="mbar"><span>' + MONTHS[mm].slice(0, 3) + (y !== TODAY.getFullYear() ? ' ' + String(y).slice(2) : '') + '</span><i style="width:' + Math.round(bm[x] / mx * 100) + '%"></i><b>' + bm[x] + '</b></div>'; }).join('') + '</div>');
+    }
+  }
   function pastSheet(i){ var s = A.past[i]; var w = A.W[s.key]; openSheet('<h3>' + full(s.d) + '</h3><p class="sub">' + kind(s.partners) + (s.start ? ' · ' + tr(s.start, s.end) : '') + '</p>' + (w ? '<div class="list" style="margin-top:14px">' + workoutRows(s.key) + '</div>' : '<p class="sub" style="margin-top:14px">No workout logged for this session.</p>')); }
   function liftSheet(i){ var l = A.lifts[i], ss = l.sessions, v = ss.map(function(p){ return val(p, l); }); var W = 340, H = 150, lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1;
     var xs = v.map(function(_, k){ return ss.length < 2 ? W / 2 : 14 + k * (W - 28) / (ss.length - 1); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); });
@@ -652,14 +697,13 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (t.dataset.unit) { try { localStorage.setItem(UKEY, t.dataset.unit); } catch (x) {} render(true); return; }
     if (t.dataset.dayview) { daySheet(t.dataset.dayview); return; }
     if (t.dataset.day) { logSheet(t.dataset.day); return; }
-    if (t.dataset.addset !== undefined) { var box = document.querySelector('.lg-ex[data-ex="' + t.dataset.addset + '"]'), rows = box.querySelectorAll('.srow'), last = rows[rows.length - 1], nr = last.cloneNode(true); nr.querySelector('b').textContent = rows.length + 1; [].forEach.call(nr.querySelectorAll('input'), function(i, ii){ var src = last.querySelectorAll('input')[ii]; i.placeholder = src.value || src.placeholder; i.value = ''; }); box.insertBefore(nr, t); saveDraft(); return; }
+    if (t.dataset.addset !== undefined) { var box = document.querySelector('.lg-ex[data-ex="' + t.dataset.addset + '"]'), rows = box.querySelectorAll('.srow'), last = rows[rows.length - 1]; var tmp = document.createElement('div'); tmp.innerHTML = setRow(rows.length + 1, last ? last.querySelector('[data-w]').value : '', last ? last.querySelector('[data-r]').value : '', false); box.insertBefore(tmp.firstChild, t); saveDraft(); countSets(); return; }
+    if (t.dataset.tick) { var row = t.closest('.srow'); row.classList.toggle('ok'); if (row.classList.contains('ok') && navigator.vibrate) navigator.vibrate(12); saveDraft(); countSets(); return; }
     if (t.id === 'lg-done') { finishLog(); return; }
-    if (t.dataset.checkin) { checkinSheet(); return; }
-    if (t.dataset.sc) { [].forEach.call(t.parentNode.children, function(b){ b.classList.toggle('on', b === t); }); return; }
-    if (t.id === 'ci-done') { finishCheckin(); return; }
     if (t.id === 'g-save') { saveGoal(); return; }
     if (t.dataset.delgoal !== undefined) { var all = localGoals(); all.splice(+t.dataset.delgoal, 1); saveGoals(all); A.goals = A.goals.filter(function(x){ return x.by === 'paya'; }).concat(all.map(function(x, i){ return Object.assign({ by: 'me', li: i }, x); })); render(true); return; }
-    if (t.dataset.lg) { LG = t.dataset.lg; var sw = t.parentNode; [].forEach.call(sw.children, function(b){ b.classList.toggle('on', b === t); }); [].forEach.call(document.querySelectorAll('[data-lgp]'), function(p){ var show = p.dataset.lgp === LG; if (show && p.hidden) { p.hidden = false; if (p.animate) p.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: EASE }); } else if (!show) p.hidden = true; }); return; }
+    if (t.dataset.stat) { statSheet(t.dataset.stat); return; }
+    if (t.dataset.lg) { LG = LG === t.dataset.lg ? '' : t.dataset.lg; try { localStorage.setItem('p2-lg:' + location.pathname, LG); } catch (e) {} var sw = t.parentNode; sw.classList.toggle('sel', !!LG); [].forEach.call(sw.children, function(b){ b.classList.toggle('on', !!LG && b === t); }); [].forEach.call(document.querySelectorAll('[data-lgp]'), function(p){ var show = p.dataset.lgp === LG; if (show && p.hidden) { p.hidden = false; if (p.animate) p.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: EASE }); } else if (!show) p.hidden = true; }); return; }
     if (t.id === 'forget') { try { localStorage.removeItem(DKEY); localStorage.removeItem(SLUG_KEY); } catch (x) {} location.reload(); }
   });
   document.addEventListener('input', function(e){ if (e.target.closest && e.target.closest('#logf, #lg-note')) saveDraft(); });
