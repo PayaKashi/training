@@ -222,6 +222,18 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 .lgnote summary{list-style:none;cursor:pointer;color:var(--pink2);font-weight:700;font-size:.9rem;padding:4px 0}
 .lgnote summary::-webkit-details-marker{display:none}
 .lgnote textarea{margin-top:8px;width:100%;min-height:76px;padding:12px 14px;border-radius:14px;border:1px solid rgba(223,229,235,.16);background:#0E0F13;color:var(--fg);font:inherit;font-size:1rem;resize:vertical}
+
+.wknav{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px;margin:18px 0 12px}
+.wknav div{text-align:center}
+.wknav div b{display:block;font-size:1.05rem;color:#EEF2F5}
+.wknav div span{font-size:.8rem;color:var(--muted)}
+.wknav button{width:44px;height:44px;border-radius:14px;border:1px solid rgba(223,229,235,.12);background:#16181D;color:var(--pink2);display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,opacity .2s}
+.wknav button svg{width:20px;height:20px}
+.wknav button:active{transform:scale(.92)}
+.wknav button:disabled{opacity:.25;cursor:default}
+.lvsets{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.lvsets span{padding:7px 11px;border-radius:10px;background:rgba(223,229,235,.06);font-size:.88rem;font-weight:600;color:#EEF2F5}
+.lvsets i{font-style:normal;color:var(--muted);margin-right:7px;font-size:.78rem}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -479,15 +491,31 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     h += noteCard();
     return h;
   }
+  var PW = 0;
+  function weekStart(off){ var m = monday(TODAY); m.setDate(m.getDate() - 7 * off); return m; }
+  function maxBack(){ var first = A.C.start ? parse(A.C.start) : (A.logs.length ? parse(A.logs[0].date) : TODAY); return Math.max(0, Math.round((monday(TODAY) - monday(first)) / 604800000)); }
   function viewProgram(){
     var C = A.C, h = '<h2 class="page">Your Program</h2>';
     if (C.phase || C.focus) h += '<section class="card"><p class="lab pk">' + esc(C.phase || 'This block') + (A.week ? ' · Week ' + A.week : '') + '</p>' + (C.focus ? '<p class="sub" style="margin-top:6px">' + esc(C.focus) + '</p>' : '') + '</section>';
-    if (!A.days.length) return h + '<p class="card empty">Paya is building your program. Your workouts will show up here.</p>';
-    h += '<div class="sec">This Week</div><div class="list">' + A.days.map(function(d){ var dn = doneThisWeek(d.key);
-      return '<button class="li day' + (dn ? ' done' : '') + '" data-dayview="' + esc(d.key) + '"><span class="dk">' + (dn ? '✓' : esc(d.key)) + '</span><span class="t"><b>' + esc(d.name) + '</b><span>' + plural((d.exercises || []).length, 'exercise') + (dn ? ' · done this week' : '') + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
-    if (C.next) h += '<section class="card note" style="margin-top:12px"><p class="lab">Coming Next</p><p>' + esc(C.next) + '</p></section>';
+    if (!A.days.length && !A.logs.length) return h + '<p class="card empty">Paya is building your program. Your workouts will show up here.</p>';
+    var mb = maxBack(); if (PW > mb) PW = mb; if (PW < 0) PW = 0;
+    var ws = weekStart(PW), we = new Date(ws), wn = A.week ? A.week - PW : null; we.setDate(ws.getDate() + 6);
+    var ARW = function(d){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="' + (d < 0 ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6') + '"/></svg>'; };
+    h += '<div class="wknav"><button data-wk="1" aria-label="Previous week"' + (PW >= mb ? ' disabled' : '') + '>' + ARW(-1) + '</button><div><b>' + (PW === 0 ? 'This Week' : PW === 1 ? 'Last Week' : (wn && wn > 0 ? 'Week ' + wn : 'Week of ' + md(ws))) + '</b><span>' + md(ws) + ' – ' + md(we) + (PW <= 1 && wn && wn > 0 ? ' · Week ' + wn : '') + '</span></div><button data-wk="-1" aria-label="Next week"' + (PW === 0 ? ' disabled' : '') + '>' + ARW(1) + '</button></div>';
+    if (PW === 0) {
+      h += A.days.length ? '<div class="list">' + A.days.map(function(d){ var dn = doneThisWeek(d.key);
+        return '<button class="li day' + (dn ? ' done' : '') + '" data-dayview="' + esc(d.key) + '"><span class="dk">' + (dn ? '✓' : esc(d.key)) + '</span><span class="t"><b>' + esc(d.name) + '</b><span>' + plural((d.exercises || []).length, 'exercise') + (dn ? ' · done this week' : '') + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>' : '<p class="card empty">Paya is building your next workouts.</p>';
+      if (C.next) h += '<section class="card note" style="margin-top:12px"><p class="lab">Coming Next</p><p>' + esc(C.next) + '</p></section>';
+    } else {
+      var a = key(ws), b = key(we), wl = A.logs.filter(function(l){ return l.date >= a && l.date <= b; });
+      h += wl.length ? '<div class="list">' + wl.map(function(l){ var d = parse(l.date), nb = (A.W[l.date] || []).filter(function(x){ return x.best; }).length, ns = (l.ex || []).reduce(function(t, e){ return t + (e.sets || []).length; }, 0);
+        return '<button class="li day done" data-logview="' + esc(l.id) + '"><span class="dk">' + esc(l.day || '✓') + '</span><span class="t"><b>' + esc(l.dayName || 'Workout') + '</b><span>' + wd(d).slice(0, 3) + ' ' + md(d) + ' · ' + plural(ns, 'set') + '</span></span>' + (nb ? '<span class="tag">' + plural(nb, 'best') + '</span>' : '') + CHEV + '</button>'; }).join('') + '</div>'
+        : '<p class="card empty">No workouts logged this week.</p>';
+    }
     return h;
   }
+  function logViewSheet(id){ var l = A.logs.filter(function(x){ return x.id === id; })[0]; if (!l) return; var d = parse(l.date);
+    openSheet('<p class="lab pk">' + full(d) + '</p><h3>' + esc(l.dayName || 'Workout') + '</h3>' + (l.ex || []).map(function(e){ return '<div class="lg-ex"><div class="lgh"><h4>' + esc(shortName(e.name)) + '</h4><span class="tgt">' + plural((e.sets || []).length, 'set') + '</span></div><div class="lvsets">' + (e.sets || []).map(function(st, j){ return '<span><i>' + (j + 1) + '</i>' + (st.w ? fmtW(st.w) + ' lb × ' : '') + st.r + '</span>'; }).join('') + '</div></div>'; }).join('') + (l.note ? '<section class="card note" style="margin-top:14px"><p class="lab">Your Note</p><p>' + esc(l.note) + '</p></section>' : '')); }
   function dayByKey(k){ return A.days.filter(function(d){ return d.key === k; })[0]; }
   function daySheet(k){ var d = dayByKey(k); if (!d) return;
     openSheet('<p class="lab pk">Workout ' + esc(d.key) + '</p><h3>' + esc(d.name) + '</h3>' + (d.note ? '<p class="sub">' + esc(d.note) + '</p>' : '') + '<div class="list exl">' + (d.exercises || []).map(function(e){
@@ -696,6 +724,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (t.dataset.newgoal) { goalSheet(); return; }
     if (t.dataset.unit) { try { localStorage.setItem(UKEY, t.dataset.unit); } catch (x) {} render(true); return; }
     if (t.dataset.dayview) { daySheet(t.dataset.dayview); return; }
+    if (t.dataset.logview) { logViewSheet(t.dataset.logview); return; }
+    if (t.dataset.wk) { PW += +t.dataset.wk; render(true); return; }
     if (t.dataset.day) { logSheet(t.dataset.day); return; }
     if (t.dataset.addset !== undefined) { var box = document.querySelector('.lg-ex[data-ex="' + t.dataset.addset + '"]'), rows = box.querySelectorAll('.srow'), last = rows[rows.length - 1]; var tmp = document.createElement('div'); tmp.innerHTML = setRow(rows.length + 1, last ? last.querySelector('[data-w]').value : '', last ? last.querySelector('[data-r]').value : '', false); box.insertBefore(tmp.firstChild, t); saveDraft(); countSets(); return; }
     if (t.dataset.tick) { var row = t.closest('.srow'); row.classList.toggle('ok'); if (row.classList.contains('ok') && navigator.vibrate) navigator.vibrate(12); saveDraft(); countSets(); return; }
