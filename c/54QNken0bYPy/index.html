@@ -167,6 +167,20 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 .field textarea{width:100%;min-height:76px;padding:12px 14px;border-radius:14px;border:1px solid rgba(223,229,235,.16);background:#0E0F13;color:var(--fg);font:inherit;font-size:1rem;resize:vertical}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:60;padding:12px 18px;border-radius:99px;background:#EEF2F5;color:#111217;font-weight:700;font-size:.9rem;box-shadow:0 0 0 1.5px rgba(240,140,194,.7),0 18px 40px -12px rgba(0,0,0,.8);transition:opacity .25s,transform .35s cubic-bezier(.2,.7,.2,1);pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---- workout tab (in-person clients, view only) ---- */
+.tabs.five{grid-template-columns:repeat(5,1fr)}
+.tabs.five .tab{font-size:.68rem}
+.wb{margin-bottom:12px}
+.wb .wh{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.wb .wl{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;font-family:Fraunces,Georgia,serif;font-size:1.2rem;color:var(--pink2);background:linear-gradient(150deg,rgba(236,116,176,.24),rgba(178,58,119,.10));box-shadow:inset 0 0 0 1px rgba(240,140,194,.32)}
+.wb .wh b{display:block;font-size:1rem;color:#EEF2F5}
+.wb .wh span{font-size:.8rem;color:var(--muted)}
+.wb .wx{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.wb .wx:first-of-type{border-top:0}
+.wb .wx b{font-size:.95rem;font-weight:600;color:#EEF2F5}
+.wb .wx span{font-size:.9rem;color:var(--pink2);font-weight:700;text-align:right;white-space:nowrap}
+.wb .wx small{display:block;font-size:.78rem;color:var(--muted);font-weight:500}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -352,6 +366,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     // goals: Paya's + this phone's
     a.goals = (d.goals || []).map(function(g){ return Object.assign({ by: 'paya' }, g); }).concat(localGoals().map(function(g, i){ return Object.assign({ by: 'me', li: i }, g); }));
     a.total = d.totalSessions != null ? d.totalSessions : a.past.length;
+    a.program = d.program || null;
     if (d.coach) onlineBuild(a, d);
     return a;
   }
@@ -488,6 +503,14 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     return h; }
   var RAW = null;
 
+
+  // ---- workout tab (view only) ----
+  function viewWorkout(){ var P = A.program || {}, h = '<h2 class="page">Your Workout</h2>';
+    if (P.title || P.note) h += '<section class="card glow"><p class="lab pk">' + esc(P.title || 'Workout') + '</p>' + (P.note ? '<p class="sub" style="margin-top:6px">' + esc(P.note) + '</p>' : '') + '</section>';
+    (P.blocks || []).forEach(function(b){ h += '<section class="card wb"><div class="wh"><span class="wl">' + esc(b.label) + '</span><div><b>' + esc(b.title) + '</b><span>' + esc(b.sub || '') + '</span></div></div>' +
+      (b.items || []).map(function(x){ return '<div class="wx"><b>' + esc(x.name) + (x.alt ? '<small>' + esc(x.alt) + '</small>' : '') + '</b><span>' + esc(x.load) + '</span></div>'; }).join('') + '</section>'; });
+    return h; }
+
   // ---- views ----
   function viewHome(){
     var next = A.upcoming[0], h = '';
@@ -551,7 +574,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
     return h;
   }
-  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
+  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
 
   // ---- sheets ----
   function openSheet(html){ var r = document.getElementById('sheet-root'); r.innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + html + '<button class="btn q" data-close="1">Close</button></div></div>'; document.documentElement.classList.add('sheet-open'); }
@@ -691,6 +714,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     }); }
   document.getElementById('view').innerHTML = '<p class="empty">Loading…</p>';
   getData().then(function(d){ RAW = d; A = build(d);
+    if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
     if (A.online) { var sb = document.querySelector('.tab[data-tab="sessions"]'); if (sb) { sb.dataset.tab = 'program'; sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Program'; } setTimeout(flush, 800); } greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
     .catch(function(){ document.getElementById('view').innerHTML = '<section class="card"><p class="sub" style="margin:0 0 12px">Your account didn’t load. Check your connection and try again. If it keeps happening, ask Paya to resend your link.</p><button class="btn q" onclick="location.reload()">Try again</button></section>'; });
 })();
