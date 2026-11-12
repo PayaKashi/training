@@ -147,7 +147,7 @@ section{position:relative;z-index:1}
 .seg{display:inline-flex;margin-top:18px;padding:4px;border-radius:99px;background:rgba(223,229,235,.06);box-shadow:inset 0 0 0 1px var(--line)}
 .seg button{border:0;background:none;cursor:pointer;padding:9px 20px;border-radius:99px;font-weight:700;font-size:.92rem;color:var(--muted);transition:color .2s,background .25s}
 .seg button[aria-selected="true"]{color:#101116;background:linear-gradient(180deg,#F7F9FB,#B4BCC7);box-shadow:0 0 0 1.5px rgba(240,140,194,.7)}
-.show{display:grid;gap:20px;margin-top:20px;align-items:center}
+.show{display:grid;gap:20px;margin-top:20px;align-items:start}
 .show .stage{position:relative;justify-self:center}
 .show .stage::before{content:"";position:absolute;inset:-12% -40%;z-index:-1;background:radial-gradient(closest-side,rgba(224,90,156,.34),transparent 70%)}
 .show .phone .scr img{transition:opacity .45s var(--ease)}
@@ -341,16 +341,16 @@ section[id]{scroll-margin-top:70px}
   <div class="show">
     <div>
       <div class="feats" data-feats="ip">
-        <button aria-current="true" data-img="ip-home"><b>Always Know What's Next</b><span>Your next session, your credit, your latest workout and notes from me, every time you open it.</span></button>
-        <button data-img="ip-progress"><b>Every Lift, Tracked</b><span>Your goals, your best set on every exercise, and how far each one has come.</span></button>
-        <button data-img="ip-bests"><b>Every New Best, Dated</b><span>Tap your new bests to see exactly what you beat and the day you did it.</span></button>
-        <button data-img="ip-lift"><b>Watch Yourself Get Stronger</b><span>Open any lift to see the whole climb, session by session.</span></button>
+        <button aria-current="true" data-img="ip-home"><b>What's Coming Up</b><span>Your next session, and what you owe or have left, always up to date.</span></button>
+        <button data-img="ip-progress"><b>Every Lift Logged</b><span>The best set on every exercise you've done with me.</span></button>
+        <button data-img="ip-bests"><b>Personal Records</b><span>Every record you've hit, and the day you hit it.</span></button>
+        <button data-img="ip-lift"><b>Your Progress</b><span>Tap any lift to see the whole climb.</span></button>
       </div>
       <div class="feats" data-feats="on" hidden>
-        <button data-img="on-home"><b>Your Week at a Glance</b><span>How many workouts are done, which one is next, and one button to start it.</span></button>
-        <button data-img="on-program"><b>Your Program, Laid Out</b><span>Each workout for the week, built for your goal and updated as you progress.</span></button>
-        <button data-img="on-log"><b>Log a Set with One Tap</b><span>Your weights and reps are filled in. Tick each set as you go and change a number only if you need to.</span></button>
-        <button data-img="on-lastweek"><b>Look Back at Any Week</b><span>Flip through past weeks to see every workout you logged and every best you hit.</span></button>
+        <button data-img="on-home"><b>What's Next</b><span>What's done this week, what's next, and one button to start.</span></button>
+        <button data-img="on-program"><b>Your Workouts</b><span>Every workout I've built for you, ready to go.</span></button>
+        <button data-img="on-log"><b>Tick Off Every Set</b><span>Your numbers are filled in, so just tap ✓.</span></button>
+        <button data-img="on-lastweek"><b>Your History</b><span>Flip back to see every workout you've done.</span></button>
       </div>
     </div>
     <div class="stage"><div class="phone"><div class="scr"><img id="shA" src="site/s-ip-home.webp" alt="Screenshot of the client app" width="600" height="1298" loading="lazy"><img id="shB" src="" alt="" width="600" height="1298" style="opacity:0"></div></div></div>
