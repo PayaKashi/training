@@ -253,12 +253,13 @@ section[id]{scroll-margin-top:70px}
 @media (min-width:900px){.lede.trio{font-size:1.26rem}}
 .tags{display:flex;flex-wrap:wrap;gap:8px}
 .tags span{padding:7px 14px;border-radius:99px;font-size:.9rem;font-weight:600;color:#DFE5EB;background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.14)}
+.end{display:block;max-width:760px;margin:0 auto}
 </style>
 </head>
 <body>
 <header class="nav"><div class="bar">
   <a class="brand" href="#top"><img src="site/logo.png" alt="" width="34" height="34"><span>P² Collective</span></a>
-  <nav class="links" aria-label="Sections"><a href="#online">Online</a><a href="#services">In Person</a><a href="#about">About</a><a href="#app">The App</a><a href="#faq">FAQ</a></nav>
+  <nav class="links" aria-label="Sections"><a href="#online">Online</a><a href="#services">In Person</a><a href="#about">About</a><a href="#app">The App</a></nav>
   <a class="btn" href="#start">Get Started</a>
 </div></header>
 
@@ -357,16 +358,8 @@ section[id]{scroll-margin-top:70px}
   </div>
 </div></section>
 
-<section class="sec rule" id="faq"><div class="wrap">
+<section class="sec rule" id="book"><div class="wrap">
   <div class="end">
-    <div>
-      <h2>Good to Know.</h2>
-      <div class="faq">
-        <details><summary>Do I Need Experience to Start?</summary><p>No. Some of my clients had never lifted before, others have trained for years. Your plan starts where you are.</p></details>
-        <details><summary>How Often Should I Train?</summary><p>Most clients train with me one to three times a week. We'll decide what makes sense for your goal and schedule on the intro call.</p></details>
-        <details><summary>What Happens on the Intro Call?</summary><p>It's free and there's no pressure. We talk about your goals, your schedule and your training history, and figure out whether online or in person fits you best. Phone, video or in person, your choice.</p></details>
-      </div>
-    </div>
     <div class="start" id="start">
       <div id="f-wrap">
         <h2>Book Your Free Intro Call.</h2>
@@ -484,7 +477,7 @@ document.querySelectorAll('[data-pick]').forEach(function(a){ a.addEventListener
   // nav highlight + sticky mobile button
   var links = [].slice.call(document.querySelectorAll('.nav .links a'));
   if ('IntersectionObserver' in window) { var so = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); }); }); }, { rootMargin: '-45% 0px -50% 0px' });
-    ['online','services','about','app','faq'].forEach(function(id){ so.observe(document.getElementById(id)); });
+    ['online','services','about','app'].forEach(function(id){ so.observe(document.getElementById(id)); });
     var st = document.getElementById('stick'), hv = true, fv = false; function upd(){ var on = !hv && !fv; st.classList.toggle('show', on); st.setAttribute('aria-hidden', on ? 'false' : 'true'); st.tabIndex = on ? 0 : -1; }
     new IntersectionObserver(function(es){ hv = es[0].isIntersecting; upd(); }).observe(document.querySelector('.hero .cta-row'));
     new IntersectionObserver(function(es){ fv = es[0].isIntersecting; upd(); }, { threshold: .05 }).observe(document.getElementById('start')); }
