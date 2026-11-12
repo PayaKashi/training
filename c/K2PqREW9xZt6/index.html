@@ -491,8 +491,13 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     return a;
   }
   var GKEY = 'p2-goals:' + location.pathname;
-  function localGoals(){ try { return JSON.parse(localStorage.getItem(GKEY) || '[]'); } catch (e) { return []; } }
-  function saveGoals(g){ try { localStorage.setItem(GKEY, JSON.stringify(g)); } catch (e) {} }
+  // Goals the client sets live on their phone; a copy is sent quietly so they also show on Paya's view after the nightly update.
+  function goalsSetHere(){ try { return localStorage.getItem(GKEY) !== null; } catch (e) { return false; } }
+  function localGoals(){ try { var v = localStorage.getItem(GKEY); if (v !== null) return JSON.parse(v); } catch (e) {} return (RAW && RAW.clientGoals) || []; }
+  function saveGoals(g){ try { localStorage.setItem(GKEY, JSON.stringify(g)); } catch (e) {} syncGoals(); }
+  function syncGoals(){ if (!goalsSetHere() || !A || !A.name) return; var g = localGoals(), sig = JSON.stringify(g), SK = 'p2-goals-sent:' + location.pathname;
+    try { if (localStorage.getItem(SK) === sig) return; localStorage.setItem(SK, sig); } catch (e) { return; }
+    queue({ _subject: 'P2 Goals · ' + A.name, Client: A.name, Goals: g.length ? g.map(function(x){ return x.text; }).join(', ') : '(none)', kind: 'goals', p2: pack({ id: 'goals-' + Date.now(), at: new Date().toISOString(), goals: g }) }); }
   function liftByName(n){ for (var i = 0; i < A.lifts.length; i++) if (A.lifts[i].name === n) return A.lifts[i]; return null; }
   function goalProgress(g){ var l = g.lift && liftByName(g.lift); if (!l || !g.target) return null; var cur = l.best.weight || 0; if (l.assisted) return null; return { cur: cur, pct: Math.max(4, Math.min(100, Math.round(cur / g.target * 100))), l: l }; }
 
@@ -867,7 +872,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
       return rawAes(b64u(saved)).then(function(k){ return aesOpen(k, x); }).catch(function(){ try { localStorage.removeItem(DKEY); } catch (e) {} return askPin(x); });
     }); }
   document.getElementById('view').innerHTML = '<p class="empty">Loading…</p>';
-  getData().then(function(d){ RAW = d; A = build(d);
+  getData().then(function(d){ RAW = d; A = build(d); setTimeout(function(){ syncGoals(); flush(); }, 1200);
     if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
     if (A.online) { var sb = document.querySelector('.tab[data-tab="sessions"]'); if (sb) { sb.dataset.tab = 'program'; sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Program'; } setTimeout(flush, 800); } greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
     .catch(function(){ document.getElementById('view').innerHTML = '<section class="card"><p class="sub" style="margin:0 0 12px">Your account didn’t load. Check your connection and try again. If it keeps happening, ask Paya to resend your link.</p><button class="btn q" onclick="location.reload()">Try again</button></section>'; });
