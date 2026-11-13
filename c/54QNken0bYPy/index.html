@@ -296,6 +296,18 @@ h2.page{font-weight:600;font-size:clamp(1.6rem,7.6vw,2rem);white-space:nowrap;li
 .rung{margin-top:14px;font-weight:700;color:var(--pink2)}
 .wax{display:flex;justify-content:space-between;margin-top:6px;font-size:.78rem;color:var(--muted)}
 .field input[type=date]{color-scheme:dark}
+.wlog{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:18px 0 14px;padding:18px 16px;border-radius:20px;background:rgba(223,229,235,.04);border:1px solid var(--line)}
+.wlog input{width:5.2ch;min-width:0;border:0;background:none;outline:0;text-align:right;padding:0;font-family:Fraunces,Georgia,serif;font-weight:600;font-size:3rem;line-height:1.1;color:#EEF2F5;-moz-appearance:textfield}
+.wlog input::-webkit-outer-spin-button,.wlog input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.wlog input::placeholder{color:rgba(223,229,235,.25)}
+.wlog span{font-size:1.1rem;font-weight:700;color:var(--muted)}
+.wdate{position:relative;display:flex;align-items:center;gap:10px;padding:15px 16px;border-radius:16px;background:rgba(223,229,235,.04);border:1px solid var(--line)}
+.wdate span{font-size:.92rem;color:var(--muted);font-weight:600}
+.wdate b{margin-left:auto;font-size:1rem;font-weight:700;color:#EEF2F5}
+.wdate .chev{width:16px;height:16px;color:var(--muted)}
+.wdate input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;margin:0;padding:0;-webkit-appearance:none;appearance:none;cursor:pointer}
+.wdate.fixed input{pointer-events:none}
+.whint{margin:8px 2px 0;font-size:.8rem;color:var(--muted)}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -528,11 +540,15 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
       h += '<div class="sec">Over Time</div><section class="card" style="padding:14px"><div class="chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".35"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs><polygon points="' + pts + ' ' + xs[xs.length - 1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#wg)"/><polyline pathLength="1" points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' + xs.map(function(x, k){ return '<circle cx="' + x + '" cy="' + ys[k] + '" r="3.5" fill="#F08CC2"/>'; }).join('') + '</svg></div><div class="wax"><span>' + md(parse(first.d)) + '</span><span>' + md(parse(last.d)) + '</span></div></section>'; }
     h += '<div class="sec">History</div><div class="list">' + a.slice().reverse().map(function(x){ return '<button class="li" data-wedit="' + esc(x.d) + '"><span class="t"><b>' + wShow(x.w) + ' ' + u + '</b><span>' + short(parse(x.d)) + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
     return h; }
-  function weightSheet(d){ var a = localWeights(), e = d ? a.filter(function(x){ return x.d === d; })[0] : null, u = wUnit();
-    openSheet('<h3>' + (e ? 'Edit Weigh-In' : 'Log Weight') + '</h3><p class="sub">' + (e ? 'Change the number or remove this entry.' : 'Pick an earlier date to add a past weigh-in.') + '</p>' +
-      '<label class="field"><span>Date</span><input id="w-d" type="date" max="' + TODAY_KEY + '" value="' + esc(e ? e.d : TODAY_KEY) + '"' + (e ? ' disabled' : '') + '></label>' +
-      '<label class="field"><span>Weight (' + u + ')</span><input id="w-w" type="number" inputmode="decimal" step="0.1" placeholder="e.g. ' + (u === 'kg' ? '68.5' : '150') + '" value="' + (e ? wShow(e.w) : '') + '"></label><p class="pin-err" id="w-err"></p>' +
-      '<button class="btn" id="w-save" data-orig="' + esc(e ? e.d : '') + '">Save</button>' + (e ? '<button class="btn line" id="w-del" data-d="' + esc(e.d) + '" style="margin-top:10px">Remove Entry</button>' : '')); }
+  function wDateLabel(k){ return k === TODAY_KEY ? 'Today' : short(parse(k)); }
+  function weightSheet(d){ var a = localWeights(), e = d ? a.filter(function(x){ return x.d === d; })[0] : null, u = wUnit(), k = e ? e.d : TODAY_KEY;
+    openSheet('<h3>' + (e ? 'Edit Weigh-In' : 'Log Weight') + '</h3>' +
+      '<div class="wlog"><input id="w-w" type="number" inputmode="decimal" step="0.1" placeholder="0" aria-label="Weight in ' + u + '" value="' + (e ? wShow(e.w) : '') + '"><span>' + u + '</span></div>' +
+      '<div class="wdate' + (e ? ' fixed' : '') + '"><span>Date</span><b id="w-dl">' + wDateLabel(k) + '</b>' + (e ? '' : CHEV) + '<input id="w-d" type="date" max="' + TODAY_KEY + '" value="' + esc(k) + '"' + (e ? ' disabled' : '') + ' aria-label="Date"></div>' +
+      (e ? '' : '<p class="whint">Tap the date to add a past weigh-in.</p>') + '<p class="pin-err" id="w-err"></p>' +
+      '<button class="btn" id="w-save" data-orig="' + esc(e ? e.d : '') + '">Save</button>' + (e ? '<button class="btn line" id="w-del" data-d="' + esc(e.d) + '" style="margin-top:10px">Remove Entry</button>' : ''));
+    var inp = document.getElementById('w-d'); if (inp && !e) inp.addEventListener('change', function(){ var v = inp.value; document.getElementById('w-dl').textContent = v ? wDateLabel(v > TODAY_KEY ? TODAY_KEY : v) : 'Today'; });
+    setTimeout(function(){ var w = document.getElementById('w-w'); if (w && !e) w.focus(); }, 350); }
   function saveWeight(orig){ var d = (document.getElementById('w-d') || {}).value || orig, v = parseFloat((document.getElementById('w-w') || {}).value), err = document.getElementById('w-err');
     if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d) || d > TODAY_KEY) { err.textContent = 'Pick a date up to today.'; return; }
     if (!(v > 0) || v > (wUnit() === 'kg' ? 300 : 660)) { err.textContent = 'Enter your weight.'; return; }
@@ -698,9 +714,33 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     openSheet('<h3>' + esc(w.name) + '</h3>' + (P.rest ? '<p class="sub">' + esc(P.rest) + '</p>' : '') +
       '<div class="runl">' + (w.lines || []).map(function(l){ return '<p' + (l.hi ? ' class="hi"' : '') + '>' + esc(l.t || l) + '</p>'; }).join('') + '</div>' + (w.goal ? '<p class="rung">' + esc(w.goal) + '</p>' : '')); }
 
+
+  // ---- special-occasion theme (e.g. bridal): swaps the pink accents for champagne gold ----
+  var THEME = null, TSWAP = [[/#EC74B0/gi,'#E2C48F'],[/#F08CC2/gi,'#EED9AE'],[/#B23A77/gi,'#A9844C'],[/#E05A9C/gi,'#CDA868'],[/#C2478A/gi,'#B8924F'],[/#F8C2DE/gi,'#F6E7C8'],[/#FF9DB8/gi,'#F3DDB0'],[/#F27BC0/gi,'#E8CC94'],[/#E86FB0/gi,'#DDBD84'],
+    [/rgba\(224,\s*90,\s*156,/g,'rgba(205,168,104,'],[/rgba\(240,\s*140,\s*194,/g,'rgba(238,217,174,'],[/rgba\(236,\s*116,\s*176,/g,'rgba(226,196,143,'],[/rgba\(178,\s*58,\s*119,/g,'rgba(169,132,76,'],[/rgba\(120,\s*40,\s*80,/g,'rgba(120,95,50,'],[/rgba\(255,\s*160,\s*210,/g,'rgba(246,226,184,'],[/rgba\(242,\s*123,\s*192,/g,'rgba(232,204,148,'],[/rgba\(224,\s*72,\s*150,/g,'rgba(200,160,95,']];
+  function themed(h){ if (!THEME) return h; TSWAP.forEach(function(p){ h = h.replace(p[0], p[1]); }); return h; }
+  function applyTheme(t){ if (!t || t.name !== 'bridal') return; THEME = t;
+    var css = [].map.call(document.querySelectorAll('style'), function(x){ return x.textContent; }).join('\n'), st = document.createElement('style'); st.textContent = themed(css) + BRIDAL_CSS; document.head.appendChild(st);
+    var defs = document.querySelector('svg[aria-hidden="true"] defs'); if (defs) defs.parentNode.innerHTML = themed(defs.parentNode.innerHTML);
+    document.documentElement.classList.add('bridal');
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) { var pf = document.createElement('div'); pf.className = 'petals'; pf.setAttribute('aria-hidden', 'true'); for (var i = 0; i < 14; i++) { var p = document.createElement('i'); p.style.left = (Math.random() * 100) + '%'; p.style.animationDelay = (-Math.random() * 16) + 's'; p.style.animationDuration = (11 + Math.random() * 9) + 's'; p.style.transform = 'scale(' + (.6 + Math.random() * .7) + ')'; pf.appendChild(p); } document.body.appendChild(pf); } }
+  var BRIDAL_CSS = 'html.bridal,html.bridal body{background:radial-gradient(80% 40% at 100% 0%,rgba(246,231,200,.10),transparent 70%),radial-gradient(70% 40% at 0% 100%,rgba(205,168,104,.14),transparent 70%),#0E0D0C;background-attachment:fixed}' +
+    '.petals{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}.petals i{position:absolute;top:-30px;width:12px;height:16px;border-radius:12px 0 12px 0;background:linear-gradient(135deg,rgba(255,250,240,.75),rgba(238,217,174,.35));animation:petal linear infinite;opacity:.55}' +
+    '@keyframes petal{0%{transform:translate(0,-30px) rotate(0)}50%{transform:translate(40px,50vh) rotate(160deg)}100%{transform:translate(-20px,105vh) rotate(320deg)}}' +
+    '.wed{position:relative;overflow:hidden;text-align:center;padding:22px 18px 20px;border-radius:26px;margin-bottom:12px;background:radial-gradient(90% 80% at 50% 0%,rgba(246,231,200,.16),transparent 70%),#17150F;border:1px solid rgba(238,217,174,.35);box-shadow:0 0 50px -24px rgba(238,217,174,.7)}' +
+    '.wed svg{width:46px;height:30px;margin:0 auto 8px;display:block}.wed .lab{color:#EED9AE;text-transform:none}.wed .big{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.5rem,7vw,1.9rem);margin:6px 0 4px;background:linear-gradient(178deg,#FFFDF7 10%,#EED9AE 55%,#B8924F 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.wed .sub{color:#CFC6B4}';
+  function weddingCard(){ var t = THEME; if (!t || !t.date) return ''; var wd8 = parse(t.date), days = Math.round((wd8 - TODAY) / 864e5), who = t.names || '';
+    var rings = '<svg viewBox="0 0 46 30" fill="none" stroke="#EED9AE" stroke-width="2"><circle cx="17" cy="17" r="10"/><circle cx="29" cy="17" r="10"/><path d="M29 3.5l2-2.5 2 2.5" stroke-width="1.6"/></svg>';
+    var lab, big, sub;
+    if (days > 1) { lab = 'The Big Day'; big = wd(wd8) + ', ' + md(wd8); sub = days + ' days to go'; }
+    else if (days === 1) { lab = 'The Big Day'; big = 'Tomorrow!'; sub = 'Enjoy every minute of it'; }
+    else if (days === 0) { lab = 'Today\'s the Day'; big = 'Congratulations!'; sub = 'Wishing you a beautiful wedding day'; }
+    else { lab = 'Just Married'; big = 'Congratulations!'; sub = 'Wishing you a lifetime of happiness together'; }
+    return '<section class="wed">' + rings + '<p class="lab">' + lab + '</p><p class="big">' + big + '</p><p class="sub">' + sub + '</p></section>'; }
+
   // ---- views ----
   function viewHome(){
-    var next = A.upcoming[0], h = '';
+    var next = A.upcoming[0], h = weddingCard();
     // next session: same card every day
     var cb = climb();
     h += next ? '<section class="card glow">' + cb.bg + '<p class="lab pk">Next Session</p><p class="big">' + rel(next.d) + ' · ' + tr(next.start) + '</p><p class="sub">' + mdl(next.d) + ' · ' + kind(next.partners) + '</p><button class="btn q" data-up="0">Session details</button></section>'
@@ -766,7 +806,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, run: viewRun, weight: viewWeight, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
 
   // ---- sheets ----
-  function openSheet(html){ var r = document.getElementById('sheet-root'); r.innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + html + '<button class="btn q" data-close="1">Close</button></div></div>'; document.documentElement.classList.add('sheet-open'); }
+  function openSheet(html){ var r = document.getElementById('sheet-root'); r.innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + themed(html) + '<button class="btn q" data-close="1">Close</button></div></div>'; document.documentElement.classList.add('sheet-open'); }
   function closeSheet(){ document.getElementById('sheet-root').innerHTML = ''; document.documentElement.classList.remove('sheet-open'); }
   function upSheet(i){ var s = A.upcoming[i]; if (!s) return; var f = '<div><span>Time</span><b>' + tr(s.start, s.end) + '</b></div><div><span>Session</span><b>' + kind(s.partners) + '</b></div>';
     if (s.price) f += '<div><span>Price</span><b>' + money(s.price) + '</b></div>';
@@ -827,7 +867,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function pill(anim){ var t = document.querySelector('.tab[data-tab="' + cur + '"]'), p = document.querySelector('.tabs .pill'); if (!t || !p) return; if (!anim) p.style.transition = 'none'; p.style.width = t.offsetWidth + 'px'; p.style.transform = 'translateX(' + t.offsetLeft + 'px)'; if (!anim) { void p.offsetWidth; p.style.transition = ''; } }
   function countUp(root){ if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; [].forEach.call(root.querySelectorAll('[data-n]'), function(el){ var n = +el.dataset.n, t0 = null; if (!n) return; el.textContent = '0';
       requestAnimationFrame(function step(t){ if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(n * e); if (k < 1) requestAnimationFrame(step); }); }); }
-  function render(keepScroll){ var v = document.getElementById('view'); v.innerHTML = A ? views[cur]() : ''; if (!keepScroll) countUp(v); tabsList().forEach(function(t){ if (t.dataset.tab === cur) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); }); pill(true); if (!keepScroll) window.scrollTo(0, 0); }
+  function render(keepScroll){ var v = document.getElementById('view'); v.innerHTML = A ? themed(views[cur]()) : ''; if (!keepScroll) countUp(v); tabsList().forEach(function(t){ if (t.dataset.tab === cur) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); }); pill(true); if (!keepScroll) window.scrollTo(0, 0); }
   var busy = false, EASE = 'cubic-bezier(.32,.72,0,1)', RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function go(t, dir, fromX){ if (t === cur || busy) return; var v = document.getElementById('view');
     if (RM || !v.animate) { cur = t; render(); return; }
@@ -927,7 +967,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
       return rawAes(b64u(saved)).then(function(k){ return aesOpen(k, x); }).catch(function(){ try { localStorage.removeItem(DKEY); } catch (e) {} return askPin(x); });
     }); }
   document.getElementById('view').innerHTML = '<p class="empty">Loading…</p>';
-  getData().then(function(d){ RAW = d; A = build(d); setTimeout(function(){ syncGoals(); syncWeights(); flush(); }, 1200);
+  getData().then(function(d){ RAW = d; applyTheme(d.theme); A = build(d); setTimeout(function(){ syncGoals(); syncWeights(); flush(); }, 1200);
     if (RAW && RAW.weightTab && !A.online) { var tb3 = document.querySelector('.tabs'), pb3 = tb3.querySelector('.tab[data-tab="progress"]'), wtb = document.createElement('button'); wtb.className = 'tab'; wtb.type = 'button'; wtb.dataset.tab = 'weight'; wtb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8.5 9.5a5 5 0 0 1 7 0M12 12.5l1.6-2.6"/></svg>Weight'; tb3.insertBefore(wtb, pb3.nextSibling); tb3.classList.add('five'); }
     if (A.run && !A.online) { var tb2 = document.querySelector('.tabs'), pb2 = tb2.querySelector('.tab[data-tab="progress"]'), rbtn = document.createElement('button'); rbtn.className = 'tab'; rbtn.type = 'button'; rbtn.dataset.tab = 'run'; rbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14.5" cy="4.5" r="1.8"/><path d="M8 21l3.2-6.2 3.3 2.7V22M6 12.5l3.5-3.2 4 .7 2.5 3.4 3 .6M11.2 14.8l2-5"/></svg>Run'; tb2.insertBefore(rbtn, pb2.nextSibling); tb2.classList.add('five'); }
     if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
