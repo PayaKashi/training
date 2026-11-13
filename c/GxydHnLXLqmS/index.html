@@ -661,7 +661,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     h += '<div class="list">' + (P.workouts || []).map(function(w, i){ return '<button class="li day" data-runw="' + i + '"><span class="dk">' + (i + 1) + '</span><span class="t"><b>' + esc(w.name) + '</b><span>' + esc(w.sub || '') + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
     return h; }
   function runSheet(i){ var P = A.run || {}, w = (P.workouts || [])[i]; if (!w) return;
-    openSheet('<p class="lab pk" style="text-transform:none">' + esc(P.title || 'Run Plan') + '</p><h3>' + esc(w.name) + '</h3>' + (P.rest ? '<p class="sub">' + esc(P.rest) + '</p>' : '') +
+    openSheet('<h3>' + esc(w.name) + '</h3>' + (P.rest ? '<p class="sub">' + esc(P.rest) + '</p>' : '') +
       '<div class="runl">' + (w.lines || []).map(function(l){ return '<p' + (l.hi ? ' class="hi"' : '') + '>' + esc(l.t || l) + '</p>'; }).join('') + '</div>' + (w.goal ? '<p class="rung">' + esc(w.goal) + '</p>' : '')); }
 
   // ---- views ----
