@@ -294,6 +294,8 @@ h2.page{font-weight:600;font-size:clamp(1.6rem,7.6vw,2rem);white-space:nowrap;li
 .runl p:first-child{border-top:0}
 .runl p.hi{color:var(--pink2)}
 .rung{margin-top:14px;font-weight:700;color:var(--pink2)}
+.wax{display:flex;justify-content:space-between;margin-top:6px;font-size:.78rem;color:var(--muted)}
+.field input[type=date]{color-scheme:dark}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -504,6 +506,38 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function syncGoals(){ if (!goalsSetHere() || !A || !A.name) return; var g = localGoals(), sig = JSON.stringify(g), SK = 'p2-goals-sent:' + location.pathname;
     try { if (localStorage.getItem(SK) === sig) return; localStorage.setItem(SK, sig); } catch (e) { return; }
     queue({ _subject: 'P2 Goals · ' + A.name, Client: A.name, Goals: g.length ? g.map(function(x){ return x.text; }).join(', ') : '(none)', kind: 'goals', p2: pack({ id: 'goals-' + Date.now(), at: new Date().toISOString(), goals: g }) }); }
+  // ---- body weight (clients with weightTab): logged on the phone, synced quietly like goals ----
+  var WKEY = 'p2-weight:' + location.pathname;
+  function weightSetHere(){ try { return localStorage.getItem(WKEY) !== null; } catch (e) { return false; } }
+  function localWeights(){ var v = null; try { v = localStorage.getItem(WKEY); } catch (e) {} var a = v !== null ? JSON.parse(v) : ((RAW && RAW.clientWeights) || []); return a.filter(function(x){ return x && x.d && x.w > 0; }).sort(function(x, y){ return x.d < y.d ? -1 : 1; }); }
+  var wTimer = null;
+  function saveWeights(a){ try { localStorage.setItem(WKEY, JSON.stringify(a)); } catch (e) {} clearTimeout(wTimer); wTimer = setTimeout(function(){ syncWeights(); flush(); }, 8000); }
+  function syncWeights(){ if (!weightSetHere() || !A || !A.name) return; var a = localWeights(), sig = JSON.stringify(a), SK = 'p2-weight-sent:' + location.pathname;
+    try { if (localStorage.getItem(SK) === sig) return; localStorage.setItem(SK, sig); } catch (e) { return; }
+    var last = a[a.length - 1];
+    queue({ _subject: 'P2 Weight · ' + A.name, Client: A.name, Latest: last ? (Math.round(last.w * 10) / 10) + ' lb on ' + last.d : '(none)', Entries: a.length, kind: 'weights', p2: pack({ id: 'weights-' + Date.now(), at: new Date().toISOString(), weights: a }) }); }
+  function wUnit(){ try { return localStorage.getItem('p2-wunit:' + location.pathname) || 'lb'; } catch (e) { return 'lb'; } }
+  function wShow(lb){ return wUnit() === 'kg' ? (Math.round(lb / 2.20462 * 10) / 10).toString() : (Math.round(lb * 10) / 10).toString(); }
+  function viewWeight(){ var a = localWeights(), u = wUnit(), h = '<h2 class="page">Your Weight</h2>', last = a[a.length - 1], first = a[0];
+    var seg = '<div class="useg" role="group" aria-label="Weight units"><button data-wunit="lb"' + (u === 'lb' ? ' class="on"' : '') + '>lb</button><button data-wunit="kg"' + (u === 'kg' ? ' class="on"' : '') + '>kg</button></div>';
+    if (!last) return h + '<section class="card glow"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><p class="lab pk">Body Weight</p>' + seg + '</div><p class="big">No entries yet</p><p class="sub">Log your weight here. You can add past weigh-ins too by picking the date.</p><button class="btn q" data-wlog="1">Log Weight</button></section>';
+    var diff = a.length > 1 ? last.w - first.w : 0, dtxt = a.length > 1 ? (Math.abs(diff) < 0.05 ? 'Same as ' : (diff < 0 ? 'Down ' : 'Up ') + wShow(Math.abs(diff)) + ' ' + u + ' since ') + md(parse(first.d)) : 'Logged ' + md(parse(last.d));
+    h += '<section class="card glow"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><p class="lab pk">Latest · ' + md(parse(last.d)) + '</p>' + seg + '</div><p class="big">' + wShow(last.w) + ' ' + u + '</p><p class="sub">' + dtxt + '</p><button class="btn q" data-wlog="1">Log Weight</button></section>';
+    if (a.length > 1) { var W = 340, H = 150, v = a.map(function(x){ return x.w; }), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1, t0 = parse(a[0].d).getTime(), t1 = parse(last.d).getTime(), tsp = t1 - t0 || 1;
+      var xs = a.map(function(x){ return 14 + (parse(x.d).getTime() - t0) / tsp * (W - 28); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); }), pts = xs.map(function(x, k){ return x.toFixed(1) + ',' + ys[k].toFixed(1); }).join(' ');
+      h += '<div class="sec">Over Time</div><section class="card" style="padding:14px"><div class="chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".35"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs><polygon points="' + pts + ' ' + xs[xs.length - 1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#wg)"/><polyline pathLength="1" points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' + xs.map(function(x, k){ return '<circle cx="' + x + '" cy="' + ys[k] + '" r="3.5" fill="#F08CC2"/>'; }).join('') + '</svg></div><div class="wax"><span>' + md(parse(first.d)) + '</span><span>' + md(parse(last.d)) + '</span></div></section>'; }
+    h += '<div class="sec">History</div><div class="list">' + a.slice().reverse().map(function(x){ return '<button class="li" data-wedit="' + esc(x.d) + '"><span class="t"><b>' + wShow(x.w) + ' ' + u + '</b><span>' + short(parse(x.d)) + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
+    return h; }
+  function weightSheet(d){ var a = localWeights(), e = d ? a.filter(function(x){ return x.d === d; })[0] : null, u = wUnit();
+    openSheet('<h3>' + (e ? 'Edit Weigh-In' : 'Log Weight') + '</h3><p class="sub">' + (e ? 'Change the number or remove this entry.' : 'Pick an earlier date to add a past weigh-in.') + '</p>' +
+      '<label class="field"><span>Date</span><input id="w-d" type="date" max="' + TODAY_KEY + '" value="' + esc(e ? e.d : TODAY_KEY) + '"' + (e ? ' disabled' : '') + '></label>' +
+      '<label class="field"><span>Weight (' + u + ')</span><input id="w-w" type="number" inputmode="decimal" step="0.1" placeholder="e.g. ' + (u === 'kg' ? '68.5' : '150') + '" value="' + (e ? wShow(e.w) : '') + '"></label><p class="pin-err" id="w-err"></p>' +
+      '<button class="btn" id="w-save" data-orig="' + esc(e ? e.d : '') + '">Save</button>' + (e ? '<button class="btn line" id="w-del" data-d="' + esc(e.d) + '" style="margin-top:10px">Remove Entry</button>' : '')); }
+  function saveWeight(orig){ var d = (document.getElementById('w-d') || {}).value || orig, v = parseFloat((document.getElementById('w-w') || {}).value), err = document.getElementById('w-err');
+    if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d) || d > TODAY_KEY) { err.textContent = 'Pick a date up to today.'; return; }
+    if (!(v > 0) || v > (wUnit() === 'kg' ? 300 : 660)) { err.textContent = 'Enter your weight.'; return; }
+    var lb = wUnit() === 'kg' ? v * 2.20462 : v; lb = Math.round(lb * 10) / 10;
+    var a = localWeights().filter(function(x){ return x.d !== d; }); a.push({ d: d, w: lb }); saveWeights(a); closeSheet(); render(true); }
   function liftByName(n){ for (var i = 0; i < A.lifts.length; i++) if (A.lifts[i].name === n) return A.lifts[i]; return null; }
   function goalProgress(g){ var l = g.lift && liftByName(g.lift); if (!l || !g.target) return null; var cur = l.best.weight || 0; if (l.assisted) return null; return { cur: cur, pct: Math.max(4, Math.min(100, Math.round(cur / g.target * 100))), l: l }; }
 
@@ -729,7 +763,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
     return h;
   }
-  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, run: viewRun, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
+  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, run: viewRun, weight: viewWeight, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
 
   // ---- sheets ----
   function openSheet(html){ var r = document.getElementById('sheet-root'); r.innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + html + '<button class="btn q" data-close="1">Close</button></div></div>'; document.documentElement.classList.add('sheet-open'); }
@@ -814,6 +848,11 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (t.dataset.lift) { liftSheet(+t.dataset.lift); return; }
     if (t.dataset.newgoal) { goalSheet(); return; }
     if (t.dataset.runw !== undefined) { runSheet(+t.dataset.runw); return; }
+    if (t.dataset.wlog) { weightSheet(null); return; }
+    if (t.dataset.wedit) { weightSheet(t.dataset.wedit); return; }
+    if (t.dataset.wunit) { try { localStorage.setItem('p2-wunit:' + location.pathname, t.dataset.wunit); } catch (e) {} render(true); return; }
+    if (t.id === 'w-save') { saveWeight(t.dataset.orig); return; }
+    if (t.id === 'w-del') { saveWeights(localWeights().filter(function(x){ return x.d !== t.dataset.d; })); closeSheet(); render(true); return; }
     if (t.dataset.unit) { try { localStorage.setItem(UKEY, t.dataset.unit); } catch (x) {} render(true); return; }
     if (t.dataset.dayview) { daySheet(t.dataset.dayview); return; }
     if (t.dataset.logview) { logViewSheet(t.dataset.logview); return; }
@@ -888,7 +927,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
       return rawAes(b64u(saved)).then(function(k){ return aesOpen(k, x); }).catch(function(){ try { localStorage.removeItem(DKEY); } catch (e) {} return askPin(x); });
     }); }
   document.getElementById('view').innerHTML = '<p class="empty">Loading…</p>';
-  getData().then(function(d){ RAW = d; A = build(d); setTimeout(function(){ syncGoals(); flush(); }, 1200);
+  getData().then(function(d){ RAW = d; A = build(d); setTimeout(function(){ syncGoals(); syncWeights(); flush(); }, 1200);
+    if (RAW && RAW.weightTab && !A.online) { var tb3 = document.querySelector('.tabs'), pb3 = tb3.querySelector('.tab[data-tab="progress"]'), wtb = document.createElement('button'); wtb.className = 'tab'; wtb.type = 'button'; wtb.dataset.tab = 'weight'; wtb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8.5 9.5a5 5 0 0 1 7 0M12 12.5l1.6-2.6"/></svg>Weight'; tb3.insertBefore(wtb, pb3.nextSibling); tb3.classList.add('five'); }
     if (A.run && !A.online) { var tb2 = document.querySelector('.tabs'), pb2 = tb2.querySelector('.tab[data-tab="progress"]'), rbtn = document.createElement('button'); rbtn.className = 'tab'; rbtn.type = 'button'; rbtn.dataset.tab = 'run'; rbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14.5" cy="4.5" r="1.8"/><path d="M8 21l3.2-6.2 3.3 2.7V22M6 12.5l3.5-3.2 4 .7 2.5 3.4 3 .6M11.2 14.8l2-5"/></svg>Run'; tb2.insertBefore(rbtn, pb2.nextSibling); tb2.classList.add('five'); }
     if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
     if (A.online) { var sb = document.querySelector('.tab[data-tab="sessions"]'); if (sb) { sb.dataset.tab = 'program'; sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Program'; } setTimeout(flush, 800); } greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
