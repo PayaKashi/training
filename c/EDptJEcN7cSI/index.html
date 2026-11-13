@@ -289,6 +289,11 @@ h2.page{font-weight:600;font-size:clamp(1.6rem,7.6vw,2rem);white-space:nowrap;li
 .big,.stats b,.goal b,.sheet h3,.readout b,.mcard .mt b,.badge b,.lock h2,.day .dk,.wb .wl{font-weight:600}
 .top h1{font-size:clamp(1.25rem,6.1vw,1.62rem)}
 .card.glow .big{font-size:clamp(1.4rem,6.9vw,1.8rem)}
+.runl{margin-top:14px;border-radius:16px;border:1px solid var(--line);background:rgba(223,229,235,.03);padding:4px 16px}
+.runl p{padding:12px 0;border-top:1px solid var(--line);font-size:1rem;font-weight:600;color:#DFE5EB}
+.runl p:first-child{border-top:0}
+.runl p.hi{color:var(--pink2)}
+.rung{margin-top:14px;font-weight:700;color:var(--pink2)}
 </style>
 <style id="obsidian">
 /* Obsidian Black #111217 + Ice Grey #DFE5EB, pink stays the accent */
@@ -487,6 +492,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     a.goals = (d.goals || []).map(function(g){ return Object.assign({ by: 'paya' }, g); }).concat(localGoals().map(function(g, i){ return Object.assign({ by: 'me', li: i }, g); }));
     a.total = d.totalSessions != null ? d.totalSessions : a.past.length;
     a.program = d.program || null;
+    a.run = d.run || null;
     if (d.coach) onlineBuild(a, d);
     return a;
   }
@@ -643,12 +649,20 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function conv(t){ var u = unit(); return String(t || '').replace(/(\d+(?:\.\d+)?)(?:\s*[–-]\s*(\d+(?:\.\d+)?))?\s*(lb|kg)\b/g, function(m, a, b, from){ if (from === u) return m;
       var f = function(x){ x = +x; return from === 'lb' ? (Math.round(x / 2.20462 * 2) / 2) : (Math.round(x * 2.20462 / 2.5) * 2.5); };
       return f(a) + (b ? '–' + f(b) : '') + ' ' + u; }); }
-  function viewWorkout(){ var P = A.program || {}, run = P.kind === 'run', h = '<h2 class="page">' + esc(P.page || (run ? 'Your Run' : 'Your Workout')) + '</h2>', u = unit();
-    h += '<section class="card glow" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><p class="lab pk"' + (run ? ' style="text-transform:none"' : '') + '>' + esc(P.title || 'Workout') + '</p>' + (P.note ? '<p class="sub" style="margin-top:6px">' + esc(P.note) + '</p>' : '') + '</div>' + (run ? '' : '<div class="useg" role="group" aria-label="Weight units"><button data-unit="lb"' + (u === 'lb' ? ' class="on"' : '') + '>lb</button><button data-unit="kg"' + (u === 'kg' ? ' class="on"' : '') + '>kg</button></div>') + '</section>';
-    if (run && P.steady) h += '<section class="card wb"><div class="wh"><span class="wl">+</span><div><b>Every Workout</b><span>Same start and finish each time</span></div></div>' + P.steady.map(function(x){ return '<div class="wx"><b>' + esc(x.name) + (x.alt ? '<small>' + esc(x.alt) + '</small>' : '') + '</b><span>' + esc(x.load) + '</span></div>'; }).join('') + '</section>';
+  function viewWorkout(){ var P = A.program || {}, h = '<h2 class="page">Your Workout</h2>', u = unit();
+    h += '<section class="card glow" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><p class="lab pk">' + esc(P.title || 'Workout') + '</p>' + (P.note ? '<p class="sub" style="margin-top:6px">' + esc(P.note) + '</p>' : '') + '</div><div class="useg" role="group" aria-label="Weight units"><button data-unit="lb"' + (u === 'lb' ? ' class="on"' : '') + '>lb</button><button data-unit="kg"' + (u === 'kg' ? ' class="on"' : '') + '>kg</button></div></section>';
     (P.blocks || []).forEach(function(b){ h += '<section class="card wb"><div class="wh"><span class="wl">' + esc(b.label) + '</span><div><b>' + esc(b.title) + '</b><span>' + esc(b.sub || '') + '</span></div></div>' +
-      (b.items || []).map(function(x){ var cv = run ? function(t){ return t || ''; } : conv; return '<div class="wx"><b>' + esc(x.name) + (x.alt ? '<small>' + esc(cv(x.alt)) + '</small>' : '') + '</b><span>' + esc(cv(x.load)) + '</span></div>'; }).join('') + (b.goal ? '<p class="sub" style="margin-top:8px;color:var(--pink2);font-weight:700">' + esc(b.goal) + '</p>' : '') + '</section>'; });
+      (b.items || []).map(function(x){ return '<div class="wx"><b>' + esc(x.name) + (x.alt ? '<small>' + esc(conv(x.alt)) + '</small>' : '') + '</b><span>' + esc(conv(x.load)) + '</span></div>'; }).join('') + '</section>'; });
     return h; }
+
+  // ---- run plan (its own tab, separate from the gym workout tab) ----
+  function viewRun(){ var P = A.run || {}, h = '<h2 class="page">Your Run</h2>';
+    h += '<section class="card glow"><p class="lab pk" style="text-transform:none">' + esc(P.title || 'Run Plan') + '</p>' + (P.note ? '<p class="sub" style="margin-top:6px">' + esc(P.note) + '</p>' : '') + '</section>';
+    h += '<div class="list">' + (P.workouts || []).map(function(w, i){ return '<button class="li day" data-runw="' + i + '"><span class="dk">' + (i + 1) + '</span><span class="t"><b>' + esc(w.name) + '</b><span>' + esc(w.sub || '') + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
+    return h; }
+  function runSheet(i){ var P = A.run || {}, w = (P.workouts || [])[i]; if (!w) return;
+    openSheet('<p class="lab pk" style="text-transform:none">' + esc(P.title || 'Run Plan') + '</p><h3>' + esc(w.name) + '</h3>' + (P.rest ? '<p class="sub">' + esc(P.rest) + '</p>' : '') +
+      '<div class="runl">' + (w.lines || []).map(function(l){ return '<p' + (l.hi ? ' class="hi"' : '') + '>' + esc(l.t || l) + '</p>'; }).join('') + '</div>' + (w.goal ? '<p class="rung">' + esc(w.goal) + '</p>' : '')); }
 
   // ---- views ----
   function viewHome(){
@@ -715,7 +729,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
     return h;
   }
-  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
+  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, run: viewRun, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
 
   // ---- sheets ----
   function openSheet(html){ var r = document.getElementById('sheet-root'); r.innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + html + '<button class="btn q" data-close="1">Close</button></div></div>'; document.documentElement.classList.add('sheet-open'); }
@@ -799,6 +813,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (t.dataset.pay) { paySheet(t.dataset.pay); return; }
     if (t.dataset.lift) { liftSheet(+t.dataset.lift); return; }
     if (t.dataset.newgoal) { goalSheet(); return; }
+    if (t.dataset.runw !== undefined) { runSheet(+t.dataset.runw); return; }
     if (t.dataset.unit) { try { localStorage.setItem(UKEY, t.dataset.unit); } catch (x) {} render(true); return; }
     if (t.dataset.dayview) { daySheet(t.dataset.dayview); return; }
     if (t.dataset.logview) { logViewSheet(t.dataset.logview); return; }
@@ -874,7 +889,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     }); }
   document.getElementById('view').innerHTML = '<p class="empty">Loading…</p>';
   getData().then(function(d){ RAW = d; A = build(d); setTimeout(function(){ syncGoals(); flush(); }, 1200);
-    if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = A.program.kind === 'run' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14.5" cy="4.5" r="1.8"/><path d="M8 21l3.2-6.2 3.3 2.7V22M6 12.5l3.5-3.2 4 .7 2.5 3.4 3 .6M11.2 14.8l2-5"/></svg>' + esc(A.program.tab || 'Run') : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
+    if (A.run && !A.online) { var tb2 = document.querySelector('.tabs'), pb2 = tb2.querySelector('.tab[data-tab="progress"]'), rbtn = document.createElement('button'); rbtn.className = 'tab'; rbtn.type = 'button'; rbtn.dataset.tab = 'run'; rbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14.5" cy="4.5" r="1.8"/><path d="M8 21l3.2-6.2 3.3 2.7V22M6 12.5l3.5-3.2 4 .7 2.5 3.4 3 .6M11.2 14.8l2-5"/></svg>Run'; tb2.insertBefore(rbtn, pb2.nextSibling); tb2.classList.add('five'); }
+    if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
     if (A.online) { var sb = document.querySelector('.tab[data-tab="sessions"]'); if (sb) { sb.dataset.tab = 'program'; sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Program'; } setTimeout(flush, 800); } greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
     .catch(function(){ document.getElementById('view').innerHTML = '<section class="card"><p class="sub" style="margin:0 0 12px">Your account didn’t load. Check your connection and try again. If it keeps happening, ask Paya to resend your link.</p><button class="btn q" onclick="location.reload()">Try again</button></section>'; });
 })();
