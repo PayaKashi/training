@@ -116,15 +116,14 @@ h2{letter-spacing:-.03em;line-height:1.04;font-size:clamp(1.6rem,4.6vw,2.2rem);c
 .duo .phone:last-child{right:0;top:0;transform:rotate(5deg);z-index:2}
 
 /* in person */
-.ways{display:grid;gap:10px;margin-top:22px}
-.way{position:relative;display:flex;align-items:center;gap:14px;padding:18px 16px 18px 20px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(223,229,235,.045),transparent 55%),var(--card);box-shadow:inset 0 1px 0 rgba(223,229,235,.06);text-decoration:none;color:inherit;transition:border-color .35s,transform .35s var(--ease);-webkit-tap-highlight-color:transparent}
-.way .gly{flex:none;height:26px;width:66px;fill:var(--pink2);filter:drop-shadow(0 0 7px rgba(240,140,194,.55))}
-.way h3{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;font-size:1.35rem;letter-spacing:-.02em;line-height:1.1;color:var(--hi)}
+.ways{margin-top:20px;border-top:1px solid var(--line)}
+.way{display:flex;align-items:center;gap:12px;padding:19px 2px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+.way h3{flex:1;min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;font-size:1.45rem;letter-spacing:-.02em;line-height:1.1;color:var(--hi);transition:color .25s}
 .way h3 small{font-family:Figtree,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:0;padding:4px 10px;border-radius:99px;color:var(--pink2);background:rgba(224,90,156,.14);box-shadow:inset 0 0 0 1px rgba(240,140,194,.35)}
-.way .go{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.14);color:var(--ice);transition:background .3s,color .3s}
-.way .go svg{width:16px;height:16px}
-.way:active{transform:scale(.985)}
-@media (hover:hover){.way:hover{border-color:rgba(240,140,194,.42);transform:translateY(-3px)}.way:hover .go{background:linear-gradient(180deg,#F7F9FB,#B4BCC7);color:#101116}}
+.way .go{flex:none;display:grid;color:var(--pink2);transition:transform .3s var(--ease)}
+.way .go svg{width:20px;height:20px}
+.way:active h3{color:var(--pink2)}
+@media (hover:hover){.way:hover h3{color:var(--pink2)}.way:hover .go{transform:translateX(5px)}}
 
 /* about */
 .about .wrap{display:grid;gap:26px}
@@ -138,9 +137,9 @@ h2{letter-spacing:-.03em;line-height:1.04;font-size:clamp(1.6rem,4.6vw,2.2rem);c
 
 /* results */
 .results{display:grid;gap:22px}
-.wins{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:9px}
-.wins li{display:inline-flex;align-items:center;gap:9px;padding:10px 17px 10px 13px;border-radius:99px;border:1px solid var(--line);background:rgba(223,229,235,.04);box-shadow:inset 0 1px 0 rgba(223,229,235,.06);font-family:Fraunces,serif;font-weight:600;font-size:1.06rem;letter-spacing:-.01em;line-height:1.2;color:var(--hi)}
-.wins svg{width:13px;height:13px;transform:scale(0) rotate(-60deg);transition:transform .6s var(--ease)}
+.wins{list-style:none;padding:0;display:grid;gap:2px}
+.wins li{display:flex;align-items:center;gap:12px;padding:7px 0;font-family:Fraunces,serif;font-weight:600;font-size:1.22rem;letter-spacing:-.02em;line-height:1.2;color:var(--hi)}
+.wins svg{flex:none;width:13px;height:13px;filter:drop-shadow(0 0 6px rgba(240,140,194,.6));transform:scale(0) rotate(-60deg);transition:transform .6s var(--ease)}
 .wins.in svg{transform:none}
 .wins li:nth-child(2) svg{transition-delay:.1s}.wins li:nth-child(3) svg{transition-delay:.2s}.wins li:nth-child(4) svg{transition-delay:.3s}.wins li:nth-child(5) svg{transition-delay:.4s}
 
@@ -163,7 +162,7 @@ h2{letter-spacing:-.03em;line-height:1.04;font-size:clamp(1.6rem,4.6vw,2.2rem);c
 .feats button[aria-current] span{grid-template-rows:1fr;margin-top:5px}
 @media (hover:hover){.feats button:hover b{color:var(--hi)}}
 .app .panel{padding-bottom:10px}
-.feat-cap{display:none}
+.feat-cap,.fnav,.fdots{display:none}
 .stage .phone{cursor:pointer}
 
 /* form */
@@ -197,13 +196,17 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
 
 @media (max-width:899px){
   .hero .chart .area{display:none}
-  .feats{grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;border-top:0}
-  .feats button{padding:12px 8px;text-align:center;border:1px solid var(--line);border-radius:14px;background:rgba(223,229,235,.04);transition:border-color .25s,background .25s}
-  .feats button::before{display:none}
-  .feats b{font-size:.98rem;letter-spacing:-.01em;color:rgba(223,229,235,.72)}
-  .feats span{display:none}
-  .feats button[aria-current]{border-color:rgba(240,140,194,.75);background:rgba(224,90,156,.14)}
-  .feat-cap{display:block;margin-top:12px;min-height:2.9em;text-align:center;color:var(--muted);font-size:.94rem;line-height:1.45}
+  .feats{display:none}
+  .fnav{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;gap:8px;margin-top:20px}
+  .fnav b{font-family:Fraunces,serif;font-weight:600;font-size:1.32rem;letter-spacing:-.02em;line-height:1.15;text-align:center;color:var(--hi);white-space:nowrap}
+  .fnav button{display:grid;place-items:center;width:42px;height:42px;padding:0;border:0;border-radius:50%;background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.14);color:var(--ice);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+  .fnav button:active{transform:scale(.9)}
+  .fnav svg{width:18px;height:18px}
+  .feat-cap{display:block;margin:8px auto 0;max-width:19em;min-height:2.9em;text-align:center;color:var(--muted);font-size:.94rem;line-height:1.45}
+  .fdots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+  .fdots i{width:6px;height:6px;border-radius:6px;background:rgba(223,229,235,.22);transition:width .3s var(--ease),background .3s}
+  .fdots i.on{width:20px;background:linear-gradient(90deg,var(--pink),var(--pink2))}
+  .sec{padding:44px 0}
   .stage{padding:10px 0 28px}
   .stage .phone{--w:min(204px,54vw)}
 }
@@ -231,15 +234,12 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
   .duo .phone{--w:228px}
   .duo .phone:first-child{left:0;top:54px}
   .duo .phone:last-child{right:0;top:0}
-  .ways{grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
-  .way{flex-direction:column;align-items:flex-start;gap:18px;padding:28px 28px 26px}
-  .way .gly{height:30px;width:76px}
-  .way h3{flex:none;font-size:1.5rem}
-  .way .go{position:absolute;right:22px;top:22px}
+  .ways{display:grid;grid-template-columns:repeat(3,1fr);gap:0 44px;margin-top:28px;border-top:0}
+  .way{border-top:1px solid var(--line);border-bottom:0;padding:22px 0}
+  .way h3{font-size:1.6rem}
+  .wins li{font-size:1.4rem;padding:8px 0}
   .about .wrap{grid-template-columns:1.15fr .85fr;gap:76px;align-items:start}
   .results{grid-template-columns:.9fr 1.1fr;gap:76px;align-items:center}
-  .wins{gap:11px}
-  .wins li{font-size:1.16rem;padding:12px 20px 12px 15px}
   .app .panel{padding-bottom:60px}
   .show{grid-template-columns:1fr 360px;grid-template-rows:auto auto;align-content:center;column-gap:40px;row-gap:0}
   .a-head{grid-area:1/1}
@@ -308,9 +308,9 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
 <section class="sec" id="services"><div class="wrap">
   <h2>Train with Me in Toronto.</h2>
   <div class="ways">
-    <a class="way" href="#start" data-pick="1-on-1 training" aria-label="Ask about 1-on-1 training"><svg class="gly" viewBox="0 0 76 30" aria-hidden="true"><path transform="translate(15 15) scale(1.4)" d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg><h3>1-on-1</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
-    <a class="way" href="#start" data-pick="Semi-private training" aria-label="Ask about semi-private training"><svg class="gly" viewBox="0 0 76 30" aria-hidden="true"><path transform="translate(15 15) scale(1.4)" d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/><path transform="translate(42 15) scale(1.4)" d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg><h3>Semi-Private</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
-    <a class="way" href="#start" data-pick="Group classes (waitlist)" aria-label="Join the group classes waitlist"><svg class="gly" viewBox="0 0 76 30" aria-hidden="true"><path transform="translate(13 17) scale(1.15)" d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/><path transform="translate(33 10) scale(0.9)" d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/><path transform="translate(49 20) scale(0.9)" d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/><path transform="translate(65 11) scale(0.7)" d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg><h3>Group Classes<small>Coming Soon</small></h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+    <a class="way" href="#start" data-pick="1-on-1 training" aria-label="Ask about 1-on-1 training"><h3>1-on-1</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+    <a class="way" href="#start" data-pick="Semi-private training" aria-label="Ask about semi-private training"><h3>Semi-Private</h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+    <a class="way" href="#start" data-pick="Group classes (waitlist)" aria-label="Join the group classes waitlist"><h3>Group Classes<small>Coming Soon</small></h3><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
   </div>
 </div></section>
 
@@ -356,7 +356,9 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
       <button data-img="on-log"><b>Tick Off Every Set</b><span><i>Your numbers are filled in, so just tap ✓.</i></span></button>
       <button data-img="on-lastweek"><b>Your History</b><span><i>Flip back to see every workout you've done.</i></span></button>
     </div>
+    <div class="fnav"><button type="button" data-fstep="-1" aria-label="Previous screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><b id="featT"></b><button type="button" data-fstep="1" aria-label="Next screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div>
     <p class="feat-cap" id="featCap" aria-live="polite"></p>
+    <div class="fdots" id="featDots" aria-hidden="true"></div>
   </div>
   <div class="stage"><div class="phone"><div class="scr"><img id="shA" src="../site/s2-ip-home.webp" alt="Screenshot of the client app" width="600" height="1298" loading="lazy"><img id="shB" src="" alt="" width="600" height="1298" style="opacity:0"></div></div></div>
 </div></div></div></section>
@@ -466,12 +468,19 @@ document.querySelectorAll('[data-pick]').forEach(function(a){ a.addEventListener
   // app showcase
   var A = document.getElementById('shA'), B = document.getElementById('shB'), front = A, BASE = A.getAttribute('src').replace(/s2-[a-z-]+\.webp$/, '');
   function showImg(n){ var src = BASE + 's2-' + n + '.webp', back = front === A ? B : A; if (front.getAttribute('src') === src) return; back.onload = function(){ back.style.opacity = 1; front.style.opacity = 0; front = back; }; back.src = src; }
-  var cap = document.getElementById('featCap');
-  function pick(b){ [].forEach.call(b.parentNode.children, function(x){ x.removeAttribute('aria-current'); }); b.setAttribute('aria-current', 'true'); showImg(b.dataset.img); cap.textContent = b.querySelector('span').textContent; }
+  var cap = document.getElementById('featCap'), capT = document.getElementById('featT'), dots = document.getElementById('featDots');
+  function pick(b){ var all = [].slice.call(b.parentNode.children), k = all.indexOf(b); all.forEach(function(x){ x.removeAttribute('aria-current'); }); b.setAttribute('aria-current', 'true'); showImg(b.dataset.img);
+    capT.textContent = b.querySelector('b').textContent; cap.textContent = b.querySelector('span').textContent;
+    dots.innerHTML = all.map(function(_, i){ return '<i' + (i === k ? ' class="on"' : '') + '></i>'; }).join(''); }
+  function stepFeat(d){ var f = document.querySelector('.feats:not([hidden])'), all = [].slice.call(f.children), k = all.indexOf(f.querySelector('[aria-current]')); pick(all[(Math.max(0, k) + d + all.length) % all.length]); }
   document.querySelectorAll('.feats button').forEach(function(b){ b.addEventListener('click', function(){ pick(b); }); });
-  cap.textContent = document.querySelector('.feats:not([hidden]) [aria-current] span').textContent;
-  // tapping the phone flips to the next screen
-  document.querySelector('.stage .phone').addEventListener('click', function(){ var f = document.querySelector('.feats:not([hidden])'), c = f.querySelector('[aria-current]') || f.children[0]; pick(c.nextElementSibling || f.children[0]); });
+  document.querySelectorAll('[data-fstep]').forEach(function(b){ b.addEventListener('click', function(){ stepFeat(+b.dataset.fstep); }); });
+  pick(document.querySelector('.feats:not([hidden]) [aria-current]'));
+  // the phone itself: tap for the next screen, or swipe left and right
+  var ph = document.querySelector('.stage .phone'), sx = null, swiped = false;
+  ph.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; swiped = false; }, { passive: true });
+  ph.addEventListener('touchend', function(e){ if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 36) { swiped = true; stepFeat(dx < 0 ? 1 : -1); } }, { passive: true });
+  ph.addEventListener('click', function(){ if (swiped) { swiped = false; return; } stepFeat(1); });
   document.querySelectorAll('.seg button').forEach(function(t){ t.addEventListener('click', function(){ document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
     document.querySelectorAll('.feats').forEach(function(f){ var on = f.dataset.feats === t.dataset.set; f.hidden = !on; if (on) { var c = f.querySelector('[aria-current]') || f.children[0]; c.click(); } }); }); });
 
