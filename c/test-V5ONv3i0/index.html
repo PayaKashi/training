@@ -233,6 +233,23 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 .gnext:active{transform:scale(.98)}
 .gnext b{font-size:1rem}
 .gnext span{max-width:100%;font-size:.76rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* home plan tab: timed circuits */
+.hn{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.82rem;font-weight:700;color:var(--pink2);background:rgba(224,90,156,.14);box-shadow:inset 0 0 0 1px rgba(240,140,194,.3)}
+.tmr{text-align:center;padding:4px 0 2px}
+.tm-ring{--p:0;position:relative;width:min(232px,62vw);aspect-ratio:1;margin:16px auto 16px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#F08CC2 calc(var(--p)*360deg),rgba(223,229,235,.1) 0);box-shadow:0 0 50px -18px rgba(224,90,156,.8)}
+.tm-ring::before{content:"";position:absolute;inset:9px;border-radius:50%;background:#14161B}
+.tm-ring.rest{background:conic-gradient(#C9D0D8 calc(var(--p)*360deg),rgba(223,229,235,.1) 0);box-shadow:none}
+.tm-ring>div{position:relative;display:grid;gap:4px}
+.tm-k{font-size:.9rem;font-weight:700;color:var(--pink2)}
+.tm-ring.rest .tm-k{color:#C9D0D8}
+.tm-big{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:4.2rem;line-height:1;color:#EEF2F5;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.tm-name{margin:0;font-family:Fraunces,Georgia,serif;font-weight:600;font-size:1.6rem;letter-spacing:-.02em;line-height:1.15;color:#EEF2F5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm-cue{margin-top:6px}
+.tm-cue b{color:#DFE5EB}
+.tm-btns{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:10px;margin-top:20px}
+.tm-btns .btn{margin-top:0}
+.tm-done{padding:36px 0 14px}
+.tm-done svg{display:block;width:44px;height:44px;margin:0 auto 14px;fill:var(--pink2);filter:drop-shadow(0 0 10px rgba(240,140,194,.8))}
 /* logger v2 */
 .lgtop{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
 .lgcount{flex:none;margin-bottom:8px;padding:6px 12px;border-radius:99px;font-size:.8rem;font-weight:700;color:var(--muted);background:rgba(223,229,235,.07);transition:background .3s,color .3s}
@@ -604,6 +621,7 @@ input,select,textarea{font-size:max(16px,1rem)}
     a.total = d.totalSessions != null ? d.totalSessions : a.past.length;
     a.program = d.program || null;
     a.run = d.run || null;
+    a.homePlan = d.homePlan || null;
     if (d.coach) onlineBuild(a, d);
     return a;
   }
@@ -830,6 +848,53 @@ input,select,textarea{font-size:max(16px,1rem)}
       (b.items || []).map(function(x){ return '<div class="wx"><b>' + esc(x.name) + (x.alt ? '<small>' + esc(conv(x.alt)) + '</small>' : '') + '</b><span>' + esc(conv(x.load)) + '</span></div>'; }).join('') + '</section>'; });
     return h; }
 
+  // ---- home plan (its own tab): timed circuits, a week picker and a timer ----
+  var HWK = 'p2-homewk:' + location.pathname, TM = null;
+  function hWeeks(){ var H = A.homePlan || {}; return (H.timing && H.timing.length) || H.weeks || 1; }
+  function hWeek(){ var H = A.homePlan || {}, n = hWeeks(), auto = H.start ? Math.floor((TODAY - parse(H.start)) / 6048e5) + 1 : 1, o = jget(HWK, null);
+    var w = o && (!H.start || o.m === key(monday(TODAY))) ? o.w : auto; return Math.max(1, Math.min(n, w || 1)); }
+  function hTiming(){ var H = A.homePlan || {}; return H.timing ? H.timing[hWeek() - 1] : null; }
+  function hCue(e){ var w = hWeek(), hit = (e.cues || []).filter(function(q){ return w >= q.from && w <= q.to; })[0]; return hit ? hit.text : ''; }
+  function hLine(){ var t = hTiming(); return t ? t.on + 's work · ' + t.off + 's rest · ' + plural(t.rounds, 'round') : ''; }
+  function hMins(d){ var t = hTiming(); return t ? Math.round((t.rounds * d.exercises.length * (t.on + t.off) + (t.rounds - 1) * (t.restRound || 60)) / 60) : 0; }
+  function hDay(k){ return ((A.homePlan || {}).days || []).filter(function(x){ return x.key === k; })[0]; }
+  function viewHomePlan(){ var H = A.homePlan || {}, n = hWeeks(), w = hWeek(), h = '<h2 class="page">Your Home Plan</h2>';
+    var AR = function(d){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="' + (d < 0 ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6') + '"/></svg>'; };
+    h += '<section class="card glow"><p class="lab pk" style="text-transform:none">' + esc(H.title || 'Home Plan') + '</p>' + (H.focus ? '<p class="sub" style="margin-top:6px">' + esc(H.focus) + '</p>' : '') + '</section>';
+    if (n > 1) h += '<div class="wknav"><button data-hwk="-1" aria-label="Previous week"' + (w <= 1 ? ' disabled' : '') + '>' + AR(-1) + '</button><div><b>Week ' + w + ' of ' + n + '</b><span>' + esc(hLine()) + '</span></div><button data-hwk="1" aria-label="Next week"' + (w >= n ? ' disabled' : '') + '>' + AR(1) + '</button></div>';
+    h += '<div class="list">' + (H.days || []).map(function(d){ var m = hMins(d); return '<button class="li day" data-hday="' + esc(d.key) + '"><span class="dk">' + esc(d.key) + '</span><span class="t"><b>' + esc(d.name) + '</b><span>' + esc([d.sub, m ? 'about ' + m + ' min' : plural(d.exercises.length, 'exercise')].filter(Boolean).join(' · ')) + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
+    if (H.how) h += '<section class="card" style="margin-top:12px"><p class="lab">How It Works</p><p class="sub" style="margin-top:6px">' + esc(H.how) + '</p></section>';
+    return h; }
+  function hDaySheet(k){ var d = hDay(k); if (!d) return; var t = hTiming();
+    openSheet('<p class="lab pk" style="text-transform:none">Week ' + hWeek() + ' of ' + hWeeks() + (d.sub ? ' · ' + esc(d.sub) : '') + '</p><h3>' + esc(d.name) + '</h3>' + (t ? '<p class="sub">' + esc(hLine()) + '</p>' : '') +
+      '<div class="list exl">' + d.exercises.map(function(e, i){ return '<div class="li"><span class="hn">' + (i + 1) + '</span><span class="t"><b>' + esc(e.name) + '</b><span>' + esc(hCue(e)) + '</span></span></div>'; }).join('') + '</div>' +
+      (t ? '<button class="btn" data-htimer="' + esc(d.key) + '" style="margin-top:16px">Start the Timer</button>' : '')); }
+  function hTimerSheet(k){ var d = hDay(k), t = hTiming(); if (!d || !t) return; if (TM && TM.h) clearInterval(TM.h);
+    var steps = [];
+    for (var r = 1; r <= t.rounds; r++) d.exercises.forEach(function(e, i){ steps.push({ kind: 'work', secs: t.on, name: e.name, cue: hCue(e), r: r });
+      if (i < d.exercises.length - 1) steps.push({ kind: 'rest', secs: t.off, name: 'Rest', next: d.exercises[i + 1].name, r: r });
+      else if (r < t.rounds) steps.push({ kind: 'rest', secs: t.restRound || 60, name: 'Rest Before Round ' + (r + 1), next: d.exercises[0].name, r: r }); });
+    TM = { steps: steps, i: 0, left: steps[0].secs, run: false, h: null, total: t.rounds, day: d };
+    openSheet('<div class="tmr" id="tmr"></div>'); paintTimer(); }
+  function tmStop(){ if (!TM) return; TM.run = false; clearInterval(TM.h); if (TM.wl) { try { TM.wl.release(); } catch (e) {} TM.wl = null; } }
+  function paintTimer(){ var el = document.getElementById('tmr'); if (!el || !TM) return;
+    if (TM.i >= TM.steps.length) { el.innerHTML = themed('<div class="tm-done"><svg viewBox="-10 -10 20 20" aria-hidden="true"><path d="' + STAR + '"/></svg><p class="tm-name">Workout Done</p><p class="sub tm-cue">Nice work, ' + esc(A.name || '') + '.</p></div>'); return; }
+    var s = TM.steps[TM.i], mm = Math.floor(TM.left / 60), ss = TM.left % 60, pct = 1 - TM.left / s.secs;
+    el.innerHTML = themed('<p class="lab pk" style="text-transform:none">' + esc(TM.day.name) + ' · Round ' + s.r + ' of ' + TM.total + '</p>' +
+      '<div class="tm-ring ' + s.kind + '" style="--p:' + pct.toFixed(3) + '"><div><span class="tm-k">' + (s.kind === 'work' ? 'Go' : 'Rest') + '</span><span class="tm-big">' + (mm ? mm + ':' + String(ss).padStart(2, '0') : ss) + '</span></div></div>' +
+      '<p class="tm-name">' + esc(s.name) + '</p>' + (s.cue ? '<p class="sub tm-cue">' + esc(s.cue) + '</p>' : '') + (s.next ? '<p class="sub tm-cue">Next: <b>' + esc(s.next) + '</b></p>' : '') +
+      '<div class="tm-btns"><button class="btn q" data-tm="back">Back</button><button class="btn" data-tm="go">' + (TM.run ? 'Pause' : (TM.i || TM.left < s.secs ? 'Resume' : 'Start')) + '</button><button class="btn q" data-tm="skip">Skip</button></div>'); }
+  function tmTick(){ if (!TM || !TM.run) return; if (!document.getElementById('tmr')) { tmStop(); TM = null; return; }
+    TM.left--; if (TM.left <= 3 && TM.left > 0) tmBeep(660, 90);
+    if (TM.left <= 0) { TM.i++; tmBeep(TM.i < TM.steps.length && TM.steps[TM.i].kind === 'work' ? 1040 : 520, 350); if (TM.i >= TM.steps.length) tmStop(); else TM.left = TM.steps[TM.i].secs; }
+    paintTimer(); }
+  function timerCmd(cmd){ if (!TM || TM.i >= TM.steps.length) return;
+    if (cmd === 'go') { if (TM.run) tmStop(); else { TM.run = true; tmBeep(880, 120); clearInterval(TM.h); TM.h = setInterval(tmTick, 1000); try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function(l){ if (TM) TM.wl = l; }).catch(function(){}); } catch (e) {} } }
+    if (cmd === 'skip') { TM.i++; if (TM.i < TM.steps.length) TM.left = TM.steps[TM.i].secs; else tmStop(); }
+    if (cmd === 'back') { if (TM.left === TM.steps[TM.i].secs && TM.i > 0) TM.i--; TM.left = TM.steps[TM.i].secs; }
+    paintTimer(); }
+  function tmBeep(f, ms){ try { var AC = window.__ac || (window.__ac = new (window.AudioContext || window.webkitAudioContext)()); var o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = f; g.gain.value = .15; o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + ms / 1000); } catch (e) {} try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
   // ---- run plan (its own tab, separate from the gym workout tab) ----
   function viewRun(){ var P = A.run || {}, h = '<h2 class="page">Your Run</h2>';
     h += '<section class="card glow"><p class="lab pk" style="text-transform:none">' + esc(P.title || 'Run Plan') + '</p>' + (P.note ? '<p class="sub" style="margin-top:6px">' + esc(P.note) + '</p>' : '') + '</section>';
@@ -949,7 +1014,7 @@ input,select,textarea{font-size:max(16px,1rem)}
     h += '<button class="quiet" id="forget">Forget This Phone</button>';
     return h;
   }
-  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, run: viewRun, weight: viewWeight, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
+  var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, run: viewRun, plan: viewHomePlan, weight: viewWeight, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
 
   // ---- sheets ----
   function openSheet(html){ var r = document.getElementById('sheet-root'); r.innerHTML = '<div class="scrim" data-close="1"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' + themed(html) + '<button class="btn q" data-close="1">Close</button></div></div>'; document.documentElement.classList.add('sheet-open'); }
@@ -1042,6 +1107,10 @@ input,select,textarea{font-size:max(16px,1rem)}
     if (t.dataset.lift) { liftSheet(+t.dataset.lift); return; }
     if (t.dataset.newgoal) { goalSheet(); return; }
     if (t.dataset.runw !== undefined) { runSheet(+t.dataset.runw); return; }
+    if (t.dataset.hwk) { jset(HWK, { w: Math.max(1, Math.min(hWeeks(), hWeek() + +t.dataset.hwk)), m: key(monday(TODAY)) }); render(true); return; }
+    if (t.dataset.hday) { hDaySheet(t.dataset.hday); return; }
+    if (t.dataset.htimer) { hTimerSheet(t.dataset.htimer); return; }
+    if (t.dataset.tm) { timerCmd(t.dataset.tm); return; }
     if (t.dataset.wlog) { weightSheet(null); return; }
     if (t.dataset.wedit) { weightSheet(t.dataset.wedit); return; }
     if (t.dataset.wunit) { try { localStorage.setItem('p2-wunit:' + location.pathname, t.dataset.wunit); } catch (e) {} render(true); return; }
@@ -1131,6 +1200,7 @@ input,select,textarea{font-size:max(16px,1rem)}
   document.getElementById('view').innerHTML = '<p class="empty">Loading…</p>';
   getData().then(function(d){ RAW = d; applyTheme(d.theme); A = build(d); setTimeout(function(){ syncGoals(); syncWeights(); if (A && A.run) syncRuns(''); flush(); }, 1200);
     if (RAW && RAW.weightTab && !A.online) { var tb3 = document.querySelector('.tabs'), pb3 = tb3.querySelector('.tab[data-tab="progress"]'), wtb = document.createElement('button'); wtb.className = 'tab'; wtb.type = 'button'; wtb.dataset.tab = 'weight'; wtb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8.5 9.5a5 5 0 0 1 7 0M12 12.5l1.6-2.6"/></svg>Weight'; tb3.insertBefore(wtb, pb3.nextSibling); tb3.classList.add('five'); }
+    if (A.homePlan && !A.online) { var tb4 = document.querySelector('.tabs'), pb4 = tb4.querySelector('.tab[data-tab="progress"]'), hbtn = document.createElement('button'); hbtn.className = 'tab'; hbtn.type = 'button'; hbtn.dataset.tab = 'plan'; hbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.6 1.8M9.5 3h5M12 3v3"/></svg>Plan'; tb4.insertBefore(hbtn, pb4.nextSibling); tb4.classList.add('five'); }
     if (A.run && !A.online) { var tb2 = document.querySelector('.tabs'), pb2 = tb2.querySelector('.tab[data-tab="progress"]'), rbtn = document.createElement('button'); rbtn.className = 'tab'; rbtn.type = 'button'; rbtn.dataset.tab = 'run'; rbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14.5" cy="4.5" r="1.8"/><path d="M8 21l3.2-6.2 3.3 2.7V22M6 12.5l3.5-3.2 4 .7 2.5 3.4 3 .6M11.2 14.8l2-5"/></svg>Run'; tb2.insertBefore(rbtn, pb2.nextSibling); tb2.classList.add('five'); }
     if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
     if (A.online) { var sb = document.querySelector('.tab[data-tab="sessions"]'); if (sb) { sb.dataset.tab = 'program'; sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Program'; } setTimeout(flush, 800); } greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
