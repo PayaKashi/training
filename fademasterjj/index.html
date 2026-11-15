@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0E0E0F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Fade Master JJ">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<title>Fade Master JJ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--brass:#C9A45C;--bg:#0E0E0F;--surf:#18181A;--surf2:#232326;--line:#2A2A2D;--fg:#F5F3EF;--muted:#A1A1A6;--dim:#8E8E93;--ink:#141414;--red:#E58A7E;--redline:#5A2E28;--green:#7DD3A0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.4}
+button{font-family:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.disp{font-family:Archivo,Inter,sans-serif;font-stretch:125%;font-weight:900;text-transform:uppercase}
+.num{font-family:Archivo,Inter,sans-serif;font-stretch:112%}
+.app{max-width:440px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative}
+.demo{position:sticky;top:0;z-index:10;background:rgba(14,14,15,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:calc(8px + env(safe-area-inset-top,0px)) 16px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line)}
+.demo span{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--brass)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;border-radius:999px;min-height:34px;padding:0 14px;font-size:13px;font-weight:700;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--brass);color:var(--ink)}
+main{padding:20px 20px calc(110px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:20px}
+header.h{display:flex;align-items:center;gap:10px}
+.mono{flex:0 0 40px;height:40px;border-radius:50%;border:2px solid var(--brass);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--brass)}
+.mono.fill{background:var(--brass);color:var(--ink)}
+.brand{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.brand .disp{font-size:16px;letter-spacing:.04em;line-height:1}
+.pole{width:54px;height:4px;border-radius:2px;background:repeating-linear-gradient(-45deg,var(--brass) 0 4px,#F5F3EF 4px 8px,#A33A30 8px 12px,#F5F3EF 12px 16px)}
+.av{flex:0 0 36px;height:36px;border-radius:50%;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.owner{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--brass);border:1px solid var(--brass);padding:4px 10px;border-radius:999px}
+h1{margin:0;font-size:26px;line-height:1.15}
+h1.disp{font-size:26px}
+.sub{font-size:15px;color:var(--muted);margin-top:2px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.ticket{position:relative;background:#F3EBDD;color:var(--ink);border-radius:18px;display:grid;grid-template-columns:92px 1fr}
+.ticket .notch{position:absolute;left:82px;width:20px;height:20px;border-radius:50%;background:var(--bg)}
+.ticket .l{padding:18px 0 18px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.ticket .r{border-left:2px dashed #CDBFA8;padding:18px;display:flex;flex-direction:column;gap:8px}
+.sm{font-size:12px;font-weight:700;color:#5F574C}
+.paid{font-size:14px;font-weight:700;color:#1E5B3A}
+.pend{font-size:14px;font-weight:700;color:#8C2F26}
+.btn{width:100%;min-height:50px;border-radius:14px;border:1px solid var(--line);background:var(--surf);color:var(--fg);font-size:15px;font-weight:700}
+.btn.gold{background:var(--brass);border-color:var(--brass);color:var(--ink);font-weight:800;font-size:16px;min-height:54px}
+.btn.gold:disabled{background:var(--surf2);border-color:var(--surf2);color:var(--dim)}
+.btn.link{border:0;background:none;color:var(--muted);min-height:44px;font-weight:600;font-size:14px}
+.card{background:#141416;border:1px solid #3A3226;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dots{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.dot{aspect-ratio:1;border-radius:50%;border:2px solid #3A3A3E}
+.dot.f{background:var(--brass);border-color:var(--brass)}
+.dot.n{border-color:var(--brass)}
+.dot.r{border:2px dashed var(--brass)}
+.kicker{font-size:13px;letter-spacing:.06em;color:var(--brass)}
+nav.nb{position:fixed;left:50%;transform:translateX(-50%);width:min(400px,calc(100% - 40px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#1B1B1E;border:1px solid var(--line);border-radius:999px;display:grid;padding:6px;box-shadow:0 10px 28px rgba(0,0,0,.5);z-index:9}
+nav.nb button{min-height:50px;border:0;border-radius:999px;background:none;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+nav.nb button[aria-current="page"]{background:var(--brass);color:var(--ink)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{min-height:64px;border-radius:999px;border:1px solid var(--line);background:var(--surf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0}
+.day small{font-size:11px;font-weight:600}
+.day b{font-size:18px;font-weight:800}
+.day:disabled{background:transparent;border-color:#1E1E20;color:#5E5E63}
+.day[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:var(--ink)}
+.times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tm{min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--surf);font-size:16px;font-weight:800}
+.tm:disabled{background:transparent;border-color:#1E1E20;color:#5E5E63;text-decoration:line-through}
+.tm.mine{border-color:var(--brass)}
+.tm[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:var(--ink)}
+.sum{background:var(--surf);border-radius:14px;padding:4px 16px}
+.sum .row{padding:12px 0;font-size:15px}
+.sum .row+.row{border-top:1px solid var(--line)}
+.mut{color:var(--muted)}
+.dep{background:var(--surf);border:1px solid var(--brass);border-radius:16px;padding:4px 16px}
+.dep .row{padding:14px 0}
+.dep .row+.row{border-top:1px solid var(--line)}
+.lab{font-size:13px;color:var(--muted)}
+.pill{flex:0 0 auto;min-height:40px;padding:0 14px;border-radius:999px;border:0;background:var(--surf2);color:var(--brass);font-size:13px;font-weight:700}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;justify-items:center}
+.st{width:54px;height:54px;border-radius:50%;border:2px solid #3A3A3E;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--dim)}
+.st.f{background:var(--brass);border-color:var(--brass);color:var(--ink)}
+.st.n{border-color:var(--brass);color:var(--brass)}
+.st.r{border-style:dashed;border-color:var(--brass);color:var(--brass)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{background:var(--surf);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.stats b{font-size:22px;font-weight:900}
+.stats div>span{font-size:12px;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:8px}
+.ap{background:var(--surf);border:1px solid var(--surf);border-radius:16px;padding:12px 12px 12px 14px;display:flex;align-items:center;gap:12px}
+.ap.open{background:transparent;border-color:var(--line)}
+.ap.warn{border-color:var(--redline)}
+.ap.gold{border-color:var(--brass)}
+.ap .t{flex:0 0 62px;white-space:nowrap;font-size:15px;font-weight:900}
+.ap .m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ap .m b{font-size:16px}
+.ap .m span{font-size:12px;font-weight:600;color:var(--muted)}
+.ab{flex:0 0 auto;min-height:40px;padding:0 12px;border-radius:10px;font-size:13px;font-weight:700;background:var(--brass);color:var(--ink);border:1px solid var(--brass)}
+.ab.red{background:transparent;color:var(--red);border-color:var(--redline)}
+.ab.ghost{background:transparent;color:var(--muted);border-color:var(--line)}
+.ab.sent{background:transparent;color:var(--green);border-color:var(--line)}
+.sec{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--muted);margin:4px 0 -6px}
+.note{font-size:13px;color:var(--dim);text-align:center;margin:0}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--ink);font-size:14px;font-weight:700;padding:10px 16px;border-radius:999px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="demo">
+    <span>DEMO · VIEW AS</span>
+    <div class="seg" role="group" aria-label="View as">
+      <button type="button" data-view="client">Client</button>
+      <button type="button" data-view="jj">JJ</button>
+    </div>
+  </div>
+  <main id="main"></main>
+</div>
+<nav class="nb" id="nav" aria-label="Main"></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var PRICE = 35, DEPOSIT = 20;
+  var EMAIL = "JJ's e-transfer email";
+  var HOURS = [10, 11, 12, 13, 14, 15, 16, 17, 18];
+  var CLOSED = [0, 1]; // Sunday, Monday
+  var KEY = 'fmjj-demo-v1';
+
+  function startOfDay(d){ var x = new Date(d); x.setHours(0,0,0,0); return x; }
+  var TODAY = startOfDay(new Date());
+  function addDays(d, n){ var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  function iso(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function fromIso(s){ var p = s.split('-').map(Number); return new Date(p[0], p[1]-1, p[2]); }
+  function dow(d){ return d.toLocaleDateString('en-US', { weekday: 'short' }); }
+  function mon(d){ return d.toLocaleDateString('en-US', { month: 'short' }); }
+  function nice(d){ return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
+  function longDate(d){ return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }); }
+  function hr(h){ return (h % 12 || 12) + (h < 12 ? ' AM' : ' PM'); }
+  function money(n){ return '$' + (Number.isInteger(n) ? n : n.toFixed(2)); }
+  function isClosed(d){ return CLOSED.indexOf(d.getDay()) >= 0; }
+
+  var DAYS = []; for (var i = 0; i < 7; i++) DAYS.push(addDays(TODAY, i));
+  // Taken slots: today matches JJ's schedule (only 2 PM open); other days follow a fixed pattern.
+  function taken(dateIso, h){
+    if (dateIso === iso(TODAY)) return h !== 14;
+    var n = 0; for (var i = 0; i < dateIso.length; i++) n = (n * 31 + dateIso.charCodeAt(i)) % 9973;
+    return (n + h * 7) % 3 === 0;
+  }
+  function firstOpenDay(minAhead){
+    for (var i = minAhead; i < 14; i++){ var d = addDays(TODAY, i); if (!isClosed(d)) return d; }
+    return addDays(TODAY, minAhead);
+  }
+
+  function fresh(){
+    return {
+      view: 'client', tab: 'home', jjTab: 'today', step: 'pick', sel: null, hour: null, copied: '',
+      booking: { date: iso(firstOpenDay(4)), hour: 11, status: 'paid', isNew: false },
+      stamps: 8, checked: {}, paid: {}, sent: {}
+    };
+  }
+  var S = fresh();
+  try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && saved.booking) S = Object.assign(fresh(), saved, { copied: '' }); } catch (e) {}
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  if (!S.booking || fromIso(S.booking.date) < TODAY) S = fresh();
+  if (!S.sel || fromIso(S.sel) < TODAY || fromIso(S.sel) > DAYS[6]) S.sel = iso(fromIso(S.booking.date) <= DAYS[6] ? fromIso(S.booking.date) : firstOpenDay(1));
+
+  var main = document.getElementById('main'), nav = document.getElementById('nav');
+  function toast(msg){ var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove('on'); }, 1800); }
+
+  var ICON = {
+    home: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
+    cal: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>',
+    card: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><circle cx="8" cy="12" r="2.2"/><path d="M13 10h5M13 14h3"/></svg>',
+    clock: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    people: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M15 14.6c3.2-.4 6 1.4 6 4.9"/></svg>'
+  };
+
+  function header(owner){
+    return '<header class="h"><div class="mono disp' + (owner ? ' fill' : '') + '" aria-hidden="true">JJ</div>' +
+      '<div class="brand"><span class="disp">Fade Master JJ</span><div class="pole" aria-hidden="true"></div></div>' +
+      (owner ? '<span class="owner">Owner</span>' : '<div class="av" aria-hidden="true">M</div>') + '</header>';
+  }
+
+  // ---------- client ----------
+  var nextIsReward = function(){ return S.stamps === 9; };
+  function cutPrice(){ return nextIsReward() ? PRICE / 2 : PRICE; }
+  function stampMsg(){ var left = 9 - S.stamps; return left <= 0 ? 'Your next cut is 50% off' : (left === 1 ? '1 more cut until 50% off' : left + ' more cuts until 50% off'); }
+
+  function clientHome(){
+    var b = S.booking, d = b ? fromIso(b.date) : null;
+    var dots = ''; for (var i = 0; i < 10; i++) dots += '<i class="dot ' + (i < S.stamps ? 'f' : (i === 9 ? 'r' : (i === S.stamps ? 'n' : ''))) + '"></i>';
+    var ticket = b ?
+      '<section class="ticket" aria-label="Your next cut"><div class="notch" style="top:-10px"></div><div class="notch" style="bottom:-10px"></div>' +
+        '<div class="l"><span class="sm">' + dow(d).toUpperCase() + '</span><span class="num" style="font-weight:900;font-size:46px;line-height:1">' + d.getDate() + '</span><span class="sm">' + mon(d).toUpperCase() + '</span></div>' +
+        '<div class="r"><span class="sm">NEXT CUT</span><span class="num" style="font-weight:800;font-size:28px;line-height:1">' + hr(b.hour) + '</span>' +
+        (b.status === 'paid' ? '<span class="paid">Deposit paid ✓</span>' : '<span class="pend">Waiting for JJ to confirm deposit</span>') +
+        (nextIsReward() ? '<span style="align-self:flex-start;background:#141414;color:var(--brass);font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px">10TH CUT · 50% OFF</span>' : '') +
+        '</div></section><button type="button" class="btn" data-act="book" style="margin-top:-6px">Reschedule</button>'
+      : '<div class="card"><b style="font-size:18px">No cut booked</b><button type="button" class="btn gold" data-act="book">Book a cut</button></div>';
+    return header(false) + '<div class="stack"><h1>Hi Marcus</h1>' + ticket +
+      '<section class="card"><div class="row"><span class="disp kicker">Loyalty card</span><span class="mut" style="font-size:14px;font-weight:600">' + S.stamps + ' of 10</span></div>' +
+      '<div class="dots" role="img" aria-label="' + S.stamps + ' of 10 stamps">' + dots + '</div>' +
+      '<span style="font-size:15px;font-weight:600">' + stampMsg() + '</span></section></div>';
+  }
+
+  function clientBook(){
+    if (S.step === 'deposit') return clientDeposit();
+    if (S.step === 'done') return clientDone();
+    var b = S.booking;
+    var days = DAYS.map(function(d){
+      var k = iso(d), closed = isClosed(d);
+      return '<button type="button" class="day" data-day="' + k + '" aria-pressed="' + (S.sel === k) + '"' + (closed ? ' disabled aria-label="' + nice(d) + ', closed"' : ' aria-label="' + nice(d) + '"') + '><small>' + dow(d) + '</small><b class="num">' + d.getDate() + '</b></button>';
+    }).join('');
+    var selClosed = isClosed(fromIso(S.sel));
+    var times = selClosed ? '<p class="mut" style="grid-column:1/-1;margin:0">Closed this day.</p>' : HOURS.map(function(h){
+      var mine = b && b.date === S.sel && b.hour === h;
+      var tk = taken(S.sel, h) && !mine;
+      return '<button type="button" class="tm num' + (mine ? ' mine' : '') + '" data-hour="' + h + '" aria-pressed="' + (S.hour === h) + '"' + (tk ? ' disabled aria-label="' + hr(h) + ', booked"' : '') + '>' + hr(h) + '</button>';
+    }).join('');
+    var can = S.hour !== null && !selClosed;
+    return header(false) + '<div class="stack"><h1 class="disp">Book a cut</h1>' +
+      '<div class="days">' + days + '</div><div class="times">' + times + '</div>' +
+      '<div class="sum"><div class="row"><span class="mut">Deposit today</span><b>' + money(DEPOSIT) + '</b></div>' +
+      '<div class="row"><span class="mut">Pay at the chair</span><b>' + money(Math.max(0, cutPrice() - DEPOSIT)) + '</b></div></div>' +
+      '<button type="button" class="btn gold" data-act="continue"' + (can ? '' : ' disabled') + '>' + (can ? 'Continue' : 'Pick a time') + '</button></div>';
+  }
+
+  function refCode(){ var d = fromIso(S.sel); return 'JJ-' + d.getDate() + mon(d).toUpperCase() + '-' + hr(S.hour).replace(' ', ''); }
+
+  function clientDeposit(){
+    var d = fromIso(S.sel);
+    return header(false) + '<div class="stack"><div><h1 class="disp">Send deposit</h1><div class="sub">' + nice(d) + ' · ' + hr(S.hour) + '</div></div>' +
+      '<div class="dep">' +
+        '<div class="row"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="lab">E-transfer to</span><b style="font-size:15px">' + EMAIL + '</b></div><button type="button" class="pill" data-copy="email">' + (S.copied === 'email' ? 'Copied' : 'Copy') + '</button></div>' +
+        '<div class="row"><span class="lab">Amount</span><b class="num" style="font-size:22px;font-weight:900">' + money(DEPOSIT) + '</b></div>' +
+        '<div class="row"><div style="display:flex;flex-direction:column;gap:2px"><span class="lab">Message</span><b style="font-size:15px;color:var(--brass)">' + refCode() + '</b></div><button type="button" class="pill" data-copy="ref">' + (S.copied === 'ref' ? 'Copied' : 'Copy') + '</button></div>' +
+      '</div>' +
+      '<button type="button" class="btn gold" data-act="sent">I\'ve sent it</button>' +
+      '<button type="button" class="btn link" data-act="back">Back</button></div>';
+  }
+
+  function clientDone(){
+    var b = S.booking, d = fromIso(b.date);
+    return header(false) + '<div class="stack"><h1 class="disp">Requested</h1>' +
+      '<div style="background:#F3EBDD;color:var(--ink);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px">' +
+      '<span class="num" style="font-size:22px;font-weight:900">' + nice(d) + ' · ' + hr(b.hour) + '</span>' +
+      '<span style="font-size:15px;font-weight:600;color:#5F574C">Confirmed once JJ gets your deposit.</span></div>' +
+      '<button type="button" class="btn" data-act="done">Done</button>' +
+      '<p class="note">Tip: switch to JJ at the top to see this request on his side.</p></div>';
+  }
+
+  function clientLoyalty(){
+    var st = ''; for (var i = 0; i < 10; i++){
+      var f = i < S.stamps, r = i === 9;
+      st += '<div class="st num ' + (f ? 'f' : (r ? 'r' : (i === S.stamps ? 'n' : ''))) + '">' + (f ? 'JJ' : (r ? '50%' : (i + 1))) + '</div>';
+    }
+    return header(false) + '<div class="stack"><h1 class="disp">Loyalty</h1>' +
+      '<section class="card" style="border-color:var(--brass);gap:20px;padding:20px 18px" aria-label="Loyalty card"><div class="row"><span class="disp kicker" style="font-size:14px">Fade Master JJ</span><span class="mut" style="font-size:14px;font-weight:600">' + S.stamps + ' of 10</span></div>' +
+      '<div class="stamps">' + st + '</div><span style="font-size:16px;font-weight:700;text-align:center">' + stampMsg() + '</span></section>' +
+      '<p class="mut" style="margin:0;font-size:15px">Get a stamp every cut. Your 10th is 50% off.</p></div>';
+  }
+
+  // ---------- JJ ----------
+  var TODAY_LIST = [[10,'Andre B.',4,true],[11,'Kevin L.',9,true],[12,'Dev P.',2,false],[13,'Omar S.',6,true],[14,null],[15,'Chris W.',0,true],[16,'Jay R.',8,true],[17,'Sam K.',3,false],[18,'Luis F.',5,true]];
+  var REGULARS = [['Brandon H.',7,'3 weeks ago',true],['Ray D.',3,'5 weeks ago',true],['Marcus T.',8,'2 weeks ago',false],['Andre B.',4,'2 weeks ago',false],['Kevin L.',9,'2 weeks ago',false],['Nate C.',1,'last week',false],['Jay R.',8,'2 weeks ago',false],['Luis F.',5,'4 weeks ago',false]];
+
+  function todayRows(){
+    var b = S.booking, rows = TODAY_LIST.map(function(r){ return r.slice(); });
+    if (b && b.isNew && b.date === iso(TODAY)) rows = rows.map(function(r){ return r[0] === b.hour ? [b.hour, 'Marcus T.', S.stamps, b.status === 'paid', 'marcus'] : r; });
+    return rows;
+  }
+
+  function jjToday(){
+    var rows = todayRows(), booked = 0, depIn = 0, due = 0;
+    var html = rows.map(function(r, i){
+      var h = r[0];
+      if (!r[1]) return '<div class="ap open"><span class="t num" style="color:var(--dim)">' + hr(h) + '</span><div class="m"><b style="color:var(--dim)">Open</b><span>Available to book</span></div></div>';
+      var isMarcus = r[4] === 'marcus';
+      var key = isMarcus ? 'm' : String(i);
+      var dep = isMarcus ? S.booking.status === 'paid' : (r[3] || !!S.paid[key]);
+      var done = !!S.checked[key], reward = r[2] === 9, cut = reward ? PRICE / 2 : PRICE;
+      booked++; if (dep) depIn++; if (!done) due += Math.max(0, cut - (dep ? DEPOSIT : 0));
+      var sub, subColor = 'var(--muted)', btn;
+      if (!dep){ sub = 'Deposit not in yet'; subColor = 'var(--red)'; btn = '<button type="button" class="ab red" data-paid="' + key + '">Got deposit</button>'; }
+      else {
+        if (done){ sub = reward ? 'Done · card reset' : 'Done · stamp ' + (r[2] + 1) + '/10'; subColor = 'var(--green)'; }
+        else if (reward){ sub = '10th cut · 50% off'; subColor = 'var(--brass)'; }
+        else sub = r[2] === 0 ? 'New client' : r[2] + '/10 stamps';
+        btn = '<button type="button" class="ab' + (done ? ' ghost' : '') + '" data-check="' + key + '">' + (done ? 'Undo' : 'Check in') + '</button>';
+      }
+      var cls = !dep ? ' warn' : (reward && !done ? ' gold' : '');
+      return '<div class="ap' + cls + '"><span class="t num">' + hr(h) + '</span><div class="m"><b style="' + (done ? 'color:var(--muted)' : '') + '">' + r[1] + '</b><span style="color:' + subColor + '">' + sub + '</span></div>' + btn + '</div>';
+    }).join('');
+
+    var b = S.booking, req = '';
+    if (b && b.isNew && b.date !== iso(TODAY)){
+      var d = fromIso(b.date), ok = b.status === 'paid';
+      req = '<div class="sec">NEW BOOKING</div><div class="ap ' + (ok ? '' : 'warn') + '"><span class="t num">' + hr(b.hour) + '</span><div class="m"><b>Marcus T.</b><span style="color:' + (ok ? 'var(--green)' : 'var(--red)') + '">' + nice(d) + ' · ' + (ok ? 'Deposit in · confirmed' : 'Deposit pending') + '</span></div>' +
+        (ok ? '' : '<button type="button" class="ab red" data-paid="m">Got deposit</button>') + '</div>';
+    }
+    return header(true) + '<div class="stack"><div><h1 class="disp">Today</h1><div class="sub">' + longDate(TODAY) + '</div></div>' +
+      '<div class="stats"><div><b class="num">' + booked + '</b><span>Booked</span></div><div><b class="num">' + depIn + '/' + booked + '</b><span>Deposits in</span></div><div><b class="num" style="color:var(--brass)">' + money(due) + '</b><span>To collect</span></div></div>' +
+      req + (req ? '<div class="sec">TODAY</div>' : '') + '<div class="list">' + html + '</div></div>';
+  }
+
+  function jjClients(){
+    var due = REGULARS.filter(function(r){ return r[3]; }).length;
+    var rows = REGULARS.map(function(r, i){
+      var stamps = r[0] === 'Marcus T.' ? S.stamps : r[1];
+      var btn = r[3] ? (S.sent[i] ? '<button type="button" class="ab sent" disabled>Sent</button>' : '<button type="button" class="ab" data-remind="' + i + '">Remind</button>') : '';
+      return '<div class="ap"><div class="m"><b>' + r[0] + '</b><span>Last cut ' + r[2] + ' · ' + stamps + '/10 stamps</span></div>' + btn + '</div>';
+    }).join('');
+    return header(true) + '<div class="stack"><div><h1 class="disp">Clients</h1><div class="sub">' + due + ' due for a cut</div></div><div class="list">' + rows + '</div>' +
+      '<button type="button" class="btn link" data-act="reset">Reset demo</button></div>';
+  }
+
+  // ---------- render ----------
+  function navHtml(items, current){
+    nav.style.gridTemplateColumns = 'repeat(' + items.length + ',1fr)';
+    nav.innerHTML = items.map(function(it){ return '<button type="button" data-tab="' + it[0] + '"' + (it[0] === current ? ' aria-current="page"' : '') + '>' + it[2] + it[1] + '</button>'; }).join('');
+  }
+  function render(){
+    document.querySelectorAll('.seg button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.view === S.view)); });
+    if (S.view === 'client'){
+      main.innerHTML = S.tab === 'book' ? clientBook() : S.tab === 'loyalty' ? clientLoyalty() : clientHome();
+      navHtml([['home','Home',ICON.home],['book','Book',ICON.cal],['loyalty','Loyalty',ICON.card]], S.tab);
+    } else {
+      main.innerHTML = S.jjTab === 'clients' ? jjClients() : jjToday();
+      navHtml([['today','Today',ICON.clock],['clients','Clients',ICON.people]], S.jjTab);
+    }
+    save();
+  }
+  function go(fn){ fn(); render(); }
+
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('button'); if (!t || t.disabled) return;
+    var ds = t.dataset;
+    if (ds.view) return go(function(){ S.view = ds.view; window.scrollTo(0, 0); });
+    if (ds.tab) return go(function(){
+      if (S.view === 'client'){ S.tab = ds.tab; if (ds.tab === 'book' && S.step === 'done') S.step = 'pick'; }
+      else S.jjTab = ds.tab;
+      window.scrollTo(0, 0);
+    });
+    if (ds.day) return go(function(){ S.sel = ds.day; S.hour = null; });
+    if (ds.hour) return go(function(){ S.hour = Number(ds.hour); });
+    if (ds.copy) {
+      var text = ds.copy === 'email' ? EMAIL : refCode();
+      try { navigator.clipboard && navigator.clipboard.writeText(text); } catch (err) {}
+      return go(function(){ S.copied = ds.copy; });
+    }
+    if (ds.paid) return go(function(){ if (ds.paid === 'm') S.booking.status = 'paid'; else S.paid[ds.paid] = true; toast('Deposit marked received'); });
+    if (ds.check) return go(function(){ S.checked[ds.check] = !S.checked[ds.check]; if (S.checked[ds.check]) toast('Checked in · stamp added'); });
+    if (ds.remind) return go(function(){ S.sent[ds.remind] = true; toast('Reminder sent'); });
+    switch (ds.act){
+      case 'book': return go(function(){ S.tab = 'book'; S.step = 'pick'; S.hour = null; window.scrollTo(0, 0); });
+      case 'continue': return go(function(){ S.step = 'deposit'; S.copied = ''; window.scrollTo(0, 0); });
+      case 'back': return go(function(){ S.step = 'pick'; });
+      case 'sent': return go(function(){ S.booking = { date: S.sel, hour: S.hour, status: 'pending', isNew: true }; S.step = 'done'; S.hour = null; window.scrollTo(0, 0); });
+      case 'done': return go(function(){ S.tab = 'home'; S.step = 'pick'; });
+      case 'reset': return go(function(){ try { localStorage.removeItem(KEY); } catch (err) {} S = fresh(); S.sel = iso(fromIso(S.booking.date)); window.scrollTo(0, 0); toast('Demo reset'); });
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
