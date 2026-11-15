@@ -254,6 +254,12 @@ section[id]{scroll-margin-top:70px}
 .tags{display:flex;flex-wrap:wrap;gap:8px}
 .tags span{padding:7px 14px;border-radius:99px;font-size:.9rem;font-weight:600;color:#DFE5EB;background:rgba(223,229,235,.07);box-shadow:inset 0 0 0 1px rgba(223,229,235,.14)}
 .end{display:block;max-width:760px;margin:0 auto}
+/* iPhone: when the headline lines animate in, Safari drops their silver text, so they simply sit in place */
+.hero h1 span{animation:none;opacity:1;transform:none}
+/* titles only for the online points and the in-person options */
+.incl p,.ways p{display:none}
+.incl li{align-items:center}
+.incl li svg{margin-top:0}
 </style>
 </head>
 <body>
