@@ -71,14 +71,15 @@ h2{letter-spacing:-.03em;line-height:1.04;font-size:clamp(1.6rem,4.6vw,2.2rem);c
 @keyframes pop{0%{opacity:0;transform:scale(.2) rotate(-40deg)}60%{opacity:1;transform:scale(1.25) rotate(8deg)}100%{opacity:1;transform:none}}
 .hero .wrap{display:grid;gap:22px;z-index:auto}
 .hero .copy{position:relative;z-index:3;display:grid;gap:20px}
-.hero h1{position:relative;font-size:clamp(2.4rem,10.4vw,4rem);letter-spacing:-.04em;line-height:1.03;padding-bottom:.06em}
-.hero h1 span{display:block;width:max-content;max-width:100%;padding-bottom:.12em;margin-bottom:-.12em;color:var(--hi);background:linear-gradient(180deg,#FFFFFF 10%,#E3E8ED 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:rise .8s var(--ease) backwards}
-.hero h1 span:nth-child(2){background-image:linear-gradient(180deg,#EDF0F4 10%,#C0C7CF 95%)}
-.hero h1 span:nth-child(3){background-image:linear-gradient(180deg,#D3D9E0 10%,#8D95A0 95%)}
-.hero h1 span:nth-child(2){animation-delay:.09s}.hero h1 span:nth-child(3){animation-delay:.18s}
+.head{position:relative}
+.hero h1{font-size:clamp(3.1rem,17.5vw,5.2rem);letter-spacing:-.045em;line-height:1;padding-bottom:.06em}
+.hero h1 sup{font-size:.5em;line-height:0;vertical-align:.72em;margin-left:.04em;-webkit-text-fill-color:var(--pink2);color:var(--pink2);filter:drop-shadow(0 0 10px rgba(224,90,156,.55))}
+.trio{display:flex;flex-wrap:wrap;gap:4px 1.2em;margin-top:14px;font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(.8rem,3.95vw,1.3rem);letter-spacing:-.02em;line-height:1.2;color:var(--muted)}
+.trio span{white-space:nowrap;transition:color .5s}.trio span.cur{color:var(--hi)}
+.hero h1 span{display:block;width:max-content;max-width:100%;padding-bottom:.12em;margin-bottom:-.12em;color:var(--hi);background:linear-gradient(178deg,#FFFFFF 12%,#DDE3EA 48%,#8D95A0 98%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:rise .8s var(--ease) backwards}
 .hero .rest{display:grid;gap:20px;animation:rise .8s .32s var(--ease) backwards}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}}
-.hop{position:absolute;left:0;top:0;width:.34em;height:.34em;margin:-.17em 0 0 0;opacity:0;transition:transform .7s var(--ease),opacity .4s;filter:drop-shadow(0 0 6px rgba(240,140,194,.9))}
+.hop{position:absolute;left:0;top:0;font-size:clamp(.8rem,3.95vw,1.3rem);width:.7em;height:.7em;margin:-.35em 0 0 0;opacity:0;transition:transform .7s var(--ease),opacity .4s;filter:drop-shadow(0 0 6px rgba(240,140,194,.9))}
 .hop.on{opacity:1}
 .hop svg{display:block;width:100%;height:100%;fill:var(--pink2);-webkit-text-fill-color:initial}
 .tags{display:flex;flex-wrap:wrap;gap:8px}
@@ -183,7 +184,7 @@ form{margin-top:26px}
 .pstar{position:absolute;left:0;top:0;width:18px;height:18px;margin-left:-9px;fill:#fff;filter:drop-shadow(0 0 5px rgba(240,140,194,1)) drop-shadow(0 0 12px rgba(224,90,156,.9));transition:left .7s var(--ease),transform .7s var(--ease)}
 .qs{min-height:176px;padding-top:30px;box-sizing:content-box}
 .q{display:grid;gap:8px;animation:rise .45s var(--ease)}
-.ask{display:block;font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.5rem,6.4vw,2rem);letter-spacing:-.03em;line-height:1.1;color:var(--hi);margin-bottom:8px}
+.ask{display:block;font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.15rem,5.5vw,2rem);letter-spacing:-.03em;line-height:1.1;color:var(--hi);margin-bottom:8px}
 #lead input,#lead textarea{font:inherit;font-size:max(16px,1.12rem);color:var(--hi);background:none;border:0;border-bottom:1.5px solid rgba(223,229,235,.22);border-radius:0;padding:11px 0;width:100%;transition:border-color .25s,box-shadow .25s}
 #lead textarea{resize:none;min-height:0;line-height:1.4}
 ::placeholder{color:#5F6671}
@@ -239,7 +240,8 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
   .sec{padding:88px 0}
   .hero{padding:132px 0 76px}
   .hero .wrap{grid-template-columns:minmax(0,1fr) 400px;align-items:center;gap:30px}
-  .hero h1{font-size:clamp(3.6rem,6.4vw,6.2rem)}
+  .hero h1{font-size:clamp(4.4rem,7.4vw,7rem)}
+  .trio,.hop{font-size:1.5rem}.trio{margin-top:18px}
   .hero .copy{gap:26px}
   .hero .rest{max-width:30em;gap:22px}
   .device{width:286px;height:auto;margin:0 34px 0 0;justify-self:end}
@@ -300,7 +302,7 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
     <g class="grids"></g><path class="area"/><path class="ln" pathLength="1"/><g class="star"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></g></svg>
   <div class="wrap">
     <div class="copy">
-      <h1><span>Your Coach.</span><span>Your Plan.</span><span>Your Progress.</span><i class="hop" aria-hidden="true"><svg viewBox="-10 -10 20 20"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg></i></h1>
+      <div class="head"><h1><span>P<sup>2</sup> Training</span></h1><p class="trio"><span>Your Coach.</span><span>Your Plan.</span><span>Your Progress.</span></p><i class="hop" aria-hidden="true"><svg viewBox="-10 -10 20 20"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg></i></div>
       <div class="rest">
         <div class="tags"><span>Online</span><span>In Person</span><span>Toronto</span></div>
         <div class="cta-row"><a class="btn" href="#start">Book a Free Intro Call</a><a class="btn line" href="#online">See Online Coaching</a></div>
@@ -340,7 +342,7 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
 
 <section class="sec about" id="about"><div class="wrap">
   <figure>
-    <blockquote class="quote chrome">“There's no one best exercise, program or diet. The best plan is the one that works for you and that you enjoy.”</blockquote>
+    <blockquote class="quote chrome">“There's no one best exercise, program or diet. The best plan is the one that works and is enjoyable for you.”</blockquote>
     <figcaption class="said"><img src="site/logo.png" alt="" width="42" height="42" loading="lazy"><div><b>Paya Kashi</b><span>Coach</span></div></figcaption>
   </figure>
 </div></section>
@@ -544,8 +546,8 @@ document.querySelectorAll('[data-pick]').forEach(function(a){ a.addEventListener
   }
 
   // headline and phone move together: the star hops to a line and the phone shows that screen
-  var lines = [].slice.call(document.querySelectorAll('.hero h1 span')), hop = document.querySelector('.hop'), shots = [].slice.call(document.querySelectorAll('.device .front img')), cur = RM ? 2 : 0;
-  function place(){ var s = lines[cur]; if (!s) return; var fs = parseFloat(getComputedStyle(s).fontSize); hop.style.transform = 'translate(' + (s.offsetLeft + s.offsetWidth + fs * .1).toFixed(1) + 'px,' + (s.offsetTop + s.offsetHeight * .54).toFixed(1) + 'px) rotate(' + cur * 90 + 'deg)'; }
+  var lines = [].slice.call(document.querySelectorAll('.hero .trio span')), hop = document.querySelector('.hop'), shots = [].slice.call(document.querySelectorAll('.device .front img')), cur = RM ? 2 : 0;
+  function place(){ var s = lines[cur]; if (!s) return; var fs = parseFloat(getComputedStyle(s).fontSize); lines.forEach(function(x, k){ x.classList.toggle('cur', k === cur); }); hop.style.transform = 'translate(' + (s.offsetLeft + s.offsetWidth + fs * .25).toFixed(1) + 'px,' + (s.offsetTop + s.offsetHeight * .52).toFixed(1) + 'px) rotate(' + cur * 90 + 'deg)'; }
   function show(k){ cur = k; shots.forEach(function(im, i){ im.classList.toggle('on', i === k); }); place(); }
   show(cur); setTimeout(function(){ hop.classList.add('on'); }, RM ? 0 : 1100);
   if (!RM) setInterval(function(){ if (!document.hidden) show((cur + 1) % lines.length); }, 3600);
