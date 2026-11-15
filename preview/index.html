@@ -86,6 +86,8 @@ h2{letter-spacing:-.03em;line-height:1.04;font-size:clamp(1.6rem,4.6vw,2.2rem);c
 .proof{display:flex;gap:26px;padding-top:16px;border-top:1px solid var(--line)}
 .proof b{display:block;font-family:Fraunces,serif;font-weight:600;font-size:1.35rem;line-height:1.1;color:var(--hi)}
 .proof span{display:block;margin-top:4px;font-size:.84rem;color:var(--muted);max-width:15em}
+.proof>div{min-width:0}.proof>div:last-child{flex:none}.proof span.one{max-width:none;white-space:nowrap}
+@media (max-width:480px){.proof{gap:16px}.proof span{font-size:.78rem}}
 .device{position:relative;justify-self:center;width:min(250px,64vw);height:min(390px,100vw);margin-top:16px}
 .device .phone{--w:min(250px,64vw)}
 .device .back{display:none}
@@ -279,7 +281,7 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
       <div class="rest">
         <div class="tags"><span>Online</span><span>In Person</span><span>Toronto</span></div>
         <div class="cta-row"><a class="btn" href="#start">Book a Free Intro Call</a><a class="btn line" href="#online">See Online Coaching</a></div>
-        <div class="proof"><div><b>700+</b><span>sessions coached in 2026</span></div><div><b>BKin, MSc</b><span>Kinesiology and Sport Sciences, U of T</span></div></div>
+        <div class="proof"><div><b>700+</b><span>sessions coached in 2026</span></div><div><b>BKin, MSc</b><span class="one">Kinesiology and Sport Sciences, U of T</span></div></div>
       </div>
     </div>
     <div class="device">
@@ -315,7 +317,7 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
 
 <section class="sec about" id="about"><div class="wrap">
   <figure>
-    <blockquote class="quote chrome">“You should always know what you're doing, why you're doing it, and that it's working.”</blockquote>
+    <blockquote class="quote chrome">“There's no single best exercise, program or diet. Your plan is built around what works for you, without giving up results.”</blockquote>
     <figcaption class="said"><img src="../site/logo.png" alt="" width="42" height="42" loading="lazy"><div><b>Paya Kashi</b><span>Coach</span></div></figcaption>
   </figure>
 </div></section>
