@@ -169,24 +169,42 @@ h2{letter-spacing:-.03em;line-height:1.04;font-size:clamp(1.6rem,4.6vw,2.2rem);c
 .stage .phone{cursor:pointer}
 
 /* form */
-.start{max-width:760px;margin:0 auto;padding:28px 20px;border-radius:30px;border:1px solid rgba(240,140,194,.32);background:radial-gradient(90% 60% at 100% 0%,rgba(224,90,156,.2),transparent 62%),linear-gradient(180deg,rgba(223,229,235,.05),transparent 40%),var(--card);box-shadow:inset 0 1px 0 rgba(223,229,235,.08),0 40px 80px -40px #000}
-form{display:grid;gap:14px;margin-top:22px}
-.row{display:grid;gap:14px}
-label{display:grid;gap:6px;font-size:.84rem;font-weight:600;color:#C9D0D8}
-label small{font-weight:500;color:var(--dim)}
-input,select,textarea{font:inherit;font-size:1rem;color:var(--hi);background:#0C0D11;border:1px solid rgba(223,229,235,.16);border-radius:13px;padding:12px 13px;width:100%;transition:border-color .2s,box-shadow .2s}
-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23DFE5EB' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:38px}
-textarea{min-height:88px;resize:vertical}
+.start{max-width:640px;margin:0 auto;padding:30px 22px 24px;border-radius:30px;border:1px solid rgba(240,140,194,.32);background:radial-gradient(90% 60% at 100% 0%,rgba(224,90,156,.2),transparent 62%),linear-gradient(180deg,rgba(223,229,235,.05),transparent 40%),var(--card);box-shadow:inset 0 1px 0 rgba(223,229,235,.08),0 40px 80px -40px #000}
+.start h2{text-align:center}
+form{margin-top:26px}
+.trail{position:relative;height:18px;margin:0 9px}
+.trail::before,.trail .fill{content:"";position:absolute;left:0;top:8px;height:2px;border-radius:2px}
+.trail::before{right:0;background:rgba(223,229,235,.14)}
+.trail .fill{width:0;background:linear-gradient(90deg,var(--deep),var(--pink2));transition:width .7s var(--ease)}
+.trail .dots{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center}
+.trail .dots i{width:6px;height:6px;margin:0 -3px;border-radius:50%;background:#3A3F48;transition:background .4s .3s}
+.trail .dots i.on{background:var(--pink2)}
+.pstar{position:absolute;left:0;top:0;width:18px;height:18px;margin-left:-9px;fill:#fff;filter:drop-shadow(0 0 5px rgba(240,140,194,1)) drop-shadow(0 0 12px rgba(224,90,156,.9));transition:left .7s var(--ease),transform .7s var(--ease)}
+.qs{min-height:176px;padding-top:30px;box-sizing:content-box}
+.q{display:grid;gap:8px;animation:rise .45s var(--ease)}
+.ask{display:block;font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(1.5rem,6.4vw,2rem);letter-spacing:-.03em;line-height:1.1;color:var(--hi);margin-bottom:8px}
+#lead input,#lead textarea{font:inherit;font-size:max(16px,1.12rem);color:var(--hi);background:none;border:0;border-bottom:1.5px solid rgba(223,229,235,.22);border-radius:0;padding:11px 0;width:100%;transition:border-color .25s,box-shadow .25s}
+#lead textarea{resize:none;min-height:0;line-height:1.4}
 ::placeholder{color:#5F6671}
-input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pink2);box-shadow:0 0 0 3px rgba(224,90,156,.2)}
+#lead input:focus,#lead textarea:focus{outline:0;border-bottom-color:var(--pink2);box-shadow:0 10px 14px -12px rgba(224,90,156,.9)}
+.pills{display:flex;flex-wrap:wrap;gap:10px}
+.pills button{font:inherit;font-weight:700;font-size:.98rem;padding:12px 18px;border:0;border-radius:99px;color:var(--ice);background:rgba(223,229,235,.05);box-shadow:inset 0 0 0 1px rgba(223,229,235,.2);cursor:pointer;transition:transform .2s var(--ease),background .25s,color .25s,box-shadow .25s;-webkit-tap-highlight-color:transparent}
+.pills button:active{transform:scale(.95)}
+.pills button[aria-checked=true]{color:#101116;background:linear-gradient(180deg,#F7F9FB,#B4BCC7);box-shadow:0 0 0 1.5px rgba(240,140,194,.8),0 10px 24px -12px rgba(224,90,156,.7)}
+@media (hover:hover){.pills button:hover{box-shadow:inset 0 0 0 1px rgba(240,140,194,.6)}.pills button[aria-checked=true]:hover{box-shadow:0 0 0 1.5px rgba(240,140,194,.95),0 10px 24px -12px rgba(224,90,156,.8)}}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-form .btn{width:100%;margin-top:4px}
-#f-msg{min-height:1.2em;font-size:.9rem;color:#FF9DB8;text-align:center}
-.fine{font-size:.8rem;color:var(--dim);text-align:center}
-.alt{font-size:.92rem;color:var(--soft);text-align:center}
+#f-msg{min-height:1.5em;margin-top:10px;font-size:.9rem;color:#FF9DB8}
+.fnext{display:flex;align-items:center;gap:14px;margin-top:6px}
+.fnext .count{margin-right:auto;font-size:.86rem;font-weight:600;color:var(--dim)}
+.fback{font:inherit;font-weight:700;font-size:.94rem;padding:10px 0;border:0;background:none;color:var(--soft);cursor:pointer}
+.fnext .btn{min-width:132px;white-space:nowrap}.fnext .count,.fback{white-space:nowrap}
+@media (max-width:480px){.fnext .btn{padding:14px 20px;font-size:.94rem}.fnext{gap:12px}}
+.alt{margin-top:22px;font-size:.9rem;color:var(--dim);text-align:center}
 .alt a{color:var(--pink2);font-weight:700;text-decoration:none}
-.done h3{font-size:2rem;letter-spacing:-.03em;color:var(--hi);margin-bottom:8px}
-.done p{color:var(--soft)}
+.done{text-align:center;padding:26px 0 18px}
+.done .dstar{width:44px;height:44px;fill:#fff;filter:drop-shadow(0 0 8px rgba(240,140,194,1)) drop-shadow(0 0 22px rgba(224,90,156,.9));animation:pop .9s var(--ease) backwards}
+.done h3{font-size:clamp(1.8rem,7vw,2.4rem);letter-spacing:-.03em;line-height:1.1;color:var(--hi);margin:14px 0 10px;animation:rise .7s .25s var(--ease) backwards}
+.done p{color:var(--soft);max-width:24em;margin:0 auto;animation:rise .7s .4s var(--ease) backwards}
 
 /* footer */
 footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1px solid var(--line)}
@@ -252,8 +270,8 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
   .stage .phone{--w:270px}
   .app .feats{margin:26px 0 0}
   .feats b{font-size:1.4rem}
-  .start{padding:44px 44px 38px}
-  .row{grid-template-columns:1fr 1fr}
+  .start{padding:46px 52px 34px}
+  .qs{min-height:190px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -261,6 +279,7 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
   .hero .chart .area,.hero .chart .star path,.hero h1 span,.hero .rest{animation:none;opacity:1;transform:none}
   .seal svg{animation:none}
   .hop,.device .front .scr img,.wins svg,.feats span,.btn,.way{transition:none}
+  .q,.done .dstar,.done h3,.done p{animation:none}.trail .fill,.pstar,.pills button{transition:none}
   .wins svg{transform:none}
 }
 </style>
@@ -369,31 +388,56 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
   <div class="start" id="start">
     <div id="f-wrap">
       <h2>Book Your Free Intro Call.</h2>
-      <p class="lede">Tell me a bit about you and I'll get back to you within a day or two to set up a time.</p>
       <form id="lead" novalidate>
       <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="row">
-        <label>Your Name<input name="name" required autocomplete="name"></label>
-        <label>Email<input name="email" type="email" required autocomplete="email" inputmode="email"></label>
+      <div class="trail" aria-hidden="true"><i class="fill" id="f-fill"></i><span class="dots"><i></i><i></i><i></i><i></i><i></i></span><svg class="pstar" id="f-star" viewBox="-10 -10 20 20"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg></div>
+      <div class="qs">
+        <div class="q" data-step="name">
+          <label class="ask" for="f-name">What's Your Name?</label>
+          <input id="f-name" name="name" required autocomplete="name" placeholder="First and last">
+        </div>
+        <div class="q" data-step="interest" hidden>
+          <p class="ask" id="q-int">What Are You Interested In?</p>
+          <div class="pills" role="radiogroup" aria-labelledby="q-int" data-for="interested_in">
+            <button type="button" role="radio" aria-checked="false" data-v="Online coaching">Online Coaching</button>
+            <button type="button" role="radio" aria-checked="false" data-v="1-on-1 training">1-on-1</button>
+            <button type="button" role="radio" aria-checked="false" data-v="Semi-private training">Semi-Private</button>
+            <button type="button" role="radio" aria-checked="false" data-v="Group classes (waitlist)">Group Classes</button>
+            <button type="button" role="radio" aria-checked="false" data-v="Not sure yet">Not Sure Yet</button>
+          </div>
+          <input type="hidden" name="interested_in">
+        </div>
+        <div class="q" data-step="goal" hidden>
+          <label class="ask" for="f-goal">What's Your Main Goal?</label>
+          <textarea id="f-goal" name="goal" required rows="2" placeholder="Get stronger, lose 15 lb, run my first 10K"></textarea>
+        </div>
+        <div class="q" data-step="call" hidden>
+          <p class="ask" id="q-call">How Should We Meet?</p>
+          <div class="pills" role="radiogroup" aria-labelledby="q-call" data-for="call_by">
+            <button type="button" role="radio" aria-checked="false" data-v="Phone">Phone</button>
+            <button type="button" role="radio" aria-checked="false" data-v="Video">Video</button>
+            <button type="button" role="radio" aria-checked="false" data-v="In person at the gym">In Person</button>
+            <button type="button" role="radio" aria-checked="false" data-v="Any is fine">Any Is Fine</button>
+          </div>
+          <input type="hidden" name="call_by">
+        </div>
+        <div class="q" data-step="reach" hidden>
+          <label class="ask" for="f-email">Where Can I Reach You?</label>
+          <input id="f-email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder="Email" aria-label="Email">
+          <input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Phone (optional)" aria-label="Phone, optional">
+          <input name="heard_from" placeholder="How did you hear about me?" aria-label="How did you hear about me, optional">
+        </div>
       </div>
-      <div class="row">
-        <label>Phone <small>(optional)</small><input name="phone" type="tel" autocomplete="tel" inputmode="tel"></label>
-        <label>I'm Interested In<select name="interested_in" required>
-          <option value="">Choose one</option><option>Online coaching</option><option>1-on-1 training</option><option>Semi-private training</option><option>Group classes (waitlist)</option><option>Not sure yet</option></select></label>
-      </div>
-      <label>What's Your Main Goal?<textarea name="goal" required placeholder="e.g. get stronger, lose 15 lb, run my first 10K, train consistently"></textarea></label>
-      <div class="row">
-        <label>Intro Call Preference<select name="call_by">
-          <option value="">Any is fine</option><option>Phone</option><option>Video</option><option>In person at the gym</option></select></label>
-        <label>How Did You Hear About Me? <small>(optional)</small><input name="heard_from"></label>
-      </div>
-      <button class="btn" type="submit" id="f-go">Book My Free Intro Call</button>
       <p id="f-msg" role="status" aria-live="polite"></p>
-      <p class="fine">Your details are only used to contact you about training. Never shared, never sold.</p>
+      <div class="fnext">
+        <button class="fback" type="button" id="f-back" hidden>Back</button>
+        <span class="count" id="f-count">1 of 5</span>
+        <button class="btn" type="submit" id="f-go">Next</button>
+      </div>
       <p class="alt">Rather message? <a href="https://ig.me/m/payakashi" target="_blank" rel="noopener">DM Me on Instagram</a></p>
     </form>
     </div>
-    <div class="done" id="f-done" hidden><h3>Got It. <span class="pk">Talk Soon.</span></h3><p>Thanks for reaching out. I'll get back to you within a day or two to set up your intro call.</p></div>
+    <div class="done" id="f-done" hidden><svg class="dstar" viewBox="-10 -10 20 20" aria-hidden="true"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg><h3>Talk Soon<span id="f-who"></span>.</h3><p>I'll get back to you within a day or two to set up your intro call.</p></div>
   </div>
 </div></section>
 </main>
@@ -409,26 +453,72 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
   var ENDPOINT = 'https://formsubmit.co/ajax/cc0640974cf9d5457ec4d574b3539c97';
   var io = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .12 }) : null;
   document.querySelectorAll('.rv').forEach(function(el, i){ el.style.transitionDelay = (i % 4) * 70 + 'ms'; if (io) io.observe(el); else el.classList.add('in'); });
-  var f = document.getElementById('lead'), msg = document.getElementById('f-msg'), go = document.getElementById('f-go');
+  var f = document.getElementById('lead'), msg = document.getElementById('f-msg'), go = document.getElementById('f-go'), back = document.getElementById('f-back');
+  var steps = [].slice.call(f.querySelectorAll('.q')), last = steps.length - 1, cur = 0, busy = false;
+  var fill = document.getElementById('f-fill'), star = document.getElementById('f-star'), count = document.getElementById('f-count'), dots = [].slice.call(f.querySelectorAll('.trail .dots i'));
+  var SEND = 'Book My Free Intro Call';
+  function show(i, focus){
+    cur = i; msg.textContent = '';
+    steps.forEach(function(s, k){ s.hidden = k !== i; });
+    back.hidden = i === 0; go.textContent = i === last ? SEND : 'Next';
+    count.textContent = (i + 1) + ' of ' + steps.length;
+    var pct = i / last * 100; fill.style.width = pct + '%'; star.style.left = pct + '%'; star.style.transform = 'rotate(' + i * 90 + 'deg)';
+    dots.forEach(function(d, k){ d.classList.toggle('on', k <= i); });
+    if (focus) { var el = steps[i].querySelector('input:not([type=hidden]),textarea'); if (el) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } } }
+  }
+  // Returns '' when the step is fine, or what to tell the person.
+  function check(i){
+    var k = steps[i].getAttribute('data-step');
+    if (k === 'name' && !f.name.value.trim()) return 'Add your name to continue.';
+    if (k === 'interest' && !f.interested_in.value) return 'Pick one to continue.';
+    if (k === 'goal' && !f.goal.value.trim()) return 'Tell me your main goal to continue.';
+    if (k === 'reach' && !/^\S+@\S+\.\S+$/.test(f.email.value.trim())) return f.email.value.trim() ? 'That email doesn\'t look right.' : 'Add your email so I can reach you.';
+    return '';
+  }
+  function setPill(group, v){
+    var hit = false;
+    [].forEach.call(group.children, function(b){ var on = b.getAttribute('data-v') === v; if (on) hit = true; b.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    if (hit) f[group.getAttribute('data-for')].value = v;
+    return hit;
+  }
+  [].forEach.call(f.querySelectorAll('.pills'), function(g){
+    g.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if (!b || busy) return;
+      setPill(g, b.getAttribute('data-v')); msg.textContent = '';
+      var at = cur; if (at < last) setTimeout(function(){ if (cur === at) show(at + 1, true); }, 280);
+    });
+  });
+  // Links elsewhere on the page ("1-on-1", "Semi-Private"...) pre-select what the person is interested in.
+  window.p2Pick = function(v){ setPill(f.querySelector('.pills[data-for=interested_in]'), v); };
+  back.addEventListener('click', function(){ if (cur > 0 && !busy) show(cur - 1, true); });
   f.addEventListener('submit', function(e){
-    e.preventDefault(); msg.textContent = '';
+    e.preventDefault(); if (busy) return; msg.textContent = '';
     if (f._honey.value) return;
-    var bad = [].filter.call(f.querySelectorAll('[required]'), function(x){ return !x.value.trim(); })[0];
-    if (bad) { msg.textContent = 'Please fill in your name, email, what you\'re interested in and your goal.'; bad.focus(); return; }
-    if (!/^\S+@\S+\.\S+$/.test(f.email.value.trim())) { msg.textContent = 'That email doesn\'t look right.'; f.email.focus(); return; }
+    var why = check(cur);
+    if (why) { msg.textContent = why; var el = steps[cur].querySelector('input:not([type=hidden]),textarea'); if (el) el.focus(); return; }
+    if (cur < last) { show(cur + 1, true); return; }
+    for (var i = 0; i < steps.length; i++) { why = check(i); if (why) { show(i, true); msg.textContent = why; return; } }
     if (!ENDPOINT) { msg.textContent = 'This form isn\'t connected yet.'; return; }
     var data = {}; new FormData(f).forEach(function(v, k){ if (k !== '_honey') data[k] = v; });
+    if (!data.call_by) data.call_by = 'Any is fine';
     data._subject = 'New training inquiry: ' + data.name + ' (' + data.interested_in + ')'; data._template = 'table'; data._captcha = 'false';
-    go.disabled = true; go.textContent = 'Sending…';
+    busy = true; go.disabled = true; go.textContent = 'Sending…';
     fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(data) })
       .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function(j){ if (j && String(j.success) === 'false') throw new Error('not accepted'); document.getElementById('f-wrap').hidden = true; document.getElementById('f-done').hidden = false; })
-      .catch(function(){ go.disabled = false; go.textContent = 'Book My Free Intro Call'; msg.textContent = 'Something went wrong sending that. Please try again in a moment.'; });
+      .then(function(j){ if (j && String(j.success) === 'false') throw new Error('not accepted');
+        var first = f.name.value.trim().split(/\s+/)[0]; document.getElementById('f-who').textContent = first ? ', ' + first : '';
+        document.getElementById('f-wrap').hidden = true; document.getElementById('f-done').hidden = false; })
+      .catch(function(){ busy = false; go.disabled = false; go.textContent = SEND; msg.textContent = 'Something went wrong sending that. Please try again in a moment.'; });
   });
+  // Keep the card the same height on every step so nothing jumps as the questions change.
+  var qs = f.querySelector('.qs');
+  function fit(){ var h = 0; steps.forEach(function(s){ var was = s.hidden; s.hidden = false; s.style.animation = 'none'; h = Math.max(h, s.offsetHeight); s.hidden = was; s.style.animation = ''; }); if (h) qs.style.minHeight = h + 'px'; }
+  show(0, false); fit();
+  window.addEventListener('resize', fit); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
 })();
 </script>
 <script>
-document.querySelectorAll('[data-pick]').forEach(function(a){ a.addEventListener('click', function(){ var s = document.querySelector('select[name=interested_in]'); if (s) s.value = a.getAttribute('data-pick'); }); });
+document.querySelectorAll('[data-pick]').forEach(function(a){ a.addEventListener('click', function(){ if (window.p2Pick) window.p2Pick(a.getAttribute('data-pick')); }); });
 (function(){
   var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var NS = 'http://www.w3.org/2000/svg';
