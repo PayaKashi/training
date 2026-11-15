@@ -200,7 +200,10 @@ details.fold[open]>summary svg{transform:rotate(90deg)}
 
 
 /* guided workout */
-.sheet:has(.guide){max-height:96vh;padding-bottom:0}
+.sheet:has(.guide){max-height:none;height:96vh;height:96dvh;padding-bottom:0;display:flex;flex-direction:column}
+.guide{flex:1;min-height:0;display:flex;flex-direction:column}
+.guide #logf{flex:1}
+.gstep:not(:has(.gdemo)) .gpill{margin-top:6px}
 .sheet:has(.guide)>.btn.q{display:none}
 .gtop{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .gtop .lgcount{margin:0 0 0 auto}
@@ -465,6 +468,58 @@ details.wfold>summary .wd{padding:4px 10px;border-radius:99px;background:rgba(22
 details.wfold>summary .wch{width:18px;height:18px;color:var(--muted)}
 details.wfold[open]>summary .wch{transform:rotate(90deg)}
 </style>
+<style>
+/* ===== finish pass: PIN cells, cleaner cards, charts with a scale, one label style ===== */
+/* PIN */
+.lock{padding:30px 22px 26px}
+.lock h2{font-size:1.7rem;letter-spacing:-.03em}
+.pinw{position:relative;margin:22px 0 4px}
+.pinc{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.pinc i{position:relative;aspect-ratio:1/1.18;border-radius:15px;border:1.5px solid rgba(223,229,235,.14);background:linear-gradient(180deg,#0E0F13,#121419);box-shadow:inset 0 1px 0 rgba(223,229,235,.04);transition:border-color .2s,box-shadow .2s,transform .2s}
+.pinc i::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#EEF2F5;transform:scale(0);transition:transform .22s cubic-bezier(.3,1.5,.5,1)}
+.pinc i.on::after{transform:scale(1)}
+.pinc i.on{border-color:rgba(223,229,235,.3)}
+.pinc i.cur{border-color:var(--pink2);box-shadow:0 0 0 3px rgba(224,90,156,.22),inset 0 1px 0 rgba(223,229,235,.04)}
+.pinc.bad{animation:pshake .4s}
+@keyframes pshake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+#pin-in{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;font-size:16px;letter-spacing:0;text-indent:0;background:none;color:transparent;caret-color:transparent}
+#pin-in:focus{outline:none;box-shadow:none}
+.pin-err{min-height:1.3em;margin:10px 0 2px}
+/* hero: glass button, so the climb line reads as one stroke */
+.card.glow .btn.q{margin-top:26px;background:rgba(223,229,235,.045);border:1px solid rgba(223,229,235,.16);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);box-shadow:inset 0 1px 0 rgba(223,229,235,.08)}
+/* money card: no stray arc or rule */
+.mcard::before,.mcard::after{display:none}
+.mcard{box-shadow:inset 0 1px 0 rgba(223,229,235,.1),0 16px 30px -24px #000}
+/* one style for every section label */
+details.fold>summary{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:1.12rem;letter-spacing:-.01em;text-transform:none;color:#EEF2F5;padding:6px 2px 9px}
+details.fold>summary svg{color:#7F8691}
+details.wfold>summary{font-family:inherit;font-size:1rem;letter-spacing:0}
+/* quiet footer action */
+.quiet{display:block;margin:20px auto 0;padding:10px 16px;border:0;background:none;font:inherit;font-size:.86rem;font-weight:600;color:#7F8691;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.quiet:active{color:#DFE5EB}
+/* drawn star in place of emoji */
+.big.paid{display:flex;align-items:center;gap:10px}
+.big.paid svg{width:.7em;height:.7em;fill:var(--pink2);filter:drop-shadow(0 0 8px rgba(240,140,194,.7))}
+.mini .em{display:grid;place-items:center}
+.mini .em svg{width:20px;height:20px;fill:var(--pink2);filter:drop-shadow(0 0 6px rgba(240,140,194,.7))}
+/* charts */
+.chart .gl{stroke:rgba(223,229,235,.1);stroke-width:1;stroke-dasharray:2 5}
+.chart .gy{position:absolute;right:2px;transform:translateY(-50%);font-size:.7rem;font-weight:600;color:#7F8691;font-variant-numeric:tabular-nums;line-height:1}
+.chart .pt{fill:#14161B;stroke:#F08CC2;stroke-width:2}
+.chart .pt.end{fill:#F08CC2}
+.chart .cstar{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;pointer-events:none;opacity:0;animation:cpop .7s 1.15s cubic-bezier(.2,.7,.2,1) forwards;filter:drop-shadow(0 0 6px rgba(240,140,194,1)) drop-shadow(0 0 14px rgba(224,90,156,.9))}
+.chart .cstar svg{display:block;width:100%;height:100%;fill:#fff}
+.card .chart .pt{fill:#16181D}
+/* Latest Workout row keeps its own padding (the section-label style above is for plain group headings) */
+details.wfold>summary{padding:12px 16px 12px 12px}
+/* guided workout: the sets sit inside their card with room on both sides */
+.gstep .lg-ex{padding:2px 12px 8px}
+.gstep .lg-ex .addset{margin-top:8px;padding:8px 2px}
+/* iPhone zooms the whole page when a field's text is under 16px, so no field goes below that */
+input,select,textarea{font-size:max(16px,1rem)}
+.srow input,.field input,.field select,.field textarea,.lgnote textarea,.rlog textarea,.wdate input{font-size:max(16px,1rem)}
+@media (prefers-reduced-motion:reduce){.chart .cstar{animation:none;opacity:1}.pinc.bad{animation:none}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -502,7 +557,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function plural(n, w){ return n + ' ' + w + (n === 1 ? '' : 's'); }
   function names(n){ return n.length === 1 ? n[0] : n.slice(0,-1).join(', ') + ' and ' + n[n.length-1]; }
-  function kind(p){ return !p || !p.length ? 'One-on-one' : (p.length === 1 ? 'Tandem with ' : 'Group with ') + names(p); }
+  function kind(p){ return !p || !p.length ? 'One-on-One' : (p.length === 1 ? 'Tandem with ' : 'Group with ') + names(p); }
   function fmtW(w){ return (Math.round(w * 2) / 2).toString(); }
   function shortName(n){ return n.replace(/\s*\(.*\)$/, ''); }
   var CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
@@ -529,7 +584,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function climb(){ var best = null; (A.lifts || []).forEach(function(l){ if (l.sessions.length < 2 || l.assisted) return; var v = l.sessions.map(function(p){ return val(p, l); }), g = v[0] > 0 ? (Math.max.apply(null, v) - v[0]) / v[0] : 0; if (g > 0 && (!best || g > best.g)) best = { l: l, v: v, g: g }; });
     if (!best) return { bg: '', cap: '' }; var v = best.v, lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1, run = v[0], raw = v.map(function(x, i){ run = Math.max(run, x); return [i / (v.length - 1) * 95, 90 - (run - lo) / sp * 74]; }), pts = [];
     // keep the line under the title and text: it may only climb to the top near the right edge
-    for (var q = 0; q <= 48; q++) { var X = q / 48 * 95, k = 0; while (k < raw.length - 2 && raw[k + 1][0] < X) k++; var a0 = raw[k], a1 = raw[k + 1], t = a1[0] === a0[0] ? 0 : (X - a0[0]) / (a1[0] - a0[0]), Y = a0[1] + (a1[1] - a0[1]) * Math.max(0, Math.min(1, t)), env = X < 78 ? 57 : 57 - (X - 78) / 17 * 41; pts.push([X, Math.max(Y, env)]); }
+    for (var q = 0; q <= 48; q++) { var X = q / 48 * 95, k = 0; while (k < raw.length - 2 && raw[k + 1][0] < X) k++; var a0 = raw[k], a1 = raw[k + 1], t = a1[0] === a0[0] ? 0 : (X - a0[0]) / (a1[0] - a0[0]), Y = a0[1] + (a1[1] - a0[1]) * Math.max(0, Math.min(1, t)), env = X < 78 ? 58 : 58 - (X - 78) / 17 * 42; pts.push([X, Math.max(Y, env)]); }
     pts[pts.length - 1][1] = 16;
     var d = 'M' + pts.map(function(p){ return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L'), e = pts[pts.length - 1];
     return { bg: '<div class="climb" aria-hidden="true"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path class="ar" d="' + d + 'L' + e[0] + ' 100L0 100Z"/><path class="ln" pathLength="1" vector-effect="non-scaling-stroke" d="' + d + '"/></svg><i style="left:' + e[0] + '%;top:' + e[1] + '%"><svg viewBox="-10 -10 20 20"><path d="' + STAR + '"/></svg></i></div>',
@@ -592,12 +647,13 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function wShow(lb){ return wUnit() === 'kg' ? (Math.round(lb / 2.20462 * 10) / 10).toString() : (Math.round(lb * 10) / 10).toString(); }
   function viewWeight(){ var a = localWeights(), u = wUnit(), h = '<h2 class="page">Your Weight</h2>', last = a[a.length - 1], first = a[0];
     var seg = '<div class="useg" role="group" aria-label="Weight units"><button data-wunit="lb"' + (u === 'lb' ? ' class="on"' : '') + '>lb</button><button data-wunit="kg"' + (u === 'kg' ? ' class="on"' : '') + '>kg</button></div>';
-    if (!last) return h + '<section class="card glow"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><p class="lab pk">Body Weight</p>' + seg + '</div><p class="big">No entries yet</p><p class="sub">Log your weight here. You can add past weigh-ins too by picking the date.</p><button class="btn q" data-wlog="1">Log Weight</button></section>';
+    if (!last) return h + '<section class="card glow"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><p class="lab pk">Body Weight</p>' + seg + '</div><p class="big">No Entries Yet</p><p class="sub">Log your weight here. You can add past weigh-ins too by picking the date.</p><button class="btn q" data-wlog="1">Log Weight</button></section>';
     var diff = a.length > 1 ? last.w - first.w : 0, dtxt = a.length > 1 ? (Math.abs(diff) < 0.05 ? 'Same as ' : (diff < 0 ? 'Down ' : 'Up ') + wShow(Math.abs(diff)) + ' ' + u + ' since ') + md(parse(first.d)) : 'Logged ' + md(parse(last.d));
     h += '<section class="card glow"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><p class="lab pk">Latest · ' + md(parse(last.d)) + '</p>' + seg + '</div><p class="big">' + wShow(last.w) + ' ' + u + '</p><p class="sub">' + dtxt + '</p><button class="btn q" data-wlog="1">Log Weight</button></section>';
     if (a.length > 1) { var W = 340, H = 150, v = a.map(function(x){ return x.w; }), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1, t0 = parse(a[0].d).getTime(), t1 = parse(last.d).getTime(), tsp = t1 - t0 || 1;
-      var xs = a.map(function(x){ return 14 + (parse(x.d).getTime() - t0) / tsp * (W - 28); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); }), pts = xs.map(function(x, k){ return x.toFixed(1) + ',' + ys[k].toFixed(1); }).join(' ');
-      h += '<div class="sec">Over Time</div><section class="card" style="padding:14px"><div class="chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".35"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs><polygon points="' + pts + ' ' + xs[xs.length - 1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#wg)"/><polyline pathLength="1" points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' + xs.map(function(x, k){ return '<circle cx="' + x + '" cy="' + ys[k] + '" r="3.5" fill="#F08CC2"/>'; }).join('') + '</svg></div><div class="wax"><span>' + md(parse(first.d)) + '</span><span>' + md(parse(last.d)) + '</span></div></section>'; }
+      var xs = a.map(function(x){ return 14 + (parse(x.d).getTime() - t0) / tsp * (CXR - 14); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); }), pts = xs.map(function(x, k){ return x.toFixed(1) + ',' + ys[k].toFixed(1); }).join(' ');
+      var G = chartGrid(W, H, lo, hi, function(x){ return wShow(x); });
+      h += '<div class="sec">Over Time</div><section class="card" style="padding:14px"><div class="chart"><svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".3"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs>' + G.lines + '<polygon points="' + pts + ' ' + xs[xs.length - 1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#wg)"/><polyline pathLength="1" points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' + xs.map(function(x, k){ return a.length > 16 && k < a.length - 1 ? '' : '<circle class="pt' + (k === a.length - 1 ? ' end' : '') + '" cx="' + x + '" cy="' + ys[k] + '" r="3.2" vector-effect="non-scaling-stroke"/>'; }).join('') + '</svg>' + G.labels + '</div><div class="wax" style="margin-right:' + ((W - CXR) / W * 100).toFixed(1) + '%"><span>' + md(parse(first.d)) + '</span><span>' + md(parse(last.d)) + '</span></div></section>'; }
     h += '<div class="sec">History</div><div class="list">' + a.slice().reverse().map(function(x){ return '<button class="li" data-wedit="' + esc(x.d) + '"><span class="t"><b>' + wShow(x.w) + ' ' + u + '</b><span>' + short(parse(x.d)) + '</span></span>' + CHEV + '</button>'; }).join('') + '</div>';
     return h; }
   function wDateLabel(k){ return k === TODAY_KEY ? 'Today' : short(parse(k)); }
@@ -622,7 +678,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function milestoneBanner(){ var n = A.total; var m = MILES.filter(function(x){ return x <= n; }).pop(); if (!m) return ''; var hit = A.past[n - m]; if (!hit || dayDiff(hit.d) < -7) return '';
     return '<div class="card glow mini"><span class="em" aria-hidden="true">🏅</span><div style="flex:1"><p class="lab pk">Milestone</p><b>Your ' + m + 'th session with Paya!</b></div></div>'; }
   function latestBest(maxDays){ var w = null; A.wdates.forEach(function(k){ A.W[k].forEach(function(x){ if (x.best && (!w || k >= w.k)) w = { k: k, x: x }; }); }); if (!w || dayDiff(parse(w.k)) < -maxDays) return '';
-    return '<button class="card mini li" style="border:1px solid var(--line)" data-lift="' + w.x.l.i + '"><span class="em" aria-hidden="true">🎉</span><span class="t"><span class="lab pk" style="display:block">New best · ' + md(parse(w.k)) + '</span><b>' + esc(shortName(w.x.l.name)) + ' · ' + setText(w.x.s, w.x.l) + '</b></span>' + CHEV + '</button>'; }
+    return '<button class="card mini li" style="border:1px solid var(--line)" data-lift="' + w.x.l.i + '"><span class="em" aria-hidden="true"><svg viewBox="-10 -10 20 20"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg></span><span class="t"><span class="lab pk" style="display:block">New best · ' + md(parse(w.k)) + '</span><b>' + esc(shortName(w.x.l.name)) + ' · ' + setText(w.x.s, w.x.l) + '</b></span>' + CHEV + '</button>'; }
   function noteCard(){ var n = A.note; if (!n || !n.text) return ''; var nd = n.date ? parse(n.date) : null; if (nd && dayDiff(nd) < -7) return '';
     return '<section class="card note"><p class="lab">A note from Paya</p><p>' + esc(n.text) + '</p>' + (nd ? '<span class="sub" style="font-size:.85rem">' + md(nd) + '</span>' : '') + '</section>'; }
   function nextRow(s, label){ return '<button class="card mini li" style="border:1px solid var(--line)" data-up="0">' + dateBox(s.d) + '<span class="t"><span class="lab" style="display:block">' + (label || 'Next session') + '</span><b>' + rel(s.d) + ' · ' + tr(s.start) + '</b></span>' + CHEV + '</button>'; }
@@ -673,8 +729,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     var C = A.C, per = C.perWeek || A.days.length || 3, done = A.weekLogs.length, h = '';
     var nd = nextDay();
     var cb = climb();
-    h += '<section class="card glow">' + cb.bg + '<p class="lab pk">This Week' + (A.week ? ' · Week ' + A.week : '') + '</p><p class="big">' + Math.min(done, per) + ' of ' + plural(per, 'workout') + '</p><div class="wk">' + Array.apply(null, Array(per)).map(function(_, i){ return '<i' + (i < done ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
-      (nd ? '<p class="sub">Up next: ' + esc(nd.name) + '</p><button class="btn" data-day="' + esc(nd.key) + '">Start ' + esc(nd.name) + '</button>' : (A.days.length ? '<p class="sub">Every workout done this week. Nice work! 🎉</p>' : '<p class="sub">Paya is building your program. It will show up here.</p>')) + '</section>';
+    h += '<section class="card glow">' + cb.bg + '<p class="lab pk">This Week' + (A.week ? ' · Week ' + A.week : '') + '</p><p class="big">' + Math.min(done, per) + ' of ' + per + (per === 1 ? ' Workout' : ' Workouts') + '</p><div class="wk">' + Array.apply(null, Array(per)).map(function(_, i){ return '<i' + (i < done ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
+      (nd ? '<p class="sub">Up next: ' + esc(nd.name) + '</p><button class="btn" data-day="' + esc(nd.key) + '">Start ' + esc(nd.name) + '</button>' : (A.days.length ? '<p class="sub">Every workout done this week. Nice work!</p>' : '<p class="sub">Paya is building your program. It will show up here.</p>')) + '</section>';
     var lastW = A.wdates[A.wdates.length - 1];
     if (lastW) { var op = !!FOLD['home:w'];
       h += '<details class="fold wfold" data-fold="home:w"' + (op ? ' open' : '') + '><summary><span class="wic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg></span><b class="wt">Latest Workout</b><span class="wd">' + md(parse(lastW)) + '</span><svg class="wch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + workoutRows(lastW) + '</div></details>'; }
@@ -716,7 +772,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function demoSrc(e){ if (e.demo) return e.demo; var sl = slugEx(e.name); return ((RAW && RAW.demos) || []).indexOf(sl) >= 0 ? '../../demos/' + sl + '.mp4' : ''; }
   function demoBox(e, cur){ var src = demoSrc(e);
     if (src) return '<div class="gdemo"><video src="' + esc(src) + '" muted loop playsinline' + (cur ? ' autoplay preload="auto"' : ' preload="none"') + '></video></div>';
-    return '<div class="gdemo ph"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6c1.6 13 7 18.4 20 20-13 1.6-18.4 7-20 20-1.6-13-7-18.4-20-20 13-1.6 18.4-7 20-20z"/></svg><span>Demo coming soon</span></div>'; }
+    return ''; }
   function gBig(e){ var sets = exSets(e); if (!sets.length) return ''; var reps = sets.map(function(s){ return s.reps || s.dur || ''; }), same = reps.every(function(r){ return r === reps[0]; }), r = same ? String(reps[0]) : reps.join('/');
     return plural(sets.length, 'set') + ' × ' + r + (/^[0-9–\-]+$/.test(r) ? ' reps' : ''); }
   function gSub(e){ var w = exSets(e).map(function(s){ return s.weight; }).filter(function(x){ return x; }); return [w.length ? fmtW(Math.max.apply(null, w)) + ' lb' : (e.target || ''), e.note || ''].filter(Boolean).join(' · '); }
@@ -760,7 +816,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     var txt = log.ex.map(function(e){ return shortName(e.name) + ': ' + e.sets.map(function(s){ return (s.w ? fmtW(s.w) + ' lb × ' : '') + s.r; }).join(', '); }).join(' | ');
     queue({ _subject: 'P2 Log · ' + A.name + ' · ' + log.dayName + ' · ' + md(TODAY), Client: A.name, Workout: log.dayName, Date: full(TODAY), Lifts: txt, Notes: log.note || '-', kind: 'log', p2: pack(log) });
     A = build(RAW); closeSheet(); render(true); celebrate(log); }
-  function celebrate(log){ var bests = (A.W[log.date] || []).filter(function(x){ return x.best; }).length; toast(bests ? '🎉 ' + plural(bests, 'new best') + '!' : 'Workout saved ✓'); }
+  function celebrate(log){ var bests = (A.W[log.date] || []).filter(function(x){ return x.best; }).length; toast(bests ? plural(bests, 'new best') + '!' : 'Workout saved ✓'); }
   function pack(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   function queue(msg){ var ob = jget(OKEY, []); ob.push(msg); jset(OKEY, ob); flush(); }
   var flushing = false;
@@ -771,11 +827,11 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   window.addEventListener('online', flush);
   function toast(t){ var el = document.getElementById('toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); } el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('on'); }, 2600); }
   function viewPaymentsOnline(){ var C = A.C, h = '<h2 class="page">Payments</h2>', pt = C.paidThrough ? parse(C.paidThrough) : null;
-    h += '<section class="card glow"><p class="lab pk">Online Coaching</p>' + (pt ? '<p class="big">Paid through ' + md(pt) + '</p><p class="sub">' + (dayDiff(pt) <= 14 && dayDiff(pt) >= 0 ? 'Your next block starts ' + mdl(pt) + '. Paya will check in with you about it.' : (C.block || '3-month block') + (C.price ? ' · ' + money(C.price) + ' a month' : '')) + '</p>' : '<p class="big">Getting set up</p><p class="sub">Paya will add your first payment here.</p>') + '</section>';
+    h += '<section class="card glow"><p class="lab pk">Online Coaching</p>' + (pt ? '<p class="big">Paid through ' + md(pt) + '</p><p class="sub">' + (dayDiff(pt) <= 14 && dayDiff(pt) >= 0 ? 'Your next block starts ' + mdl(pt) + '. Paya will check in with you about it.' : (C.block || '3-month block') + (C.price ? ' · ' + money(C.price) + ' a month' : '')) + '</p>' : '<p class="big">Getting Set Up</p><p class="sub">Paya will add your first payment here.</p>') + '</section>';
     var ps = (C.payments || []).slice().reverse();
     if (ps.length) h += '<div class="sec">Payments</div><div class="list">' + ps.map(function(p){ return '<div class="li" style="cursor:default"><span class="t"><b>' + esc(p.what || 'Payment') + '</b><span>' + short(parse(p.date)) + (p.method ? ' · ' + esc(p.method) : '') + '</span></span><span class="r plus">+' + money(p.amount) + '</span></div>'; }).join('') + '</div>';
     if (A.asOf) h += '<p class="asof">Up to date as of ' + A.asOf + '</p>';
-    h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
+    h += '<button class="quiet" id="forget">Forget This Phone</button>';
     return h; }
   var RAW = null;
 
@@ -898,13 +954,13 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     var next = A.upcoming[0], h = weddingCard();
     // next session: same card every day
     var cb = climb();
-    h += next ? '<section class="card glow">' + cb.bg + '<p class="lab pk">Next Session</p><p class="big">' + rel(next.d) + ' · ' + tr(next.start) + '</p><p class="sub">' + mdl(next.d) + ' · ' + kind(next.partners) + '</p><button class="btn q" data-up="0">Session details</button></section>'
-      : '<section class="card glow"><p class="lab pk">Next Session</p><p class="big">Nothing booked yet</p><p class="sub">Paya will add your next session soon.</p></section>';
+    h += next ? '<section class="card glow">' + cb.bg + '<p class="lab pk">Next Session</p><p class="big">' + rel(next.d) + ' · ' + tr(next.start) + '</p><p class="sub">' + mdl(next.d) + ' · ' + kind(next.partners) + '</p><button class="btn q" data-up="0">Session Details</button></section>'
+      : '<section class="card glow"><p class="lab pk">Next Session</p><p class="big">Nothing Booked Yet</p><p class="sub">Paya will add your next session soon.</p></section>';
     // money summary: one tappable line, details live on Payments
     var mt, mv;
-    if (A.plan === 'prepaid') { mt = A.owed > 0 ? 'Not paid yet' : 'Credit'; mv = A.owed > 0 ? money(A.owed) : money(A.credit); }
-    else if (A.owed > 0) { mt = 'Amount owing'; mv = money(A.owed); }
-    else { mt = A.credit > 0 ? 'Credit' : 'Balance'; mv = A.credit > 0 ? money(A.credit) : 'All paid up'; }
+    if (A.plan === 'prepaid') { mt = A.owed > 0 ? 'Not Paid Yet' : 'Credit'; mv = A.owed > 0 ? money(A.owed) : money(A.credit); }
+    else if (A.owed > 0) { mt = 'Amount Owing'; mv = money(A.owed); }
+    else { mt = A.credit > 0 ? 'Credit' : 'Balance'; mv = A.credit > 0 ? money(A.credit) : 'All Paid Up'; }
     h += '<button class="mcard" data-go="payments"><span class="mt"><span class="lab">' + mt + '</span><b>' + mv + '</b></span><span class="mgo">' + CHEV + '</span></button>';
     // latest workout
     var lastW = A.wdates[A.wdates.length - 1];
@@ -917,11 +973,11 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function viewProgress(){
     var m0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), inM = A.past.filter(function(s){ return s.d >= m0; }).length;
     var bestsM = 0; A.wdates.forEach(function(k){ if (parse(k) >= m0) A.W[k].forEach(function(x){ if (x.best) bestsM++; }); });
-    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><button data-stat="month"><b data-n="' + inM + '">' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="bests"><b data-n="' + bestsM + '">' + bestsM + '</b><span>New bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="total"><b data-n="' + A.total + '">' + A.total + '</b><span>Total ' + (A.online ? 'workouts' : 'sessions') + '</span></button></div>';
+    var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><button data-stat="month"><b data-n="' + inM + '">' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="bests"><b data-n="' + bestsM + '">' + bestsM + '</b><span>New Bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="total"><b data-n="' + A.total + '">' + A.total + '</b><span>Total ' + (A.online ? 'Workouts' : 'Sessions') + '</span></button></div>';
     // goals
-    h += '<div class="sec">Goals <a data-newgoal="1">+ Set a goal</a></div><section class="card">' + (A.goals.length ? A.goals.map(function(g){ var p = goalProgress(g);
-      return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b>' + (g.by === 'me' ? '<small>Your goal</small>' : '') + '</div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<button class="x" data-delgoal="' + g.li + '">Remove</button>' : '') + '</div>'; }).join('')
-      : '<p class="sub" style="margin:0">No goal yet. Set one and Paya will build your sessions around it.</p><button class="btn q" data-newgoal="1">Set a goal</button>') + '</section>';
+    h += '<div class="sec">Goals <a data-newgoal="1">+ Set a Goal</a></div><section class="card">' + (A.goals.length ? A.goals.map(function(g){ var p = goalProgress(g);
+      return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b>' + (g.by === 'me' ? '<small>Your Goal</small>' : '') + '</div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<button class="x" data-delgoal="' + g.li + '">Remove</button>' : '') + '</div>'; }).join('')
+      : '<p class="sub" style="margin:0">No goal yet. Set one and Paya will build your sessions around it.</p><button class="btn q" data-newgoal="1">Set a Goal</button>') + '</section>';
     // lifts
     if (!A.lifts.length) return h + '<div class="sec">Your Lifts</div><p class="card empty">' + (A.online ? 'Log your first workout and your lifts will show up here.' : 'Your lifts will show here after your next workout with Paya.') + '</p>';
     var gs = ['Lower body', 'Upper body', 'Other'].map(function(g){ return { g: g, ls: A.lifts.filter(function(l){ return l.g === g; }).sort(function(x, y){ return x.sessions[x.sessions.length-1].date < y.sessions[y.sessions.length-1].date ? 1 : -1; }) }; }).filter(function(x){ return x.ls.length; });
@@ -936,7 +992,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     var h = '<h2 class="page">Upcoming Sessions</h2>';
     var mon = new Date(TODAY); mon.setDate(TODAY.getDate() - ((TODAY.getDay() + 6) % 7)); var nmon = new Date(mon); nmon.setDate(mon.getDate() + 7); var n2 = new Date(mon); n2.setDate(mon.getDate() + 14);
     var groups = [];
-    A.upcoming.forEach(function(s, i){ if (s.d >= n2) return; var g = s.d < nmon ? 'This week' : 'Next week'; var last = groups[groups.length-1]; if (!last || last.g !== g) groups.push(last = { g: g, items: [] }); last.items.push('<button class="li" data-up="' + i + '">' + dateBox(s.d) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + tr(s.start, s.end) + ' · ' + kind(s.partners) + '</span></span>' + CHEV + '</button>'); });
+    A.upcoming.forEach(function(s, i){ if (s.d >= n2) return; var g = s.d < nmon ? 'This Week' : 'Next Week'; var last = groups[groups.length-1]; if (!last || last.g !== g) groups.push(last = { g: g, items: [] }); last.items.push('<button class="li" data-up="' + i + '">' + dateBox(s.d) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + tr(s.start, s.end) + ' · ' + kind(s.partners) + '</span></span>' + CHEV + '</button>'); });
     if (!groups.length) h += '<p class="card empty">No sessions booked for the next two weeks.</p>';
     groups.forEach(function(g){ var open = FOLD[g.g] !== undefined ? FOLD[g.g] : !/^Later/.test(g.g); h += '<details class="fold" data-fold="' + esc(g.g) + '"' + (open ? ' open' : '') + '><summary>' + esc(g.g) + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></summary><div class="list">' + g.items.join('') + '</div></details>'; });
     return h;
@@ -945,17 +1001,17 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     var h = '<h2 class="page">Payments</h2>';
     if (A.plan === 'prepaid') {
       h += '<section class="card glow"><p class="lab pk">Credit</p><p class="big" style="font-size:2.8rem">' + money(A.credit) + '</p><p class="sub">' + (A.coveredUntil ? 'Covers your sessions until ' + short(A.coveredUntil) : (A.upcoming.length ? 'Not enough for your next session yet' : 'Ready for your next booking')) + '</p></section>';
-      if (A.owed > 0) h += '<section class="card"><p class="lab">Not paid yet</p><p class="big">' + money(A.owed) + '</p><p class="sub">' + A.unpaid.map(function(u){ return md(parse(u.date)); }).join(', ') + ' · whenever suits you</p></section>';
+      if (A.owed > 0) h += '<section class="card"><p class="lab">Not Paid Yet</p><p class="big">' + money(A.owed) + '</p><p class="sub">' + A.unpaid.map(function(u){ return md(parse(u.date)); }).join(', ') + ' · whenever suits you</p></section>';
       var pp = prepaidPays();
       if (pp.length) h += '<div class="sec">Payments</div><div class="list">' + pp.map(function(b, bi){ var n = b.used.length; return '<button class="li" data-pay="l' + bi + '"><span class="t"><b>' + payTitle(b.r) + '</b><span>' + short(parse(b.r.date)) + (n ? ' · ' + plural(n, 'session') : '') + (b.left > 0.001 ? ' · ' + money(b.left) + ' left' : '') + '</span></span><span class="r plus">+' + money(b.r.amount) + '</span>' + CHEV + '</button>'; }).join('') + '</div>';
     } else {
-      h += A.owed > 0 ? '<section class="card glow"><p class="lab pk">Amount owing</p><p class="big" style="font-size:2.8rem">' + money(A.owed) + '</p><p class="sub">For ' + plural(A.unpaidS.length, 'session') + ' · pay whenever suits you</p></section>'
-        : '<section class="card glow"><p class="lab pk">Your balance</p><p class="big">All paid up ✅</p>' + (A.credit > 0 ? '<p class="sub">' + money(A.credit) + ' credit toward upcoming sessions</p>' : '<p class="sub">Thank you!</p>') + '</section>';
-      if (A.unpaidS.length) h += '<div class="sec">Not paid yet</div><div class="list">' + A.unpaidS.slice().reverse().map(function(s){ return '<div class="li" style="cursor:default">' + dateBox(s.d, true) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + kind(s.partners) + (s.owing != null && s.price && s.owing < s.price ? ' · ' + money(s.price) + ' session, ' + money(s.price - s.owing) + ' from credit' : '') + '</span></span><span class="r">' + money(s.owing != null ? s.owing : (s.price || 0)) + '</span></div>'; }).join('') + '</div>';
+      h += A.owed > 0 ? '<section class="card glow"><p class="lab pk">Amount Owing</p><p class="big" style="font-size:2.8rem">' + money(A.owed) + '</p><p class="sub">For ' + plural(A.unpaidS.length, 'session') + ' · pay whenever suits you</p></section>'
+        : '<section class="card glow"><p class="lab pk">Your Balance</p><p class="big paid">All Paid Up<svg viewBox="-10 -10 20 20" aria-hidden="true"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg></p>' + (A.credit > 0 ? '<p class="sub">' + money(A.credit) + ' credit toward upcoming sessions</p>' : '<p class="sub">Thank you!</p>') + '</section>';
+      if (A.unpaidS.length) h += '<div class="sec">Not Paid Yet</div><div class="list">' + A.unpaidS.slice().reverse().map(function(s){ return '<div class="li" style="cursor:default">' + dateBox(s.d, true) + '<span class="t"><b>' + wd(s.d) + '</b><span>' + kind(s.partners) + (s.owing != null && s.price && s.owing < s.price ? ' · ' + money(s.price) + ' session, ' + money(s.price - s.owing) + ' from credit' : '') + '</span></span><span class="r">' + money(s.owing != null ? s.owing : (s.price || 0)) + '</span></div>'; }).join('') + '</div>';
       if (A.payments.length) h += '<div class="sec">Payments</div><div class="list">' + A.payments.map(function(p, pi){ return '<button class="li" data-pay="p' + pi + '"><span class="t"><b>Payment' + (p.method ? ' · ' + esc(p.method) : '') + '</b><span>' + short(parse(p.date)) + (p.covers && p.covers.length ? ' · ' + plural(p.covers.length, 'session') : '') + '</span></span><span class="r plus">+' + money(p.amount) + '</span>' + CHEV + '</button>'; }).join('') + '</div>';
     }
     if (A.asOf) h += '<p class="asof">Up to date as of ' + A.asOf + '</p>';
-    h += '<button class="btn line" id="forget" style="margin-top:22px">Forget this phone</button>';
+    h += '<button class="quiet" id="forget">Forget This Phone</button>';
     return h;
   }
   var views = { home: function(){ return A.online ? viewHomeOnline() : viewHome(); }, progress: viewProgress, sessions: viewSessions, program: function(){ return viewProgram(); }, workout: viewWorkout, run: viewRun, plan: viewHomePlan, weight: viewWeight, payments: function(){ return A.online ? viewPaymentsOnline() : viewPayments(); } };
@@ -1001,16 +1057,24 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     }
   }
   function pastSheet(i){ var s = A.past[i]; var w = A.W[s.key]; openSheet('<h3>' + full(s.d) + '</h3><p class="sub">' + kind(s.partners) + (s.start ? ' · ' + tr(s.start, s.end) : '') + '</p>' + (w ? '<div class="list" style="margin-top:14px">' + workoutRows(s.key) + '</div>' : '<p class="sub" style="margin-top:14px">No workout logged for this session.</p>')); }
+  // charts: plot area is 14..CXR of 340 wide; the gutter on the right holds the scale
+  var CXR = 296, STARP = '<svg viewBox="-10 -10 20 20" aria-hidden="true"><path d="' + STAR + '"/></svg>';
+  function chartGrid(W, H, lo, hi, fmt){ var top = H - 18 - (H - 40), bot = H - 18, ys = hi === lo ? [bot] : [top, (top + bot) / 2, bot], vs = hi === lo ? [lo] : [hi, (hi + lo) / 2, lo];
+    return { lines: ys.map(function(y){ return '<line class="gl" x1="0" x2="' + CXR + '" y1="' + y + '" y2="' + y + '" vector-effect="non-scaling-stroke"/>'; }).join(''),
+      labels: ys.map(function(y, k){ return '<span class="gy" style="top:' + (y / H * 100).toFixed(1) + '%">' + fmt(vs[k]) + '</span>'; }).join('') }; }
   function liftSheet(i){ var l = A.lifts[i], ss = l.sessions, v = ss.map(function(p){ return val(p, l); }); var W = 340, H = 150, lo = Math.min.apply(null, v), hi = Math.max.apply(null, v), sp = hi - lo || 1;
-    var xs = v.map(function(_, k){ return ss.length < 2 ? W / 2 : 14 + k * (W - 28) / (ss.length - 1); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); });
+    var xs = v.map(function(_, k){ return ss.length < 2 ? CXR / 2 : 14 + k * (CXR - 14) / (ss.length - 1); }), ys = v.map(function(x){ return H - 18 - (x - lo) / sp * (H - 40); });
     var pts = xs.map(function(x, k){ return x.toFixed(1) + ',' + ys[k].toFixed(1); }).join(' ');
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".35"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs>' + (ss.length > 1 ? '<polygon points="' + pts + ' ' + xs[xs.length-1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#lg)"/><polyline pathLength="1" points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' : '') + xs.map(function(x, k){ return '<circle cx="' + x + '" cy="' + ys[k] + '" r="3.5" fill="#F08CC2"/>'; }).join('') + '<line class="cur" x1="0" x2="0" y1="0" y2="' + H + '" stroke="rgba(255,255,255,.35)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0"/></svg>';
+    var bk = v.lastIndexOf(hi), few = ss.length <= 16;
+    var G = chartGrid(W, H, lo, hi, function(x){ var a = Math.abs(x); return l.weighted ? fmtW(Math.round(a * 10) / 10) : String(Math.round(a)); });
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05A9C" stop-opacity=".3"/><stop offset="1" stop-color="#E05A9C" stop-opacity="0"/></linearGradient></defs>' + G.lines + (ss.length > 1 ? '<polygon points="' + pts + ' ' + xs[xs.length-1] + ',' + H + ' ' + xs[0] + ',' + H + '" fill="url(#lg)"/><polyline pathLength="1" points="' + pts + '" fill="none" stroke="#F08CC2" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' : '') + xs.map(function(x, k){ return k === bk || !few ? '' : '<circle class="pt" cx="' + x + '" cy="' + ys[k] + '" r="3.2" vector-effect="non-scaling-stroke"/>'; }).join('') + '<line class="cur" x1="0" x2="0" y1="0" y2="' + H + '" stroke="rgba(255,255,255,.35)" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0"/></svg>';
+    var star = '<i class="cstar" style="left:' + (xs[bk] / W * 100).toFixed(2) + '%;top:' + (ys[bk] / H * 100).toFixed(2) + '%">' + STARP + '</i>';
     var last = ss[ss.length - 1];
-    openSheet('<p class="lab pk">' + esc(l.g) + '</p><h3>' + esc(shortName(l.name)) + '</h3><p class="sub">' + gainText(l) + '</p><div class="chart" data-chart="' + i + '">' + svg + '</div><div class="readout"><b id="ro-v">' + setText(last, l) + '</b><span id="ro-d">' + short(parse(last.date)) + '</span></div><p class="sub" style="font-size:.82rem">Slide your finger across the chart</p>' +
-      '<div class="facts"><div><span>Best</span><b>' + setText(l.best, l) + '</b></div><div><span>First logged</span><b>' + setText(ss[0], l) + ' · ' + md(parse(ss[0].date)) + '</b></div><div><span>Sessions</span><b>' + ss.length + '</b></div></div>'); }
+    openSheet('<p class="lab pk">' + esc(l.g) + '</p><h3>' + esc(shortName(l.name)) + '</h3><p class="sub">' + gainText(l) + '</p><div class="chart" data-chart="' + i + '">' + svg + G.labels + star + '</div>' + (ss.length > 1 ? '<div class="wax" style="margin-right:' + ((W - CXR) / W * 100).toFixed(1) + '%"><span>' + md(parse(ss[0].date)) + '</span><span>' + md(parse(last.date)) + '</span></div>' : '') + '<div class="readout"><b id="ro-v">' + setText(last, l) + '</b><span id="ro-d">' + short(parse(last.date)) + '</span></div><p class="sub" style="font-size:.82rem">Slide your finger across the chart</p>' +
+      '<div class="facts"><div><span>Best</span><b>' + setText(l.best, l) + '</b></div><div><span>First Logged</span><b>' + setText(ss[0], l) + ' · ' + md(parse(ss[0].date)) + '</b></div><div><span>Sessions</span><b>' + ss.length + '</b></div></div>'); }
   function goalSheet(){ var opts = A.lifts.filter(function(l){ return l.weighted && !l.assisted; }).map(function(l){ return '<option value="' + esc(l.name) + '">' + esc(shortName(l.name)) + ' (best ' + fmtW(l.best.weight) + ' lb)</option>'; }).join('');
-    openSheet('<h3>Set a goal</h3><p class="sub">Paya will see it and plan your sessions around it.</p>' + (opts ? '<label class="field"><span>Lift</span><select id="g-lift"><option value="">Choose a lift…</option>' + opts + '</select></label><label class="field"><span>Target weight (lb)</span><input id="g-w" type="number" inputmode="decimal" placeholder="e.g. 400"></label><p class="or">or</p>' : '') +
-      '<label class="field"><span>Write your own goal</span><input id="g-t" type="text" maxlength="60" placeholder="e.g. First unassisted pull-up"></label><p class="pin-err" id="g-err"></p><button class="btn" id="g-save">Save and text Paya</button>'); }
+    openSheet('<h3>Set a Goal</h3><p class="sub">Paya will see it and plan your sessions around it.</p>' + (opts ? '<label class="field"><span>Lift</span><select id="g-lift"><option value="">Choose a lift…</option>' + opts + '</select></label><label class="field"><span>Target weight (lb)</span><input id="g-w" type="number" inputmode="decimal" placeholder="e.g. 400"></label><p class="or">or</p>' : '') +
+      '<label class="field"><span>Write your own goal</span><input id="g-t" type="text" maxlength="60" placeholder="e.g. First unassisted pull-up"></label><p class="pin-err" id="g-err"></p><button class="btn" id="g-save">Save and Text Paya</button>'); }
   function saveGoal(){ var lift = (document.getElementById('g-lift') || {}).value, w = parseFloat((document.getElementById('g-w') || {}).value), t = (document.getElementById('g-t').value || '').trim(), err = document.getElementById('g-err'), g;
     if (lift && w > 0) g = { lift: lift, target: w, text: shortName(lift) + ' ' + fmtW(w) + ' lb' }; else if (t) g = { text: t }; else { err.textContent = 'Pick a lift and target, or write your own goal.'; return; }
     var all = localGoals(); all.push(g); saveGoals(all); A.goals = A.goals.filter(function(x){ return x.by === 'paya'; }).concat(all.map(function(x, i){ return Object.assign({ by: 'me', li: i }, x); }));
@@ -1073,8 +1137,8 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   document.addEventListener('input', function(e){ if (e.target.closest && e.target.closest('#logf, #lg-note')) saveDraft(); });
   document.addEventListener('toggle', function(e){ var d = e.target; if (d.dataset && d.dataset.fold) FOLD[d.dataset.fold] = d.open; }, true);
   // chart scrub
-  function scrub(e){ var c = e.target.closest && e.target.closest('[data-chart]'); if (!c) return; var l = A.lifts[+c.dataset.chart], ss = l.sessions, r = c.getBoundingClientRect(), x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left; var k = ss.length < 2 ? 0 : Math.max(0, Math.min(ss.length - 1, Math.round((x / r.width * 340 - 14) / ((340 - 28) / (ss.length - 1))))); var s = ss[k];
-    document.getElementById('ro-v').textContent = setText(s, l); document.getElementById('ro-d').textContent = short(parse(s.date)); var ln = c.querySelector('.cur'), px = ss.length < 2 ? 170 : 14 + k * (340 - 28) / (ss.length - 1); ln.setAttribute('x1', px); ln.setAttribute('x2', px); ln.setAttribute('opacity', 1); }
+  function scrub(e){ var c = e.target.closest && e.target.closest('[data-chart]'); if (!c) return; var l = A.lifts[+c.dataset.chart], ss = l.sessions, r = c.getBoundingClientRect(), x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left; var k = ss.length < 2 ? 0 : Math.max(0, Math.min(ss.length - 1, Math.round((x / r.width * 340 - 14) / ((CXR - 14) / (ss.length - 1))))); var s = ss[k];
+    document.getElementById('ro-v').textContent = setText(s, l); document.getElementById('ro-d').textContent = short(parse(s.date)); var ln = c.querySelector('.cur'), px = ss.length < 2 ? CXR / 2 : 14 + k * (CXR - 14) / (ss.length - 1); ln.setAttribute('x1', px); ln.setAttribute('x2', px); ln.setAttribute('opacity', 1); }
   document.addEventListener('pointerdown', scrub); document.addEventListener('pointermove', function(e){ if (e.buttons || e.pointerType === 'touch') scrub(e); });
   // swipe tabs (follows finger)
   var g = null;
@@ -1114,13 +1178,17 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
   function rawAes(b){ return crypto.subtle.importKey('raw', b, 'AES-GCM', false, ['decrypt']); }
   function fromPin(pin, x){ return crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']).then(function(base){ return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: b64u(KEY), iterations: x.it }, base, 256); }); }
   function askPin(x){ return new Promise(function(resolve){
-    document.getElementById('view').innerHTML = '<section class="card lock"><div class="ico"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></div><h2>Enter your PIN</h2><p class="sub">Paya texted you a 6-digit PIN. You only need it once on this phone.</p><form id="pin-form" novalidate><input id="pin-in" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" aria-label="6-digit PIN"><p id="pin-err" class="pin-err" role="alert"></p><button class="btn" type="submit" id="pin-go">Unlock</button></form><p class="sub" style="font-size:.85rem;margin-top:14px">Forgot it? Just text Paya.</p></section>';
+    document.getElementById('view').innerHTML = '<section class="card lock"><div class="ico"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></div><h2>Enter Your PIN</h2><p class="sub">Paya texted you a 6-digit PIN. You only need it once on this phone.</p><form id="pin-form" novalidate><div class="pinw"><div class="pinc" id="pin-c" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><input id="pin-in" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" aria-label="6-digit PIN"></div><p id="pin-err" class="pin-err" role="alert"></p><button class="btn" type="submit" id="pin-go">Unlock</button></form><p class="sub" style="font-size:.85rem;margin-top:14px">Forgot it? Just text Paya.</p></section>';
     var form = document.getElementById('pin-form'), inp = document.getElementById('pin-in'), err = document.getElementById('pin-err'), btn = document.getElementById('pin-go'), wait = false;
     setTimeout(function(){ try { inp.focus(); } catch (e) {} }, 50);
-    inp.addEventListener('input', function(){ inp.value = inp.value.replace(/\D/g, '').slice(0, 6); err.textContent = ''; });
+    var cells = document.getElementById('pin-c');
+    function paint(){ var n = inp.value.length, on = document.activeElement === inp; [].forEach.call(cells.children, function(c, i){ c.className = (i < n ? 'on' : '') + (on && i === Math.min(n, 5) ? ' cur' : ''); }); }
+    inp.addEventListener('focus', paint); inp.addEventListener('blur', paint);
+    inp.addEventListener('input', function(){ inp.value = inp.value.replace(/\D/g, '').slice(0, 6); err.textContent = ''; cells.classList.remove('bad'); paint(); if (inp.value.length === 6 && !wait) { if (form.requestSubmit) form.requestSubmit(); else btn.click(); } });
+    paint();
     form.addEventListener('submit', function(e){ e.preventDefault(); if (wait) return; var pin = inp.value; if (pin.length !== 6) { err.textContent = 'Your PIN is 6 numbers.'; return; } wait = true; btn.textContent = 'Unlocking…'; var bits;
       fromPin(pin, x).then(function(b){ bits = b; return rawAes(b); }).then(function(k){ return aesOpen(k, x); }).then(function(d){ try { localStorage.setItem(DKEY, toB64u(bits)); } catch (e) {} resolve(d); })
-        .catch(function(){ wait = false; btn.textContent = 'Unlock'; err.textContent = 'That PIN didn’t match. Check the text from Paya and try again.'; inp.value = ''; inp.focus(); }); });
+        .catch(function(){ wait = false; btn.textContent = 'Unlock'; err.textContent = 'That PIN didn’t match. Check the text from Paya and try again.'; inp.value = ''; cells.classList.add('bad'); inp.focus(); paint(); }); });
   }); }
   function getData(){ if (!KEY) return Promise.reject(new Error('no key'));
     return fetch('data.enc', { cache: 'no-store' }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(x){
@@ -1136,7 +1204,7 @@ details.wfold[open]>summary .wch{transform:rotate(90deg)}
     if (A.run && !A.online) { var tb2 = document.querySelector('.tabs'), pb2 = tb2.querySelector('.tab[data-tab="progress"]'), rbtn = document.createElement('button'); rbtn.className = 'tab'; rbtn.type = 'button'; rbtn.dataset.tab = 'run'; rbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14.5" cy="4.5" r="1.8"/><path d="M8 21l3.2-6.2 3.3 2.7V22M6 12.5l3.5-3.2 4 .7 2.5 3.4 3 .6M11.2 14.8l2-5"/></svg>Run'; tb2.insertBefore(rbtn, pb2.nextSibling); tb2.classList.add('five'); }
     if (A.program && !A.online) { var tb = document.querySelector('.tabs'), pb = tb.querySelector('.tab[data-tab="progress"]'), wbtn = document.createElement('button'); wbtn.className = 'tab'; wbtn.type = 'button'; wbtn.dataset.tab = 'workout'; wbtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Workout'; tb.insertBefore(wbtn, pb.nextSibling); tb.classList.add('five'); }
     if (A.online) { var sb = document.querySelector('.tab[data-tab="sessions"]'); if (sb) { sb.dataset.tab = 'program'; sb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg>Program'; } setTimeout(flush, 800); } greet(d.greeting || d.name); document.querySelector('.tabs').hidden = false; render(); setTimeout(function(){ pill(false); }, 30); })
-    .catch(function(){ document.getElementById('view').innerHTML = '<section class="card"><p class="sub" style="margin:0 0 12px">Your account didn’t load. Check your connection and try again. If it keeps happening, ask Paya to resend your link.</p><button class="btn q" onclick="location.reload()">Try again</button></section>'; });
+    .catch(function(){ document.getElementById('view').innerHTML = '<section class="card"><p class="sub" style="margin:0 0 12px">Your account didn’t load. Check your connection and try again. If it keeps happening, ask Paya to resend your link.</p><button class="btn q" onclick="location.reload()">Try Again</button></section>'; });
 })();
 </script>
 
