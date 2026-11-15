@@ -126,14 +126,13 @@ h2{letter-spacing:-.03em;line-height:1.04;font-size:clamp(1.6rem,4.6vw,2.2rem);c
 @media (hover:hover){.way:hover h3{color:var(--pink2)}.way:hover .go{transform:translateX(5px)}}
 
 /* about */
-.about .wrap{display:grid;gap:26px}
+.about .wrap{display:grid;gap:24px}
+.coaches{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:16px 34px}
 .quote{font-size:clamp(1.5rem,4.8vw,2.5rem);letter-spacing:-.03em;line-height:1.08;padding-bottom:.08em}
-.said{display:flex;align-items:center;gap:12px;margin-top:20px}
+.said{display:flex;align-items:center;gap:12px}
 .said img{width:42px;height:42px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(223,229,235,.7),0 0 0 4px rgba(224,90,156,.3)}
 .said b{display:block;font-weight:700;color:var(--hi);line-height:1.2}
 .said span{display:block;font-size:.86rem;color:var(--muted)}
-.bio h2{font-size:clamp(1.4rem,4vw,1.8rem)}
-.bio p{color:var(--soft);margin-top:12px;max-width:34em}
 
 /* results */
 .results{display:grid;gap:22px}
@@ -238,7 +237,10 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
   .way{border-top:1px solid var(--line);border-bottom:0;padding:22px 0}
   .way h3{font-size:1.6rem}
   .wins li{font-size:1.4rem;padding:8px 0}
-  .about .wrap{grid-template-columns:1.15fr .85fr;gap:76px;align-items:start}
+  .about .wrap{grid-template-columns:1.3fr .7fr;gap:76px;align-items:center}
+  .coaches{flex-direction:column;gap:22px}
+  .said img{width:50px;height:50px}
+  .said b{font-size:1.1rem}
   .results{grid-template-columns:.9fr 1.1fr;gap:76px;align-items:center}
   .app .panel{padding-bottom:60px}
   .show{grid-template-columns:1fr 360px;grid-template-rows:auto auto;align-content:center;column-gap:40px;row-gap:0}
@@ -315,12 +317,11 @@ footer{position:relative;z-index:1;overflow:hidden;padding:36px 0 0;border-top:1
 </div></section>
 
 <section class="sec about" id="about"><div class="wrap">
-  <figure><blockquote class="quote chrome">“You should always know what you're doing, why you're doing it, and that it's working.”</blockquote><figcaption class="said"><img src="../site/logo.png" alt="" width="42" height="42" loading="lazy"><div><b>Paya Kashi</b><span>Coach, P² Collective</span></div></figcaption></figure>
-  <div class="bio">
-    <h2>Hi, I'm Paya.</h2>
-    <p>So many people put time and money into training that isn't getting them anywhere. I have a Bachelor of Kinesiology from U of T, I'm finishing my Master's in Sport Sciences there, and I train and race myself, from marathons to HYROX, so I try to be my own lab rat as often as I can.</p>
-    <p>Technique first, progress you can see in your numbers, and habits you can actually keep. It's my job to explain why, not to ask you to follow blindly.</p>
-  </div>
+  <blockquote class="quote chrome">“You should always know what you're doing, why you're doing it, and that it's working.”</blockquote>
+  <ul class="coaches">
+    <li class="said"><img src="../site/logo.png" alt="" width="42" height="42" loading="lazy"><div><b>Paya Kashi</b><span>Coach</span></div></li>
+    <li class="said"><img src="../site/logo.png" alt="" width="42" height="42" loading="lazy"><div><b>Pasha Kashi</b><span>Coach</span></div></li>
+  </ul>
 </div></section>
 
 <section class="sec" id="results"><div class="wrap results">
