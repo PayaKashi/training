@@ -519,6 +519,18 @@ details.wfold>summary{padding:12px 16px 12px 12px}
 input,select,textarea{font-size:max(16px,1rem)}
 .srow input,.field input,.field select,.field textarea,.lgnote textarea,.rlog textarea,.wdate input{font-size:max(16px,1rem)}
 @media (prefers-reduced-motion:reduce){.chart .cstar{animation:none;opacity:1}.pinc.bad{animation:none}}
+.card.ghit{position:relative;overflow:hidden;text-align:left;border-color:rgba(240,140,194,.45);background:radial-gradient(70% 90% at 100% 0%,rgba(224,90,156,.32),transparent 62%),linear-gradient(118deg,rgba(223,229,235,.12),transparent 40%),#17191F;animation:rise .6s var(--ease) backwards}
+.card.ghit .big{margin:2px 0 4px;padding-right:56px}
+.card.ghit .btn{margin-top:16px}
+.ghit .ghs{position:absolute;right:22px;top:46px;width:34px;height:34px;fill:#fff;filter:drop-shadow(0 0 6px rgba(240,140,194,1)) drop-shadow(0 0 16px rgba(224,90,156,.9));animation:cpop .9s .2s var(--ease) backwards}
+.ghx{position:absolute;right:10px;top:8px;width:36px;height:36px;border:0;background:none;color:var(--muted);font-size:1.4rem;line-height:1;cursor:pointer;z-index:1}
+.ghl{padding-top:6px;padding-bottom:6px}
+.ghl .gh{display:flex;align-items:center;gap:14px;padding:12px 0}
+.ghl .gh+.gh{border-top:1px solid var(--line)}
+.ghl .ghs{width:18px;height:18px;flex:none;fill:#F08CC2;filter:drop-shadow(0 0 5px rgba(224,90,156,.7))}
+.ghl .t{display:flex;flex-direction:column;gap:2px}.ghl .t b{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:1.05rem}.ghl .t span{color:var(--muted);font-size:.85rem}
+.gacts{display:flex;gap:16px;margin-top:6px}
+@media (prefers-reduced-motion:reduce){.card.ghit,.ghit .ghs{animation:none}}
 </style>
 </head>
 <body>
@@ -671,6 +683,21 @@ input,select,textarea{font-size:max(16px,1rem)}
     var lb = wUnit() === 'kg' ? v * 2.20462 : v; lb = Math.round(lb * 10) / 10;
     var a = localWeights().filter(function(x){ return x.d !== d; }); a.push({ d: d, w: lb }); saveWeights(a); closeSheet(); render(true); }
   function liftByName(n){ for (var i = 0; i < A.lifts.length; i++) if (A.lifts[i].name === n) return A.lifts[i]; return null; }
+  // ---- goals hit: a lift goal is hit once the logged best reaches the target; a written goal once it is marked done ----
+  var GSEEN = 'p2-goal-seen:' + location.pathname;
+  function goalKey(g){ return (g.lift || '') + '|' + (g.target || '') + '|' + (g.text || ''); }
+  function goalHit(g){ if (g.done) return { d: parse(g.done), set: null };
+    var l = g.lift && liftByName(g.lift); if (!l || !g.target || l.assisted) return null;
+    var ss = l.sessions || []; for (var i = 0; i < ss.length; i++) if ((ss[i].weight || 0) >= g.target) return { d: parse(ss[i].date), set: ss[i], l: l };
+    return null; }
+  function seenGoals(){ return jget(GSEEN, []); }
+  function markSeen(k){ var v = seenGoals(); if (v.indexOf(k) < 0) { v.push(k); jset(GSEEN, v); } }
+  function nextTarget(t){ var up = t * 1.05, step = t >= 100 ? 5 : 2.5; return Math.max(t + step, Math.ceil(up / step) * step); }
+  function freshHit(){ var seen = seenGoals(), out = null;
+    A.goals.forEach(function(g, i){ var h = goalHit(g); if (!h || out) return; if (seen.indexOf(goalKey(g)) >= 0 || dayDiff(h.d) < -30) return; out = { g: g, h: h, i: i }; });
+    return out; }
+  function goalHitCard(){ var f = freshHit(); if (!f) return ''; var g = f.g, h = f.h;
+    return '<section class="card ghit"><button class="ghx" data-ghx="' + f.i + '" aria-label="Close">&times;</button><span class="ghs" aria-hidden="true"><svg viewBox="-10 -10 20 20"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg></span><p class="lab pk">Goal Hit</p><p class="big">' + esc(g.text) + '</p><p class="sub">' + (h.set ? md(h.d) + ' · ' + setText(h.set, h.l) : 'Done ' + md(h.d)) + '</p><button class="btn" data-ghnext="' + f.i + '">Set My Next Goal</button></section>'; }
   function goalProgress(g){ var l = g.lift && liftByName(g.lift); if (!l || !g.target) return null; var cur = l.best.weight || 0; if (l.assisted) return null; return { cur: cur, pct: Math.max(4, Math.min(100, Math.round(cur / g.target * 100))), l: l }; }
 
   // ---- pieces ----
@@ -682,7 +709,7 @@ input,select,textarea{font-size:max(16px,1rem)}
   function noteCard(){ var n = A.note; if (!n || !n.text) return ''; var nd = n.date ? parse(n.date) : null; if (nd && dayDiff(nd) < -7) return '';
     return '<section class="card note"><p class="lab">A note from Paya</p><p>' + esc(n.text) + '</p>' + (nd ? '<span class="sub" style="font-size:.85rem">' + md(nd) + '</span>' : '') + '</section>'; }
   function nextRow(s, label){ return '<button class="card mini li" style="border:1px solid var(--line)" data-up="0">' + dateBox(s.d) + '<span class="t"><span class="lab" style="display:block">' + (label || 'Next session') + '</span><b>' + rel(s.d) + ' · ' + tr(s.start) + '</b></span>' + CHEV + '</button>'; }
-  function goalMini(){ var g = A.goals[0]; if (!g) return ''; var p = goalProgress(g); return '<button class="card li" style="display:block;border:1px solid var(--line);padding:16px 18px" data-go="progress"><p class="lab">Goal · ' + esc(g.text) + '</p>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + p.pct + '% there</p>' : '') + '</button>'; }
+  function goalMini(){ var g = A.goals.filter(function(x){ return !goalHit(x); })[0]; if (!g) return ''; var p = goalProgress(g); return '<button class="card li" style="display:block;border:1px solid var(--line);padding:16px 18px" data-go="progress"><p class="lab">Goal · ' + esc(g.text) + '</p>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + p.pct + '% there</p>' : '') + '</button>'; }
   function workoutRows(k){ return (A.W[k] || []).map(function(x){ return '<button class="li" data-lift="' + x.l.i + '"><span class="t"><b>' + esc(shortName(x.l.name)) + '</b><span>' + setText(x.s, x.l) + '</span></span>' + (x.best ? '<span class="tag">' + (x.prev && x.s.weight !== x.prev.weight ? (x.l.assisted ? fmtW(x.prev.weight - x.s.weight) + ' lb less help' : '+' + fmtW(x.s.weight - x.prev.weight) + ' lb') : '+' + (x.s.reps - (x.prev ? x.prev.reps : 0)) + ' reps') + ' best</span>' : '') + '</button>'; }).join(''); }
 
   // ---- online coaching ----
@@ -726,7 +753,7 @@ input,select,textarea{font-size:max(16px,1rem)}
   function doneThisWeek(dk){ return A.weekLogs.some(function(l){ return l.day === dk; }); }
   function nextDay(){ for (var i = 0; i < A.days.length; i++) if (!doneThisWeek(A.days[i].key)) return A.days[i]; return null; }
   function viewHomeOnline(){
-    var C = A.C, per = C.perWeek || A.days.length || 3, done = A.weekLogs.length, h = '';
+    var C = A.C, per = C.perWeek || A.days.length || 3, done = A.weekLogs.length, h = goalHitCard();
     var nd = nextDay();
     var cb = climb();
     h += '<section class="card glow">' + cb.bg + '<p class="lab pk">This Week' + (A.week ? ' · Week ' + A.week : '') + '</p><p class="big">' + Math.min(done, per) + ' of ' + per + (per === 1 ? ' Workout' : ' Workouts') + '</p><div class="wk">' + Array.apply(null, Array(per)).map(function(_, i){ return '<i' + (i < done ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
@@ -951,7 +978,7 @@ input,select,textarea{font-size:max(16px,1rem)}
 
   // ---- views ----
   function viewHome(){
-    var next = A.upcoming[0], h = weddingCard();
+    var next = A.upcoming[0], h = weddingCard() + goalHitCard();
     // next session: same card every day
     var cb = climb();
     h += next ? '<section class="card glow">' + cb.bg + '<p class="lab pk">Next Session</p><p class="big">' + rel(next.d) + ' · ' + tr(next.start) + '</p><p class="sub">' + mdl(next.d) + ' · ' + kind(next.partners) + '</p><button class="btn q" data-up="0">Session Details</button></section>'
@@ -975,9 +1002,12 @@ input,select,textarea{font-size:max(16px,1rem)}
     var bestsM = 0; A.wdates.forEach(function(k){ if (parse(k) >= m0) A.W[k].forEach(function(x){ if (x.best) bestsM++; }); });
     var h = '<h2 class="page">Your Progress</h2><div class="stats" style="margin-bottom:12px"><button data-stat="month"><b data-n="' + inM + '">' + inM + '</b><span>' + (A.online ? 'Workouts' : 'Sessions') + ' in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="bests"><b data-n="' + bestsM + '">' + bestsM + '</b><span>New Bests in ' + MONTHS[TODAY.getMonth()].slice(0,3) + '</span></button><button data-stat="total"><b data-n="' + A.total + '">' + A.total + '</b><span>Total ' + (A.online ? 'Workouts' : 'Sessions') + '</span></button></div>';
     // goals
-    h += '<div class="sec">Goals <a data-newgoal="1">+ Set a Goal</a></div><section class="card">' + (A.goals.length ? A.goals.map(function(g){ var p = goalProgress(g);
-      return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b>' + (g.by === 'me' ? '<small>Your Goal</small>' : '') + '</div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<button class="x" data-delgoal="' + g.li + '">Remove</button>' : '') + '</div>'; }).join('')
-      : '<p class="sub" style="margin:0">No goal yet. Set one and Paya will build your sessions around it.</p><button class="btn q" data-newgoal="1">Set a Goal</button>') + '</section>';
+    var gOn = A.goals.filter(function(g){ return !goalHit(g); }), gHit = A.goals.filter(function(g){ return goalHit(g); });
+    h += '<div class="sec">Goals <a data-newgoal="1">+ Set a Goal</a></div><section class="card">' + (gOn.length ? gOn.map(function(g){ var p = goalProgress(g);
+      return '<div class="goal"><div class="gt"><b>' + esc(g.text) + '</b>' + (g.by === 'me' ? '<small>Your Goal</small>' : '') + '</div>' + (p ? '<div class="bar"><i style="width:' + p.pct + '%"></i></div><p class="sub">' + fmtW(p.cur) + ' of ' + g.target + ' lb · ' + p.pct + '% there</p>' : '') + (g.by === 'me' ? '<div class="gacts">' + (!g.lift ? '<button class="x" data-gdone="' + g.li + '">Mark as Done</button>' : '') + '<button class="x" data-delgoal="' + g.li + '">Remove</button></div>' : '') + '</div>'; }).join('')
+      : '<p class="sub" style="margin:0">' + (gHit.length ? 'Every goal hit. Set your next one.' : 'No goal yet. Set one and Paya will build your sessions around it.') + '</p><button class="btn q" data-newgoal="1">Set a Goal</button>') + '</section>';
+    if (gHit.length) h += '<div class="sec">Goals Hit</div><section class="card ghl">' + gHit.map(function(g){ var x = goalHit(g);
+      return '<div class="gh"><span class="ghs" aria-hidden="true"><svg viewBox="-10 -10 20 20"><path d="M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z"/></svg></span><span class="t"><b>' + esc(g.text) + '</b><span>' + (x.set ? md(x.d) + ' · ' + setText(x.set, x.l) : 'Done ' + md(x.d)) + '</span></span></div>'; }).join('') + '</section>';
     // lifts
     if (!A.lifts.length) return h + '<div class="sec">Your Lifts</div><p class="card empty">' + (A.online ? 'Log your first workout and your lifts will show up here.' : 'Your lifts will show here after your next workout with Paya.') + '</p>';
     var gs = ['Lower body', 'Upper body', 'Other'].map(function(g){ return { g: g, ls: A.lifts.filter(function(l){ return l.g === g; }).sort(function(x, y){ return x.sessions[x.sessions.length-1].date < y.sessions[y.sessions.length-1].date ? 1 : -1; }) }; }).filter(function(x){ return x.ls.length; });
@@ -1072,8 +1102,8 @@ input,select,textarea{font-size:max(16px,1rem)}
     var last = ss[ss.length - 1];
     openSheet('<p class="lab pk">' + esc(l.g) + '</p><h3>' + esc(shortName(l.name)) + '</h3><p class="sub">' + gainText(l) + '</p><div class="chart" data-chart="' + i + '">' + svg + G.labels + star + '</div>' + (ss.length > 1 ? '<div class="wax" style="margin-right:' + ((W - CXR) / W * 100).toFixed(1) + '%"><span>' + md(parse(ss[0].date)) + '</span><span>' + md(parse(last.date)) + '</span></div>' : '') + '<div class="readout"><b id="ro-v">' + setText(last, l) + '</b><span id="ro-d">' + short(parse(last.date)) + '</span></div><p class="sub" style="font-size:.82rem">Slide your finger across the chart</p>' +
       '<div class="facts"><div><span>Best</span><b>' + setText(l.best, l) + '</b></div><div><span>First Logged</span><b>' + setText(ss[0], l) + ' · ' + md(parse(ss[0].date)) + '</b></div><div><span>Sessions</span><b>' + ss.length + '</b></div></div>'); }
-  function goalSheet(){ var opts = A.lifts.filter(function(l){ return l.weighted && !l.assisted; }).map(function(l){ return '<option value="' + esc(l.name) + '">' + esc(shortName(l.name)) + ' (best ' + fmtW(l.best.weight) + ' lb)</option>'; }).join('');
-    openSheet('<h3>Set a Goal</h3><p class="sub">Paya will see it and plan your sessions around it.</p>' + (opts ? '<label class="field"><span>Lift</span><select id="g-lift"><option value="">Choose a lift…</option>' + opts + '</select></label><label class="field"><span>Target weight (lb)</span><input id="g-w" type="number" inputmode="decimal" placeholder="e.g. 400"></label><p class="or">or</p>' : '') +
+  function goalSheet(pre){ pre = pre || {}; var opts = A.lifts.filter(function(l){ return l.weighted && !l.assisted; }).map(function(l){ return '<option value="' + esc(l.name) + '"' + (pre.lift === l.name ? ' selected' : '') + '>' + esc(shortName(l.name)) + ' (best ' + fmtW(l.best.weight) + ' lb)</option>'; }).join('');
+    openSheet('<h3>' + (pre.next ? 'Set Your Next Goal' : 'Set a Goal') + '</h3><p class="sub">' + (pre.next ? 'Nice work. Here is a suggested next step. Change it if you like.' : 'Paya will see it and plan your sessions around it.') + '</p>' + (opts ? '<label class="field"><span>Lift</span><select id="g-lift"><option value="">Choose a lift…</option>' + opts + '</select></label><label class="field"><span>Target weight (lb)</span><input id="g-w" type="number" inputmode="decimal" placeholder="e.g. 400"' + (pre.target ? ' value="' + pre.target + '"' : '') + '></label><p class="or">or</p>' : '') +
       '<label class="field"><span>Write your own goal</span><input id="g-t" type="text" maxlength="60" placeholder="e.g. First unassisted pull-up"></label><p class="pin-err" id="g-err"></p><button class="btn" id="g-save">Save and Text Paya</button>'); }
   function saveGoal(){ var lift = (document.getElementById('g-lift') || {}).value, w = parseFloat((document.getElementById('g-w') || {}).value), t = (document.getElementById('g-t').value || '').trim(), err = document.getElementById('g-err'), g;
     if (lift && w > 0) g = { lift: lift, target: w, text: shortName(lift) + ' ' + fmtW(w) + ' lb' }; else if (t) g = { text: t }; else { err.textContent = 'Pick a lift and target, or write your own goal.'; return; }
@@ -1106,6 +1136,9 @@ input,select,textarea{font-size:max(16px,1rem)}
     if (t.dataset.pay) { paySheet(t.dataset.pay); return; }
     if (t.dataset.lift) { liftSheet(+t.dataset.lift); return; }
     if (t.dataset.newgoal) { goalSheet(); return; }
+    if (t.dataset.ghx !== undefined) { var gx = A.goals[+t.dataset.ghx]; if (gx) markSeen(goalKey(gx)); var cd = t.closest('.ghit'); if (cd && cd.animate) { var an = cd.animate([{ opacity: 1 }, { opacity: 0, transform: 'scale(.97)' }], { duration: 220, easing: EASE }); an.onfinish = function(){ render(true); }; } else render(true); return; }
+    if (t.dataset.ghnext !== undefined) { var gn = A.goals[+t.dataset.ghnext]; if (gn) { markSeen(goalKey(gn)); render(true); var gl = gn.lift && liftByName(gn.lift); goalSheet(gn.lift && gn.target ? { lift: gn.lift, target: nextTarget(Math.max(gn.target, gl ? gl.best.weight || 0 : 0)), next: 1 } : { next: 1 }); } return; }
+    if (t.dataset.gdone !== undefined) { var ag = localGoals(), gi = +t.dataset.gdone; if (ag[gi]) { ag[gi].done = TODAY_KEY; saveGoals(ag); A.goals = A.goals.filter(function(x){ return x.by === 'paya'; }).concat(ag.map(function(x, i){ return Object.assign({ by: 'me', li: i }, x); })); } render(true); return; }
     if (t.dataset.runw !== undefined) { runSheet(+t.dataset.runw); return; }
     if (t.dataset.hwk) { jset(HWK, { w: Math.max(1, Math.min(hWeeks(), hWeek() + +t.dataset.hwk)), m: key(monday(TODAY)) }); render(true); return; }
     if (t.dataset.hday) { hDaySheet(t.dataset.hday); return; }
